@@ -1,0 +1,635 @@
+<html>
+<head>
+<title>Java Channel Access</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" href="jca.css" type="text/css">
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<table width="100%" height="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr> 
+    <td height="1"><img height="1" width="200" src="spacer.gif"></td>
+    <td><img height="1" width="10" src="spacer.gif"></td>
+    <td width="100%"><img height="1" width="400" src="spacer.gif"></td>
+    <td><img height="1" width="216" src="spacer.gif"></td>
+  </tr>
+  <tr> 
+    <td height="110" colspan="2" align="center"><img src="duke_plugin.gif" width="85" height="99"></td>
+    <td class="header" > <span class="header">JCA 2.1.2</span> </td>
+    <td valign="top" align="right"><img src="apslogo.gif"></td>
+  </tr>
+  <tr> 
+    <td height="30" colspan="4"></td>
+  </tr>
+  <tr> 
+    <td width="200" align="left" valign="top"> 
+      <table width="100%" height="100%" border="1" cellspacing="0" cellpadding="0" bordercolor="#48669F">
+        <tr> 
+          <td class="title2" width="706"><span class="title2"><a href="../index.html" class="title2">JCA</a></span> 
+          </td>
+        </tr>
+        <tr> 
+          <td bordercolor="#FFFFFF"><a href="http://www.aps.anl.gov/epics/" class="tab">- 
+            EPICS Home Page</a></td>
+        </tr>
+        <tr> 
+          <td height="3" bordercolor="#FFFFFF" background="line-light.png"></td>
+        </tr>
+        <tr> 
+          <td bordercolor="#FFFFFF"><a href="http://www.aps.anl.gov/epics/modules/base/R3-14/4-docs/CAref.html" class="tab">- 
+            Channel Access(3.14)</a></td>
+        </tr>
+        <tr> 
+          <td height="3" bordercolor="#FFFFFF" background="line-light.png"></td>
+        </tr>
+        <tr> 
+          <td height="30" bordercolor="#FFFFFF"></td>
+        </tr>
+        <tr> 
+          <td class="title2"><span class="title2"><a href="index.html" class="title2">JCA2.1.2</a></span> 
+          </td>
+        </tr>
+        <tr> 
+          <td bordercolor="#FFFFFF"><a href="download.html" class="tab">- Download</a></td>
+        </tr>
+        <tr> 
+          <td height="3" bordercolor="#FFFFFF" background="line-light.png"></td>
+        </tr>
+        <tr> 
+          <td bordercolor="#FFFFFF"><a href="installation.html" class="tab">- Installation</a></td>
+        </tr>
+        <tr> 
+          <td height="3" bordercolor="#FFFFFF" background="line-light.png"></td>
+        </tr>
+        <tr> 
+          <td bordercolor="#FFFFFF"><a href="api/index.html" class="tab">- API 
+            documentation </a></td>
+        </tr>
+        <tr> 
+          <td height="3" bordercolor="#FFFFFF" background="line-light.png"></td>
+        </tr>
+        <tr> 
+          <td bordercolor="#FFFFFF"><a href="tutorial.html" class="tab">- 
+            Tutorial</a></td>
+        </tr>
+        <tr> 
+          <td height="100%" bordercolor="#FFFFFF"></td>
+        </tr>
+      </table>
+    </td>
+    <td width="10"></td>
+    <td colspan="2" align="left" valign="top"  > 
+      <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr> 
+          <td class="title1"><span class="title1">Tutorial</span></td>
+        </tr>
+        <tr> 
+          <td height="30"></td>
+        </tr>
+        <tr> 
+          <td> 
+            <ul>
+              <li> <a href="#1">1) A word on the JCALibrary class</a></li>
+              <li><a href="#2">2) A word on JNI_THREAD_SAFE and JNI_SINGLE_THREADED 
+                contexts</a>.</li>
+              <li><a href="#3">3) A real life example.</a></li>
+              <li><a href="#4">4) Defining JCALibrary Properties for your system</a></li>
+              <li><a href="#5">5) Defining JCALibrary Properties for a particular 
+                user</a></li>
+              <li><a href="#6">6) A first program</a></li>
+              <li><a href="#7">7) Overriding default Context parameters</a></li>
+            </ul>
+            <p>&nbsp;</p>
+          </td>
+        </tr>
+        <tr> 
+          <td>&nbsp;</td>
+        </tr>
+        <tr> 
+          <td class="title2"> 
+            <p><a name="1"></a><b>1) A word on the JCALibrary class.</b></p>
+          </td>
+        </tr>
+        <tr> 
+          <td> 
+            <p><br>
+              The JCALibrary class is the entry point for all JCA enabled application. 
+              <br>
+              There is only one instance available within a JVM (Java Virtual 
+              Machine) which can be accessed with the static method getInstance().<br>
+            </p>
+            <p>The two main purposes of the JCALibrary is to provide a centralized 
+              configuration tool for other JCA objects and to act as a Context 
+              factory.</p>
+            <p><b>The JCALibrary as a configuration tool.</b></p>
+            <p>The JCALibrary holds a set of read-only Properties. These Properties 
+              are loaded at initialization time from different sources. </p>
+            <ul>
+              <li>Sitewide properties: &lt;jre.home&gt;/lib/JCALibrary.properties</li>
+              <li>User's properties: &lt;user.home&gt;/.JCALibrary/JCALibrary.properties</li>
+              <li>Command line properties: specified on the command line with 
+                the -D switch.</li>
+            </ul>
+            <p>The properties specified on the command line take precedence over 
+              the user's properties which take precedence over the sitewide properties.</p>
+            <p>What these properties represent and are going to be used for really 
+              depends on the Objetcs that need them.</p>
+            <p>Some core JCA objects, like JNI_THREAD_SAFE and JNI_SINGLE_THREADED 
+              contexts, use them to get their default configuration, ie default 
+              communication ports, default thread priorities, etc...</p>
+            <p>&nbsp;</p>
+            <p><b>The JCALibrary as a Context factory</b></p>
+            <p>The JCA package has been design in such a way that the role of 
+              each JCA component has been dissociated from the real implementation. 
+              This design allows the JCA to evolve without breaking it's contract 
+              with the applications using it.<br>
+              The JCALibrary offers two methods to create Contexts with very few 
+              knowledge of the specific underlying implementation.</p>
+            <ul>
+              <li>createContext(String fqn): <br>
+                This method take a String representing the fully qualified name 
+                of the Context class to instantiate. The class should provide 
+                a public no argument constructor. This is up to the class implementation 
+                to configure itself with sensible default values.<br>
+                <br>
+              </li>
+              <li>createContext(Configuration conf):<br>
+                This method take a Configuration object to create and configure 
+                the context. The fully qualified class name must be specified 
+                as an attribute called &quot;class&quot;. The Context instance 
+                will be created using its default no arguments constructor and 
+                the complete Confiuration object will be passed to the Context 
+                if it implements the Configurable interface.</li>
+            </ul>
+            <p>&nbsp;</p>
+          </td>
+        </tr>
+        <tr> 
+          <td class="title2"><a name="2"></a><b>2) A word on JNI_THREAD_SAFE and 
+            JNI_SINGLE_THREADED contexts</b></td>
+        </tr>
+        <tr> 
+          <td> 
+            <p><br>
+              The core JCA package comes with two different Context's implementations.</p>
+            <ul>
+              <li>JNI_THREAD_SAFE Context:<br>
+                This type of context is usefull if you don't want to worry (too 
+                much) about thread safety in your application. However you should 
+                be aware that this feature comes with a price in term of complexity. 
+                The internal implementation of this type of Context is indeed 
+                quite complex and might affect the overall performance of your 
+                application. </li>
+            </ul>
+            <p><img src="jni_thread_safe.gif" width="417" height="282" align="absmiddle"></p>
+            <ul>
+              <li>JNI_SINGLE_THREADED Context:<br>
+                This type of Context uses a quite simple implementation but doesn't 
+                offer any thread safety. Thread safety should be taking care of 
+                by the user's application. This allow a complete control over 
+                the final complexity of the application.</li>
+            </ul>
+            <p><img src="jni_single_threaded.gif" width="396" height="277"></p>
+            <p>&nbsp;</p>
+            <p><b>The following table shows the parameters that can be configured 
+              for these two type of contexts.</b></p>
+            <table width="100%" border="1">
+              <tr> 
+                <td width="20%"> 
+                  <div align="center"><b>parameter</b></div>
+                </td>
+                <td width="9%"> 
+                  <div align="center"><b>range</b></div>
+                </td>
+                <td width="44%"> 
+                  <div align="center"><b>Default</b></div>
+                </td>
+                <td width="44%"> 
+                  <div align="center"><b>Description</b></div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="20%"> 
+                  <div align="left">preemptive_callback</div>
+                </td>
+                <td width="9%"> 
+                  <div align="center">true/false</div>
+                </td>
+                <td width="44%"> 
+                  <div align="center">true</div>
+                </td>
+                <td width="44%"> 
+                  <div align="left">Define whether the context should use independant 
+                    threads to send request callback notifications (events). <br>
+                    If set to no, your application should periodically call pendEvent 
+                    to process pending events. </div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="20%"> 
+                  <div align="left">addr_list</div>
+                </td>
+                <td width="9%"> 
+                  <div align="center">string</div>
+                </td>
+                <td width="44%"> 
+                  <div align="center">empty string</div>
+                </td>
+                <td width="44%"> 
+                  <div align="left">A space-separated list of broadcast address 
+                    for process variable name resolution. Each address must be 
+                    of the form: ip.number:port or host.name:port</div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="20%">auto_addr_list</td>
+                <td width="9%"> 
+                  <div align="center">true/false</div>
+                </td>
+                <td width="44%"> 
+                  <div align="center">true</div>
+                </td>
+                <td width="44%">Define whether or not the network interfaces should 
+                  be discovered at runtime. </td>
+              </tr>
+              <tr> 
+                <td width="20%">connection_timeout</td>
+                <td width="9%"> 
+                  <div align="center">&gt;0.1</div>
+                </td>
+                <td width="44%"> 
+                  <div align="center">30.0</div>
+                </td>
+                <td width="44%">If the context doesn't see a beacon from a server 
+                  that it is connected to for connection_timeout seconds then 
+                  a state-of-health message is sent to the server over TCP/IP. 
+                  If this state-of-health message isn't promptly replied to then 
+                  the context will assume that the server is no longer present 
+                  on the network and disconnect.</td>
+              </tr>
+              <tr> 
+                <td width="20%">beacon_period</td>
+                <td width="9%"> 
+                  <div align="center">&gt;0.1</div>
+                </td>
+                <td width="44%"> 
+                  <div align="center">15.0</div>
+                </td>
+                <td width="44%">Period in second between two beacon signals</td>
+              </tr>
+              <tr> 
+                <td width="20%">repeater_port</td>
+                <td width="9%"> 
+                  <div align="center">&gt;5000</div>
+                </td>
+                <td width="44%"> 
+                  <div align="center">5065</div>
+                </td>
+                <td width="44%">Port number for the repeater to listen to</td>
+              </tr>
+              <tr> 
+                <td width="20%">server_port</td>
+                <td width="9%"> 
+                  <div align="center">&gt;5000</div>
+                </td>
+                <td width="44%"> 
+                  <div align="center">5064</div>
+                </td>
+                <td width="44%">Port number for the server to listen to</td>
+              </tr>
+              <tr> 
+                <td width="20%">max_array_bytes</td>
+                <td width="9%"> 
+                  <div align="center">&gt;=16384</div>
+                </td>
+                <td width="44%"> 
+                  <div align="center">16384</div>
+                </td>
+                <td width="44%">Length in bytes of the maximum array size that 
+                  may pass through Channel Access</td>
+              </tr>
+              <tr> 
+                <td width="20%">event_dispatcher</td>
+                <td width="9%"> 
+                  <div align="center">string</div>
+                </td>
+                <td width="44%"> 
+                  <div align="center">gov.aps.jca.event.DirectEventDispatcher</div>
+                </td>
+                <td width="44%">The fully qualified class name of the event dispatcher 
+                  used to dispatch callback event. This class must have a default 
+                  constructor with no arguments. Check the documentation of the 
+                  event dispatcher to see how to configure it.</td>
+              </tr>
+              <tr> 
+                <td width="20%">priority</td>
+                <td width="9%">0&lt;P&lt;11</td>
+                <td width="44%"> 
+                  <div align="center">5</div>
+                </td>
+                <td width="44%">Integer value representing the internal thread 
+                  priority. Only relevant for JNI_THREAD_SAFE Contexts</td>
+              </tr>
+            </table>
+            <p><br>
+              <b>Example of XML Configuration file</b>:</p>
+            <blockquote> 
+              <p>Specifying parameters as attributes.</p>
+              <pre>
+&lt;<font color="#660099"><b><font color="#000000">Context</font></b></font>
+  <font color="#00FF00"><b><font color="#006600">class</font></b></font>=&quot;<font color="#0000FF">gov.aps.jca.jni.ThreadSafeContext</font>&quot;
+  <b><font color="#006600">preemptive_callback</font></b>=&quot;<font color="#0000FF">true</font>&quot;
+  <b><font color="#006600">addr_list</font></b>=&quot;<font color="#0000FF">my.ca.server:port</font>&quot;
+  <b><font color="#006600">auto_addr_list</font></b>=&quot;<font color="#0000FF">true</font>&quot;
+  <b><font color="#006600">connection_timeout</font></b>=&quot;<font color="#0000FF">30.0</font>&quot;
+  <b><font color="#006600">beacon_period</font></b>=&quot;<font color="#0000FF">15.0</font>&quot;
+  <b><font color="#006600">repeater_port</font></b>=&quot;<font color="#0000FF">5065</font>&quot;
+  <b><font color="#006600">server_port</font></b>=&quot;<font color="#0000FF">5064</font>&quot;
+  <b><font color="#006600">max_array_bytes</font></b>=&quot;<font color="#0000FF">16384</font>&quot;
+  <b><font color="#006600">priotiry</font></b>=&quot;<font color="#0000FF">5</font>&quot;/&gt;
+</pre>
+              <p> Specifying parameters as nested elements. </p>
+              <pre>
+&lt;<font color="#000000"><b>context</b></font> <b><font color="#006600">class</font></b>=&quot;<font color="#0000FF">gov.aps.jca.jni.SingleThreadedContext</font>&quot;&gt;
+  &lt;<b>preemptive_callback</b>&gt;<font color="#0000FF">true</font>             &lt;/<b>preemptive_callback</b>&gt;
+  &lt;<b>addr_list</b>&gt;<font color="#0000FF">          my.ca.server:port</font>&lt;/<b>addr_list</b>&gt;
+  &lt;<b>auto_addr_list</b>&gt;     <font color="#0000FF">false</font>            &lt;/<b>auto_addr_list</b>&gt;
+  &lt;<b>connection_timeout</b>&gt; <font color="#0000FF">15.0</font>             &lt;/<b>connection_timeout</b>&gt;
+  &lt;<b>beacon_period</b>&gt;      <font color="#0000FF">30.0</font>             &lt;/<b>beacon_period</b>&gt;
+  &lt;<b>repeater_port</b>&gt;<font color="#0000FF">      5065</font>             &lt;/<b>repeater_por</b>t&gt;
+  &lt;<b>server_port</b>&gt;<font color="#0000FF">        5064</font>             &lt;/<b>server_port</b>&gt;
+  &lt;<b>max_array_bytes</b>&gt;<font color="#0000FF">    16384</font>            &lt;/<b>max_array_bytes</b>&gt;
+  &lt;<b>event_dispatcher</b> 
+    <b><font color="#006600">class</font></b>=&quot;<font color="#0000FF">gov.aps.jca.event.QueuedEventDispatcher</font>&quot;/&gt;
+&lt;/<b>context</b>&gt;
+            </pre>
+            </blockquote>
+            <p>If you do not specify all parameters in the Configuration, default 
+              values will be retreived from the JCALibrary Properties if they 
+              have been defined.<br>
+              To define JCALibrary properties for the parameters, just prepend 
+              the FQN name of the Context class for which you want to define a 
+              default value.</p>
+            <blockquote> 
+              <p><b>Example:</b></p>
+              <pre>
+# define the default value of <b>auto_addr_list</b> for JNI_THREAD_SAFE contexts.
+gov.aps.jca.jni.ThreadSafeContext.<b>auto_addr_list</b>=true   
+
+# define the default value of <b>server_port</b> for JNI_SINGLE_THREADED contexts
+gov.aps.jca.jni.SingleThreadedContext.<b>server_port</b>=8888
+
+# define the default value of <b>preemptive_callback</b> for both JNI_SINGLE_THREADED and JNI_THREAD_SAFE contexts
+gov.aps.jca.jni.JNIContext.<b>preemptive_callback</b>=true
+
+# define the default value of <b>auto_addr_list</b> for all JCA contexts.
+gov.aps.jca.Context.<b>auto_addr_list</b>=true   
+            </pre>
+            </blockquote>
+            <p>&nbsp;</p>
+            <p><b><font color="#FF0000">Important</font></b>: There are two special 
+              properties that should be defined for the JNI_XXXX Contexts to work 
+              correctly. These properties are platform dependent and are needed 
+              to load shared Channel Access libraries and executable.</p>
+            <blockquote> 
+              <pre>
+gov.aps.jca.jni.epics.<font color="#006600"><b>&lt;your arch&gt;</b></font>.library.path= the/path/to/the/epics/shared/libraries
+gov.aps.jca.jni.epics.<b><font color="#006600">&lt;your arch&gt;</font></b>.caRepeater.path= the/path/to/the/caRepeater/executable
+
+where <b><font color="#006600">&lt;your arch&gt;</font></b> is the epics architecture type of your system, ie win32-x86, linux-x86, solaris-sparc, etc...
+              </pre>
+            </blockquote>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+          </td>
+        </tr>
+        <tr> 
+          <td class="title2"><a name="3"></a><b>3) A real life example</b></td>
+        </tr>
+        <tr> 
+          <td> 
+            <p><br>
+              In the following chapters, we will go trough all the necessary steps 
+              to setup JCA for a particular user, named <b>toto</b>. <br>
+              The examples will be given for the windows and linux operating systems.</p>
+            <p>&nbsp;</p>
+          </td>
+        </tr>
+        <tr> 
+          <td class="title2"><a name="4"></a><b>4) Defining JCALibrary Properties 
+            for your system</b></td>
+        </tr>
+        <tr> 
+          <td> 
+            <p><br>
+              <br>
+              Create or edit the following file: &lt;jre.home&gt;/lib/JCALibrary.properties 
+              where &lt;jre.home&gt; is the path to your java runtime environment.</p>
+            <blockquote> 
+              <p>Example:<br>
+                windows: c:\j2sdk1.4.2\jre\lib\JCALibrary.properties<br>
+                linux: /usr/java/jre/lib/JCALibrary.properties</p>
+            </blockquote>
+            <p>In this file we are going to define sitewide properties for different 
+              JCA components.<br>
+              Add or modify the following lines</p>
+            <blockquote> 
+              <pre>
+# define the location of the epics shared libraries and caRepeater executable
+gov.aps.jca.jni.epics.win32-x86.library.path= c:/epics/baseR3.14.4/bin/win32-x86
+gov.aps.jca.jni.epics.win32-x86.caRepeater.path= c:/epics/baseR3.14.4/bin/win32-x86
+
+gov.aps.jca.jni.epics.linux-x86.library.path= /usr/share/epics/baseR3.14.4/lib/linux-x86
+gov.aps.jca.jni.epics.linux-x86.caRepeater.path= /usr/share/epics/baseR3.14.4/bin/linux-x86
+
+# define default values for both JNI_THREAD_SAFE and JNI_SINGLE_THREADED contexts.
+gov.aps.jca.jni.JNIContext.preemptive_callback= true
+gov.aps.jca.jni.JNIContext.addr_list=
+gov.aps.jca.jni.JNIContext.auto_addr_list= true
+gov.aps.jca.jni.JNIContext.connection_timeout= 30.0
+gov.aps.jca.jni.JNIContext.beacon_period= 15.0
+gov.aps.jca.jni.JNIContext.repeater_port= 5065
+gov.aps.jca.jni.JNIContext.server_port= 5064
+gov.aps.jca.jni.JNIContext.max_array_bytes= 16384
+
+# define default values only for JNI_SINGLE_THREADED context
+gov.aps.jca.jni.SingleThreadedContext.event_dispatcher= gov.aps.jca.event.DirectEventDispatcher
+
+# define default values only for JNI_THREAD_SAFE context
+gov.aps.jca.jni.ThreadSafeContext.event_dispatcher= gov.aps.jca.event.QueuedEventDispatcher
+gov.aps.jca.jni.ThreadSafeContext.priority= 5
+
+# define default values for QueuedEventDispatcher components
+gov.aps.jca.event.QueuedEventDispatcher= 5
+</pre>
+            </blockquote>
+            <p>&nbsp;</p>
+          </td>
+        </tr>
+        <tr> 
+          <td class="title2"><a name="5"></a><b>5) Defining JCALibrary Properties 
+            for a particular user</b></td>
+        </tr>
+        <tr> 
+          <td> 
+            <p><br>
+              Create or edit the following file: &lt;user.home&gt;/.JCALibrary/JCALibrary.properties 
+              where &lt;user.home&gt; is the home directory of the user.</p>
+            <blockquote> 
+              <p>Example:<br>
+                windows: c:\Documents and Settings\toto\.JCALibrary\JCALibrary.properties<br>
+                linux: /home/toto/.JCALibrary/JCALibrary.properties</p>
+            </blockquote>
+            <p>In this file we can override default values to match the specific 
+              need of our user toto.<br>
+              Add or modify the following lines:</p>
+            <blockquote> 
+              <pre>
+# Overwrite the default addr_list to point to a specific ca server
+gov.aps.jca.jni.JNIContext.addr_list= toto.uses.this.ca.server
+			  
+# overwrite the default auto_addr_list so that network interfaces will not be automatically added to the addr_list.
+gov.aps.jca.jni.JNIContext.auto_addr_list= false
+			  
+# toto is going to use very large array, so we want to increase the maximum array size.
+gov.aps.jca.jni.JNIContext.max_array_size= 32768
+			  </pre>
+            </blockquote>
+            <p>&nbsp;</p>
+          </td>
+        </tr>
+        <tr> 
+          <td class="title2"><b><a name="6"></a>6) A first program</b></td>
+        </tr>
+        <tr> 
+          <td>
+            <p><br>
+              Now that all the configuration has been done, lets write our first 
+              program.<br>
+              This program will take a PV name as an argument, connect to the 
+              PV and display basic information.<br>
+            </p>
+            <pre>
+// File: example1.java
+ 
+public class example1 {
+  public static void main(String[] args) {
+    if(args.length!=1) {
+      System.out.println(&quot;usage: java example1 &lt;pvname&gt;&quot;);
+      return;
+    }
+ 
+    try {
+      // Get the JCALibrary instance.
+      JCALibrary jca= JCALibrary.getInstance();
+      
+      // Create a single threaded context with default configuration values.
+      Context ctxt= jca.createContext(JCALibrary.JNI_SINGLE_THREADED);
+      
+      // Display basic information about the context.
+      ctxt.printInfo();
+      
+      // Create the Channel to connect to the PV.
+      Channel ch= ctxt.createChannel(args[0]);
+
+
+      // send the request and wait 5.0 seconds for the channel to connect to the PV.
+      ctxt.pendIO(5.0);
+ 
+      // If we're here, then everything went fine.
+      // Display basic information about the channel.
+      ch.printInfo();
+
+ 
+      // Disconnect the channel.
+      ch.destroy();
+ 
+      // Destroy the context.
+      ctxt.destroy();
+
+
+    } catch(Exception ex) {
+      System.err.println(ex);
+    }
+  }
+}
+            </pre>
+            <p>Now, our user toto starts the program with the following command 
+              line: java example1 test:my_pv</p>
+            <p>The program creates a context with the default parameters defined 
+              in the JCALibrary configuration files.<br>
+              The context will thus only look for the PV in the toto.uses.this.ca.server:5064<br>
+              If it is present on the server and that the connection is established 
+              within 5.0 seconds, then the program will display information about 
+              the channel.<br>
+              If it is not present on the server or the connection was not established 
+              within 5.0 seconds, a TimeoutException is thrown and the program 
+              exits. </p>
+            <p>&nbsp;</p>
+          </td>
+        </tr>
+        <tr> 
+          <td class="title2"><b><a name="7"></a>7) Overriding default Context 
+            parameters</b></td>
+        </tr>
+        <tr> 
+          <td>
+            <p><br>
+              In the next example, we'll learn how to specify context parameters 
+              at runtime. <br>
+              To do so, will need to create a Configuration object.<br>
+              <br>
+              <br>
+            </p>
+            <pre>// File: example2.java
+ 
+public class example2 {
+  public static void main(String[] args) {
+    if(args.length!=2) {
+      System.out.println(&quot;usage: java example2 server pvname&quot;);
+      return;
+    }
+    try {
+      // Get the JCALibrary instance.
+      JCALibrary jca= JCALibrary.getInstance();
+
+
+      // Create the Configuration object for our context.
+
+      DefaultConfiguration conf= new DefaultConfiguration(&quot;myContext&quot;);
+
+
+      // Define the context class.
+      conf.addAttribute(&quot;class&quot;, JCALibrary.JNI_SINGLE_THREADED);
+
+ 
+      // Define the addr_list
+      conf.addAttribute(&quot;addr_list&quot;, args[0]);
+ 
+      // Now, we'll create a context with this configuration.
+      Context ctxt= jca.createContext(conf);
+
+
+      // Do whatever you want with this context.
+      ...
+
+      
+    } catch( Exception ex) {
+      System.err.println(ex);
+    }
+  }
+}
+		    </pre>
+          </td>
+        </tr>
+        <tr> 
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>

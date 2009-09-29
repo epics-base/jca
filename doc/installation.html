@@ -1,0 +1,175 @@
+<html>
+<head>
+<title>Java Channel Access</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" href="jca.css" type="text/css">
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<table width="100%" height="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr> 
+    <td height="1"><img height="1" width="200" src="spacer.gif"></td>
+    <td><img height="1" width="10" src="spacer.gif"></td>
+    <td width="100%"><img height="1" width="400" src="spacer.gif"></td>
+    <td><img height="1" width="216" src="spacer.gif"></td>
+  </tr>
+  <tr> 
+    <td height="110" colspan="2" align="center"><img src="duke_plugin.gif" width="85" height="99"></td>
+    <td class="header" > <span class="header">JCA 2.1.2</span> </td>
+    <td valign="top" align="right"><img src="apslogo.gif"></td>
+  </tr>
+  <tr> 
+    <td height="30" colspan="4"></td>
+  </tr>
+  <tr> 
+    <td width="200" align="left" valign="top"> 
+      <table width="100%" height="100%" border="1" cellspacing="0" cellpadding="0" bordercolor="#48669F">
+        <tr> 
+          <td class="title2" width="706"><span class="title2"><a href="../index.html" class="title2">JCA</a></span> 
+          </td>
+        </tr>
+        <tr> 
+          <td bordercolor="#FFFFFF"><a href="http://www.aps.anl.gov/epics/" class="tab">- 
+            EPICS Home Page</a></td>
+        </tr>
+        <tr> 
+          <td height="3" bordercolor="#FFFFFF" background="line-light.png"></td>
+        </tr>
+        <tr> 
+          <td bordercolor="#FFFFFF"><a href="http://www.aps.anl.gov/epics/modules/base/R3-14/4-docs/CAref.html" class="tab">- 
+            Channel Access(3.14)</a></td>
+        </tr>
+        <tr> 
+          <td height="3" bordercolor="#FFFFFF" background="line-light.png"></td>
+        </tr>
+        <tr> 
+          <td height="30" bordercolor="#FFFFFF"></td>
+        </tr>
+        <tr> 
+          <td class="title2"><span class="title2"><a href="index.html" class="title2">JCA2.1.2</a></span></td>
+        </tr>
+        <tr> 
+          <td bordercolor="#FFFFFF"><a href="download.html" class="tab">- Download</a></td>
+        </tr>
+        <tr> 
+          <td height="3" bordercolor="#FFFFFF" background="line-light.png"></td>
+        </tr>
+        <tr> 
+          <td bordercolor="#FFFFFF"><a href="installation.html" class="tab">- 
+            Installation</a></td>
+        </tr>
+        <tr> 
+          <td height="3" bordercolor="#FFFFFF" background="line-light.png"></td>
+        </tr>
+        <tr> 
+          <td bordercolor="#FFFFFF"><a href="api/index.html" class="tab">- API 
+            documentation </a></td>
+        </tr>
+        <tr> 
+          <td height="3" bordercolor="#FFFFFF" background="line-light.png"></td>
+        </tr>
+        <tr> 
+          <td bordercolor="#FFFFFF"><a href="tutorial.html" class="tab">- Tutorial</a></td>
+        </tr>
+        <tr> 
+          <td height="3" bordercolor="#FFFFFF" background="line-light.png"></td>
+        </tr>
+        <tr> 
+          <td height="30" bordercolor="#FFFFFF"></td>
+        </tr>
+        <tr> 
+          <td height="100%" bordercolor="#FFFFFF"></td>
+        </tr>
+      </table>
+    </td>
+    <td width="10"></td>
+    <td colspan="2" align="left" valign="top"  > 
+      <table width="100%" height="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr> 
+          <td class="title1"><span class="title1">Installation</span></td>
+        </tr>
+        <tr> 
+          <td>&nbsp;</td>
+        </tr>
+        <tr> 
+          <td class="title2"><b>From source</b></td>
+        </tr>
+        <tr> 
+          <td> 
+            <p><br>
+              Requirement: </p>
+            <ul>
+              <li>EPICS3.14.4 or higher (<a href="http://www.aps.anl.gov/epics">http://www.aps.anl.gov/epics</a>)</li>
+              <li>Ant 1.5 or higher (<a href="http://ant.apache.org/">http://ant.apache.org</a>)</li>
+              <li>j2sdk1.4.2 or higher (<a href="http://java.sun.com">http://java.sun.com</a>)</li>
+            </ul>
+            <p><br>
+              <br>
+              1) Download and decompressed the archive for your platform. <br>
+              2) Go in the <b>jca/config</b> directory.<br>
+              3) Edit the file: <b>config.&lt;your arch&gt;</b> where &lt;your 
+              arch&gt; is the epics architecture type, ie win32-x86, linux-x86, 
+              etc...<br>
+              4) go to the directory <b>jca</b><br>
+              5) type: <b>ant</b><br>
+              <br>
+              The core JCA package, <b>jca.jar</b>, is build into a directory 
+              named: <b>O.core</b><br>
+              The JCA shared library, <b>libjca.so</b> on unix like systems and 
+              <b>jca.dll</b> on windows system, is build into a directory named: 
+              <b>O.&lt;your arch&gt;</b><br>
+              <br>
+              6) Add <b>jca.jar</b> to your java classpath.<br>
+              7) Add </p>
+            <ul>
+              <li><b>libjca.so</b> to your LD_LIBRARY_PATH envirnomnent variable 
+                on unix systems</li>
+              <li><b>jca.dll</b> to your PATH environment variable on windows 
+                systems.<br>
+              </li>
+            </ul>
+            <p>You can now use JCA in your application.</p>
+            <p>&nbsp;</p>
+          </td>
+        </tr>
+        <tr> 
+          <td class="title2"><b>From binaries</b></td>
+        </tr>
+        <tr> 
+          <td> 
+            <p><br>
+              Requirements:</p>
+            <p></p>
+            <ul>
+              <li>EPICS3.14.4 or higher (<a href="http://www.aps.anl.gov/epics">http://www.aps.anl.gov/epics</a>)</li>
+              <li>j2sdk1.4.2 or higher (<a href="http://java.sun.com">http://java.sun.com</a>)</li>
+            </ul>
+            <p>1) Download and decompressed the binary distribution for your platform.<br>
+              2) The core JCA package, <b>jca.jar</b>, is located in the directory 
+              <b>O.core</b> <br>
+              3) The JCA shared library, <b>libjca.so</b> on unix like systems 
+              and <b>jca.dll</b> on windows systems, is located in a directory 
+              named: <b>O.&lt;your arch&gt;</b> where &lt;your arch&gt; is the 
+              epics architecture type of your system, ie win32-x86, linux-x86, 
+              etc...<br>
+              4) Add <b>jca.jar</b> to your classpath<br>
+              5) Add</p>
+            <p></p>
+            <p></p>
+            <p></p>
+            <ul>
+              <li><b>libjca.so</b> to your LD_LIBRARY_PATH environment variable 
+                on unix system.</li>
+              <li>jca.dll to your PATH environment variable on windows system.</li>
+            </ul>
+            <p>You can now use JCA in your application.</p>
+          </td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>

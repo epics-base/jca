@@ -1,0 +1,252 @@
+<project name="jca" default="build">
+  <property name="version" value="2.3.1"/>
+  <property name="jca" value="jca"/>
+  <property name="debug" value="true"/>
+  <property environment="env"/>
+
+	<target name="-init">
+		<mkdir dir="O.ant"/>
+		<javac destdir="O.ant">
+      <classpath>
+        <path>
+        <!-- Works for command-line Ant: -->
+          <pathelement location="${ant.home}/lib/ant.jar"/>
+        <!-- Works for Ant inside NB: -->
+          <pathelement path="${netbeans.library.path}"/>
+        </path>
+      </classpath>
+			<src path="src/ant"/>
+			<include name="gov/aps/ant/**/*.java"/>
+      <src path="src/core"/>
+      <include name="gov/aps/jca/jni/JNITargetArch.java"/>
+		</javac>
+		<taskdef name="targetarch" classname="gov.aps.ant.taskdefs.TargetArch" classpath="O.ant"/>
+		<taskdef name="applyex" classname="gov.aps.ant.taskdefs.ApplyEx" classpath="O.ant"/>
+
+    <!-- set the property arch to the correct value -->
+		<targetarch name="arch"/>
+    
+		<property name="epics.base" value="${env.EPICS_BASE_RELEASE}"/>
+		<property name="install.dir" value="${env.EPICS_EXTENSIONS}"/>
+		<property file="config/config.${arch}.properties"/>
+		<property file="config/config.properties"/>
+
+		<available property="build.${arch}.properties.present" file="config/build.${arch}.properties"/>
+		<fail message="missing file: build.${arch}.properties"  unless="build.${arch}.properties.present"/>
+		<property file="config/build.${arch}.properties"/>
+ 	</target>
+
+  <target name="proper">
+		<delete includeEmptyDirs="true" failonerror="false">
+			<fileset dir="doc" includes="api/**"/>
+			<fileset dir="." includes="O.*/**"/>
+      <fileset dir="." includes="${jca}${version}-*.zip"/>
+      <fileset dir="." includes="${jca}${version}-*.tgz"/>
+      <fileset dir="." includes="**/*.*~"/>
+		</delete>
+  </target>
+  
+  <target name="dist" depends="dist.core,dist.doc,dist.src"/>
+  <target name="dist.core" depends="build.core">
+    <zip destfile="${jca}${version}-${arch}.zip">
+      <zipfileset dir="O.${arch}" prefix="${jca}${version}/${arch}" includes="${jni.lib.name}"/>
+      <zipfileset dir="O.core"    prefix="${jca}${version}"         includes="jca.jar"/>
+    </zip>
+    <tar destfile="${jca}${version}-${arch}.tar">
+      <tarfileset dir="O.${arch}" prefix="${jca}${version}/${arch}" includes="${jni.lib.name}"/>
+      <tarfileset dir="O.core"    prefix="${jca}${version}"         includes="jca.jar"/>
+    </tar>
+    <gzip src="${jca}${version}-${arch}.tar" zipfile="${jca}${version}-${arch}.tgz"/>
+    <delete file="${jca}${version}-${arch}.tar"/>
+  </target>
+  
+  <target name="dist.doc" depends="build.doc">
+    <zip destfile="${jca}${version}-doc.zip">
+      <zipfileset dir="doc" prefix="${jca}${version}/doc" excludes="**/.nbattrs **/_notes/" />
+    </zip>
+    <tar destfile="${jca}${version}-doc.tar">
+      <tarfileset dir="doc" prefix="${jca}${version}/doc" excludes="**/.nbattrs **/_notes/"/>
+    </tar>
+    <gzip src="${jca}${version}-doc.tar" zipfile="${jca}${version}-doc.tgz"/>
+    <delete file="${jca}${version}-doc.tar"/>
+  </target>
+  
+  <target name="dist.src">
+    <zip destfile="${jca}${version}-src.zip">
+      <zipfileset dir="." prefix="${jca}${version}" includes="build.xml config/** doc/* src/**" excludes="**/*.*~ **/.nbattrs"/>
+    </zip>
+    <tar destfile="${jca}${version}-src.tar">
+      <tarfileset dir="." prefix="${jca}${version}" includes="build.xml config/** doc/* src/**" excludes="**/*.*~ **/.nbattrs"/>
+    </tar>
+    <gzip src="${jca}${version}-src.tar" zipfile="${jca}${version}-src.tgz"/>
+    <delete file="${jca}${version}-src.tar"/>
+  </target>
+  
+  <target name="clean.dist" depends="clean.dist.core,clean.dist.doc,clean.dist.src"/>
+  
+  <target name="clean.dist.core" depends="-init">
+		<delete file="${jca}${version}-${arch}.zip"/>
+  </target>
+
+  <target name="clean.dist.doc">
+		<delete file="${jca}${version}-doc.zip"/>
+  </target>
+  
+  <target name="clean.dist.src">
+		<delete file="${jca}${version}-src.zip"/>
+  </target>
+  
+  <target name="clean" depends="clean.core,clean.ant"/>
+  
+  <target name="clean.all" depends="clean.core,clean.ant,clean.doc"/>
+  
+  <target name="build" depends="build.core"/>
+  
+  <target name="build.all" depends="build.core,build.doc"/>
+  
+  <target name="install" depends="build">
+    <fail message="install.dir is not defined" unless="install.dir"/>
+    <mkdir dir="${install.dir}/lib/${arch}"/>
+    <mkdir dir="${install.dir}/javalib"/>
+    <copy file="O.core/jca.jar" todir="${install.dir}/javalib"/>
+    <copy file="O.${arch}/${jni.lib.name}" todir="${install.dir}/lib/${arch}"/>
+  </target>
+
+  <target name="install.doc" depends="build.doc,-init">
+    <fail message="install.dir is not defined" unless="install.dir"/>
+    <mkdir dir="${install.dir}/doc"/>
+    <copy todir="${install.dir}/doc">
+      <fileset dir="doc" excludes="**/.nbattrs **/_notes/"/>
+    </copy>
+  </target>
+    
+  <target name="clean.ant">
+		<delete includeEmptyDirs="true" failonerror="false">
+			<fileset dir="O.ant"/>
+		</delete>
+  </target>
+
+  <target name="clean.core" depends="-init">
+		<delete includeEmptyDirs="true" failonerror="false">
+			<fileset dir="O.core"/>
+			<fileset dir="O.${arch}"/>
+		</delete>
+  </target>
+
+  <target name="build.core" depends="build.core.java,build.core.jni">
+    <jar destfile="O.core/jca.jar" basedir="O.core" includes="gov/aps/jca/**"/>
+    <echo message="done"/>
+  </target>
+  
+  <target name="build.core.java">
+		<echo message="Building core classes"/>
+		<mkdir dir="O.core"/>
+		<javac destdir="O.core" debug="${debug}" >
+			<src path="src/core"/>
+			<include name="**/*.java"/>
+		</javac>
+    
+		<echo message="Copying ressources"/>
+		<!-- remove JCALibrary.properties if out of date -->
+		<dependset>
+			<srcfilelist    dir="src/core"  files="gov/aps/jca/JCALibrary.properties"/>
+			<targetfilelist dir="O.${arch}" files="gov/aps/jca/JCALibrary.properties"/>
+		</dependset>
+
+		<copy todir="O.core">
+			<fileset dir="src/core" includes="**/*.properties"/>
+      <fileset dir="src/core" includes="**/*.gif"/>
+		</copy>
+		<echo message="Done"/>
+  </target>
+
+  <target name="build.core.jni" depends="build.core.jni.lib">
+    <echo message="done"/>
+  </target>
+  
+  <target name="build.core.jni.lib" depends="build.core.jni.objs">
+		<echo message="Building native library: ${jni.lib.name}"/>
+		<dependset>
+			<srcfileset dir="O.${arch}" includes="*.${jni.objs.ext}"/>
+			<targetfilelist dir="O.${arch}" files="${jni.lib.name}"/>
+		</dependset>
+
+		<applyex executable="${jni.lib.cmd}" dest="O.${arch}" parallel="true" substitute="true" skipemptyfilesets="true" failonerror="true">
+			<arg line="${jni.lib.cmd.args}"/>
+			<fileset dir="O.${arch}" includes="*.${jni.objs.ext}"/>
+			<mapper type="merge" to="${jni.lib.name}"/>
+		</applyex>
+
+		<!-- updating JCALibrary.properties -->
+		<propertyfile file="O.core/gov/aps/jca/JCALibrary.properties"
+			comment="JCALibrary properties generated by Ant">
+			<entry key="gov.aps.jca.jni.epics.${arch}.library.path" value="${epics.base.lib}"/>
+			<entry key="gov.aps.jca.jni.epics.${arch}.caRepeater.path" value="${epics.base.bin}"/>
+		</propertyfile>
+
+		<echo message="Done"/>
+  </target>
+  
+  	<target name="build.core.jni.objs" depends="build.core.jni.depend">
+		<echo message="Building native object files"/>
+		<!-- remove out of date objs compared to depend -->
+		<dependset>
+			<srcfilelist dir="O.${arch}" files="${jni.depend}"/>
+			<targetfileset dir="O.${arch}" includes="*.${jni.objs.ext}"/>
+		</dependset>
+
+		<!-- rebuild obj files if necessary -->
+		<applyex executable="${jni.objs.cmd}" dest="O.${arch}" substitute="true" failonerror="true">
+			<arg line="${jni.objs.cmd.args}"/>
+		  <fileset dir="src/core/gov/aps/jca/jni" includes="*.cpp"/>
+		  <mapper type="glob" from="*.cpp" to="*.${jni.objs.ext}"/>
+		</applyex>
+		<echo message="Done"/>
+	</target>
+
+	<target name="build.core.jni.depend" depends="build.core.jni.dirs">
+		<echo message="Building native header files"/>
+		<property name="jni.depend"         value="gov_aps_jca_jni_JNI.h"/>
+		<property name="jni.depend.java"    value="gov/aps/jca/jni/JNI.java"/>
+		<property name="jni.depend.srcs"    value="gov/aps/jca/jni/JNI.class"/>
+		<property name="jni.depend.classes" value="gov.aps.jca.jni.JNI"/>
+
+		<javac destdir="O.core" >
+			<src path="src/core"/>
+			<include name="${jni.depend.java}"/>
+		</javac>
+    
+		<!-- remove depend file if out of date -->
+		<dependset>
+			<srcfilelist dir="O.core" files="${jni.depend.srcs}"/>
+			<targetfilelist dir="O.${arch}" files="${jni.depend}"/>
+		</dependset>
+
+		<!-- rebuild depend file if necessary -->
+		<javah outputfile="O.${arch}/${jni.depend}" classpath="O.core" class="${jni.depend.classes}" />
+		<echo message="Done"/>
+	</target>
+
+	<target name="build.core.jni.dirs" depends="-init" >
+		<mkdir dir="O.core"/>
+		<mkdir dir="O.${arch}"/>
+	</target>
+  
+  <target name="doc" depends="build.doc"/>
+  
+  <target name="build.doc">
+    <javadoc 
+      Windowtitle="${jca}${version} API"
+      packagenames="gov.aps.jca.*"
+      excludepackagenames="gov.aps.jca.jni.*"
+      sourcepath="src/core"
+      destdir="doc/api"
+      public="true"/>
+  </target>    
+  
+  <target name="clean.doc">
+		<delete includeEmptyDirs="true" failonerror="false">
+			<fileset dir="doc/api"/>
+		</delete>
+  </target>    
+</project>
