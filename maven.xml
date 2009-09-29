@@ -1,0 +1,67 @@
+<!-- Generate announcements -->
+<project xmlns:ant="jelly:ant" xmlns:doc="doc" xmlns:maven="jelly:maven">
+  
+  <postGoal name="dist:prepare-src-filesystem">
+      <ant:copy todir="${maven.dist.src.assembly.dir}/test">
+        <ant:fileset dir="${maven.src.dir}/../test" />
+      </ant:copy>
+      <ant:copy todir="${maven.dist.src.assembly.dir}/doc">
+        <ant:fileset dir="${maven.src.dir}/../doc" />
+      </ant:copy>
+  </postGoal>
+  
+  <!-- Override xdoc downloads.xml file -->
+  <postGoal name="xdoc:generate-from-pom">
+	<doc:jslFile
+		output="${maven.gen.docs}/downloads.xml"
+		stylesheet="${maven.src.dir}/../xdocs/downloads.jelly"
+		outputMode="xml"
+		prettyPrint="true"/>
+  </postGoal>
+  
+  <!-- ================================================================== -->
+  <!-- ATRIFACTS S S H  D E P L O Y                                       -->
+  <!-- Deploys atrifacts on the the site using SSH                        -->
+  <!-- ================================================================== -->
+                                                                                                        
+  <goal name="caj:deploy"
+    prereqs="jar, jar:deploy, dist:build, site:deploy"
+    description="Deploys atrifacts on the the site using SSH">
+                                                                                                        
+    <maven:user-check user="${maven.username}"/>
+                                                                                                        
+    <!-- This needs to taken from the project properties -->
+    <!-- does this work if site:deploy has already declared it? -->
+    <property name="maven.homepage" value="${pom.siteDirectory}/distributions"/>
+
+    <echo>
+      siteAddress = ${pom.siteAddress}
+      siteDirectory = ${maven.homepage}
+      siteUser = ${maven.username}
+    </echo>
+                                                                                                        
+	<copy file="${maven.build.dir}/${maven.final.name}.jar"
+          tofile="${maven.build.dir}/distributions/${maven.final.name}.jar"/> 
+
+    <tar tarfile="${maven.build.dir}/${maven.final.name}-dep-site.tar" basedir="${maven.build.dir}/distributions"/>
+    <gzip zipfile="${maven.build.dir}/${maven.final.name}-dep-site.tar.gz" src="${maven.build.dir}/${maven.final.name}-dep-site.tar"/>
+    <delete file="${maven.build.dir}/${maven.final.name}-dep-site.tar"/>
+                                                                                                        
+    <!-- Make sure the destination directory exists before trying to copy -->
+    <exec dir="." executable="${maven.ssh.executable}">
+      <arg line="${maven.ssh.args} -l ${maven.username} ${pom.siteAddress} 'mkdir -p ${maven.homepage}'"/>
+    </exec>
+                                                                                                        
+    <exec dir="${maven.build.dir}" executable="${maven.scp.executable}">
+      <arg line="${maven.scp.args} ${maven.final.name}-dep-site.tar.gz ${maven.username}@${pom.siteAddress}:${maven.homepage}"/>
+    </exec>
+                                                                                                        
+    <exec dir="." executable="${maven.ssh.executable}">
+      <arg line="${maven.ssh.args} -l ${maven.username} ${pom.siteAddress} 'cd ${maven.homepage};gunzip ${maven.final.name}-dep-site.tar.gz;tar xUvf ${maven.final.name}-dep-site.tar;chmod -R g+u * .;rm ${maven.final.name}-dep-site.tar'"/>
+    </exec>
+                                                                                                        
+    <delete file="${maven.build.dir}/${maven.final.name}-dep-site.tar.gz"/>
+                                                                                                        
+  </goal>
+
+</project>

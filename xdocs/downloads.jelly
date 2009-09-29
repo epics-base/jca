@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--
+ * ========================================================================
+ * 
+ * Copyright 2001-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * ========================================================================
+-->
+
+<project
+  xmlns:j="jelly:core"
+  xmlns:maven="jelly:maven"
+  xmlns:util="jelly:util"
+  xmlns:x="jelly:xml">
+
+  <document>
+  
+    <properties>
+      <title>Downloads</title>
+    </properties>
+
+    <body>
+      <section name="Downloads">
+
+        <!-- Do not generate the report if the maven.xdoc.distributionUrl 
+             property is not defined -->
+        <j:choose>
+
+          <j:when test="${context.getVariable('maven.xdoc.distributionUrl') == null}">
+            <p>
+              You must define the <code>maven.xdoc.distributionUrl</code> 
+              property if you wish to generate the download report.
+            </p>
+          </j:when>
+  
+          <j:otherwise>
+
+            <j:choose>
+              <j:when test="${size(pom.versions) == 0}">
+                <p>
+                  This project has not released any version yet.
+                </p>
+              </j:when>
+              <j:otherwise>
+                <!-- Find list of versions by looking up the <version> element 
+                     in the POM -->
+                <p>
+                  List of available downloads.
+                </p>
+
+                <!-- Generate a table with download links and release notes. The release notes
+                     are only generated if there is a xdocs/changes.xml file in the project -->
+                <util:file var="changesAsFile" name="${maven.docs.src}/changes.xml"/>
+
+                <table>
+                  <tr>
+                    <th>Download links</th>
+                    <j:if test="${changesAsFile.exists()}">
+                      <th>Release notes</th>
+                    </j:if>
+                  </tr>
+
+                  <!-- Call the Announcement plugin to generate release notes if the changes.xml
+                       file exists -->
+                  <j:if test="${changesAsFile.exists()}">
+                    <attainGoal name="announcement:generate-all"/>
+                  </j:if>
+
+                  <j:forEach var="version" items="${pom.versions}">
+                    <!-- Exclude the version being worked on (i.e. the one 
+                         that has a HEAD tag -->
+                    <j:if test="${!version.tag.equals('HEAD')}">
+                      <tr>
+                        <td>
+                          <a href="${maven.xdoc.distributionUrl}/${pom.artifactId}-${version}.jar">${pom.name} v${version} (.jar)</a>
+                        </td>
+                        <j:if test="${changesAsFile.exists()}">
+                          <td rowspan="5">
+                            <a href="announcements/announcement-${version}.txt">${version} release notes</a>
+                          </td>
+                        </j:if>
+                      </tr>
+                      
+                      <tr>
+                        <td>
+                          <a href="${maven.xdoc.distributionUrl}/${pom.artifactId}-${version}-src.tar.gz">${pom.name} v${version} source (.tar.gz)</a>
+                        </td>
+                      </tr>
+                      
+                      <tr>
+                        <td>
+                          <a href="${maven.xdoc.distributionUrl}/${pom.artifactId}-${version}-src.zip">${pom.name} v${version} source (.zip)</a>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td>
+                          <a href="${maven.xdoc.distributionUrl}/${pom.artifactId}-${version}.tar.gz">${pom.name} v${version} binary distribution with docs (.tar.gz)</a>
+                        </td>
+                      </tr>
+                      
+                      <tr>
+                        <td>
+                          <a href="${maven.xdoc.distributionUrl}/${pom.artifactId}-${version}.zip">${pom.name} v${version} binary distribution with docs (.zip)</a>
+                        </td>
+                      </tr>
+
+                      <tr height="5"/>
+                      
+                    </j:if>
+                  </j:forEach>
+                </table>
+              </j:otherwise>
+            </j:choose>
+
+          </j:otherwise>
+        </j:choose>
+
+      </section>
+    </body>
+   
+  </document>
+</project>

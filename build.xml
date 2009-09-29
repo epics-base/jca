@@ -1,0 +1,142 @@
+<project name="caj" default="build" basedir=".">
+
+	<property name="project.name" value="${ant.project.name}"/>
+
+	<property name="build.output" value="./target"/>
+
+	<property name="javadoc.packages" value="com.cosylab.epics.caj.*"/>
+
+	<path id="build.classpath">
+		<pathelement location="../jca-2.3.0.jar"/>
+	</path>
+
+
+
+	<property name="build.classpath.ext" refid="build.classpath"/>
+
+	<property name="dir.base" value="."/>
+	<property name="dir.src" value="./src"/>
+	<property name="dir.test" value="./test"/>
+
+	<property name="test.class" value="com.cosylab.epics.caj.cas.test.AllTests"/>
+
+	<path id="build.classpath">
+		<pathelement path="${build.classpath.ext}"/>
+		<pathelement path="${java.class.path}"/>
+		<pathelement path="${build.output}/temp"/>
+	</path>
+
+	<target name="check" unless="build.output">
+		<echo message="*** This is the ANT buildfile for Java Channel Access Library software. ***"/>
+		<echo message=""/>
+		<echo message="It requires the following parameters to be passed to the ANT JVM using the -D cmdline parameter:"/>
+		<echo message="build.output  - The target directory where the results of the build process should be stored."/>
+		<echo message=""/>
+		<fail message="Property 'build.output' not set."/>
+	</target>
+
+	<target name="intro" depends="check">
+		<echo message="*** This is the ANT buildfile for Java Channel Access Library software. ***"/>
+		<echo message=""/>
+	</target>
+
+	<target name="init" depends="intro">
+		<property name="dir.dist" value="${build.output}"/>
+		<property name="dir.build" value="${dir.dist}/build"/>
+		<property name="dir.temp" value="${dir.dist}/temp"/>
+		<property name="dir.tests" value="${dir.build}"/>
+		<property name="dir.doc" value="${dir.dist}/doc"/>
+		<property name="dir.javadoc" value="${dir.doc}/api"/>
+
+		<mkdir dir="${dir.build}"/>
+
+		<record name="${dir.build}/buildlog.txt" append="no" loglevel="info"/>
+
+		<echo message="Distribution will be created in: ${dir.dist}."/>
+		<!--property name="cp" refid="build.classpath"/>
+		<echo message="External classpath is ${cp}."/-->
+
+		<mkdir dir="${dir.temp}"/>
+	</target>
+
+	<target name="clean" depends="init">
+		<delete dir="${build.output}"/>
+	</target>
+
+	<target name="compile" depends="init">
+		<property name="build.compiler" value="modern"/>
+		<javac srcdir="${dir.src}" destdir="${dir.temp}" classpathref="build.classpath" source="1.4">
+			<classpath refid="build.classpath"/>
+		</javac>
+	</target>
+
+	<target name="copyresources" depends="compile">
+		<copy todir="${dir.temp}">
+			<fileset file="${dir.src}/JCALibrary.properties"/>
+		</copy>
+	</target>
+
+	<target name="build" depends="copyresources">
+		<mkdir dir="${dir.dist}"/>
+		<jar jarfile="${dir.dist}/${project.name}.jar">
+			<fileset dir="${dir.temp}"/>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+				<section name="com/cosylab/epics/caj">
+					<attribute name="Implementation-Title" value="com.cosylab.epics.caj" />
+					<!--attribute name="Implementation-Version" value="${build.version}" /-->
+					<attribute name="Implementation-Vendor" value="Cosylab Ltd." />
+				</section>
+				<!--attribute name="Main-Class" value="" /-->
+				<!--attribute name="Class-Path" value="" /-->
+		  	</manifest>
+		</jar>
+	</target>
+
+	<target name="compiletests" depends="init">
+		<mkdir dir="${dir.tests}"/>
+		<property name="build.compiler" value="modern"/>
+		<javac srcdir="${dir.test}" destdir="${dir.temp}" classpathref="build.classpath" source="1.4">
+			<classpath refid="build.classpath"/>
+		</javac>
+	</target>
+
+	<target name="test" depends="copyresources,compiletests" if="test.class">
+		<junit printsummary="yes" fork="on">
+			<classpath refid="build.classpath"/>
+			<test name="${test.class}" todir="${dir.tests}">
+				<formatter type="xml"/>
+			</test>
+		</junit>
+		<junitreport todir="${dir.tests}">
+			<fileset dir="${dir.tests}">
+				<include name="TEST-*.xml"/>
+			</fileset>
+			<report format="frames" todir="${dir.tests}"/>
+		</junitreport>
+	</target>
+
+	<target name="dist" depends="init, build, doc">
+		<property name="zip.file" value="${dir.dist}/${project.name}-dist.zip"/>
+		<zip destfile="${zip.file}" encoding="UTF8">
+			<zipfileset dir="${dir.src}" prefix="src"/>
+			<zipfileset dir="${dir.test}" prefix="test"/>
+			<zipfileset dir="${dir.doc}" prefix="doc"/>
+	    	<zipfileset file="${dir.dist}/${project.name}.jar" prefix="lib"/>
+			<fileset dir="${dir.base}" includes="build.xml,LICENSE*"/>
+		</zip>
+	</target>
+
+	<target name="javadoc" depends="init" if="javadoc.packages">
+		<javadoc sourcepath="${dir.src}" destdir="${dir.javadoc}" packagenames="${javadoc.packages}" windowtitle="Java Channel Access Library API">
+			<classpath refid="build.classpath"/>
+		</javadoc>
+	</target>
+
+	<target name="doc" depends="init, javadoc">
+		<copy todir="${dir.doc}">
+			<fileset file="${dir.base}/doc/Java Channel Access Server Manual.doc"/>
+		</copy>
+	</target>
+
+</project>

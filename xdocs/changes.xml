@@ -1,0 +1,153 @@
+<document>
+  <properties>
+    <title>CAJ Changes page</title>
+    <author email="matej.sekoranja_AT_cosylab.com">Matej Sekoranja</author>
+  </properties>
+  
+  <body>
+    <release version="1.1.5b" date="2009-03-27" description="CAS public release.">
+    </release>
+    
+    <release version="1.1.5" date="2008-10-27" description="Reconnection fixed.">
+      <action dev="msekoranja" type="fix">
+      	Improved connection mechanism.
+      </action>              
+      <action dev="msekoranja" type="fix">
+      	In ceratin case CAJ might reconnect channel more then once.
+      </action>              
+      <action dev="msekoranja" type="update">
+        CAJ is now distributed with CAS (Channel Access Server) implementation.
+      </action>              
+    </release>
+
+    <release version="1.1.4" date="2007-06-11" description="PUT_ACKT/ACKS support added, synchronization fixes.">
+      <action dev="msekoranja" type="fix">
+      	ChannelSearchManager queue synchronization fixed.
+      </action>              
+      <action dev="msekoranja" type="fix">
+      	Channel connection/access rights listeners dispatching synchronization added.
+      </action>              
+      <action dev="msekoranja" type="fix">
+      	Leader/follower thread pool queue fixed.
+      </action>              
+      <action dev="msekoranja" type="update">
+      	PUT_ACKT/ACKS support added.
+      </action>              
+    </release>
+  
+    <release version="1.1.3" date="2006-12-20" description="Improvements.">
+      <action dev="msekoranja" type="update">
+		Monitor can be created even if channel is not connected.
+      </action>              
+      <action dev="msekoranja" type="update">
+		Channel instance reference counting. Connection event is artificially fired on listener 
+		added at channel creation of already created (cached) channel.
+      </action>              
+      <action dev="msekoranja" type="fix">
+		Behaviour of <code>auto_addr_list</code> fixed (now it adds auto list to <code>addr_list</code> and does not override it as before).
+      </action>              
+      <action dev="msekoranja" type="fix">
+		Massive connection fixed (UDP sent buffer was too big).
+      </action>              
+    </release>
+
+    <release version="1.1.2" date="2006-11-15" description="CAJ search algorithm reimplemented.">
+      <action dev="msekoranja" type="fix">
+		CAJ search algorithm reimplemented.
+      </action>              
+    </release>
+
+    <release version="1.1.1" date="2006-10-26" description="CAJ priority support added.">
+      <action dev="msekoranja" type="fix">
+      	Channel search improved.
+      </action>              
+      <action dev="msekoranja" type="update">
+      	CAJ priority support added.
+      </action>              
+    </release>
+
+    <release version="1.1.0" date="2006-09-09" description="JCAS implementation, CA repeater, CAJ fixes.">
+      <action dev="msekoranja" type="fix">
+      	<code>CAStatus</code> fixes (readNotify, writeNotify, eventAdd).
+      </action>              
+      <action dev="msekoranja" type="fix">
+      	Added support to workaround (strip) FQDN hostname returned from getHostname(), only hostname expected.
+      </action>              
+      <action dev="msekoranja" type="update">
+      	Flow control added.
+      </action>              
+      <action dev="msekoranja" type="update">
+      	Pure Java CA Repeater implemented, <code>com.cosylab.epics.caj.CARepeater</code>.
+      </action>              
+      <action dev="msekoranja" type="update">
+      	Pure Java CA Server (JCAS) implemented, <code>com.cosylab.epics.caj.cas.CAJServerContext</code> context.
+      </action>              
+    </release>
+
+    <release version="1.0.5" date="2006-05-26" description="Channel.put(value) and context exception notification fixes.">
+      <action dev="msekoranja" type="fix">
+      	Synchronous (non-callback) version of <code>Channel.put()</code> fixed to use CA_WRITE request instead of CA_WRITE_NOTIFY.
+      </action>              
+      <action dev="msekoranja" type="update">
+      	Added dispatching of <code>ContextExceptionListener.contextVirtualCircuitException()</code>.
+      </action>              
+      <action dev="msekoranja" type="update">
+      	I/O event listeners (write, read, monitors) no loger get error state events (disconnect, destroyed),
+		<code>ContextExceptionListener.contextException()</code> is used instead.
+      </action>              
+    </release>
+
+    <release version="1.0.4" date="2005-09-07" description="Timed-out pendIO() fixed.">
+      <action dev="msekoranja" type="fix">
+      	Timed-out pendIO() fixed.
+      </action>              
+      <action dev="msekoranja" type="update">
+      	<code>JNIRepeater</code> support for MacOS.
+      </action>              
+    </release>
+
+    <release version="1.0.3" date="2005-07-06" description="Connection lost and large arrays fix.">
+      <action dev="msekoranja" type="update">
+      	Minor performance/memory improvements.
+      </action>              
+      <action dev="msekoranja" type="fix">
+      	On Linux (and possibly others platforms) it can happen that when connection is lost, CPU goes 100%. Fixed.
+		Also reconnection was fixed. 
+      </action>              
+      <action dev="msekoranja" type="fix">
+      	Large arrays of data send/write fix/improvements.
+      </action>              
+    </release>
+
+    <release version="1.0.2" date="2005-02-01" description="String array and high port numbers fix.">
+      <action dev="msekoranja" type="fix">
+      	Port numbers above <code>0x7000</code> fixed.
+      </action>              
+      <action dev="msekoranja" type="fix">
+      	String array fix.
+      </action>              
+    </release>
+
+    <release version="1.0.1" date="2004-11-06" description="JCA 2.1.5 compatibility and access rights fix.">
+      <action dev="msekoranja" type="add">
+        Added support for <code>gov.aps.jca.Context.getVersion()</code> method.
+        Now users can retrieve context name and version information (at runtime).
+      </action>              
+      <action dev="msekoranja" type="add">
+		Added global context configuration defined in <code>JCALibrary.property</code>.
+		Prefix <code>gov.aps.jca.Context</code> can be used instead of specific
+		prefixes to set global context configuration. Of course, specific configuration overrides default configuration(s).
+      </action>              
+      <action dev="msekoranja" type="fix">
+      	Fixed access rights bug.
+      </action>              
+    </release>
+    
+    <release version="1.0" date="2004-10-27" description="First release of CAJ.">
+      <action dev="msekoranja" type="update">
+		First release of CAJ.
+      </action>              
+    </release>
+
+  </body>
+</document>

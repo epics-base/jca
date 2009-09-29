@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ !
+ ! Maven Project Descriptior for 'Channel Access for Java'
+ ! Copyright (c) 2004 by Cosylab d.o.o.
+ !
+ ! LICENSE
+ !
+ !   The full license specifying the redistribution, modification, usage and
+ !   other rights and obligations is included with the distribution of this
+ !   project in the file LICENSE.txt.
+ !
+ ! DESCRIPTION
+ !
+ !   This file describes the project. Using this information, build tool
+ !   Maven is capable of performing all the necessary steps to produce
+ !   desired deliverables.
+ !
+ !   Maven is freely downloadable at: http://maven.apache.org
+ !
+ ! AUTHOR(S)
+ !
+ !   Matej Sekoranja <matej.sekoranja@cosylab.com>
+ !
+ ! HISTORY
+ !
+ !   2004-05-19	kzagar		Created
+ !   2004-08-11	msekoranja	Automated site and distribution generation.
+ !
+ !-->
+<project>
+
+	<!--
+	 ! Version of the project descriptor file.
+	 ! When Maven is upgraded, this number will be adjusted automatically.
+	 !-->
+	<pomVersion>3</pomVersion>
+
+	<!-- Information about the organization. -->
+	<organization>
+		<name>Cosylab</name>
+		<url>http://www.cosylab.com</url>
+		<logo>/images/cosylablogo.gif</logo>
+	</organization>
+	
+	<!-- The year of project's inception. -->
+	<inceptionYear>2004</inceptionYear>
+	
+	<!-- The Java package name of the project. -->
+	<package>com.cosylab.${pom.groupId}.${pom.artifactId}</package>
+	
+	<!-- Logo of the project. -->
+	<logo>/images/logo.gif</logo>
+	
+	<!-- URL to the project's homepage. -->
+	<url>${pom.organization.url}/${pom.artifactId}</url>
+	
+	<!-- Issue tracking URL. -->
+	<issueTrackingUrl>mailto:bug_AT_caj.cosylab.com</issueTrackingUrl>
+	
+	<!-- The hostname of the web server that hosts the web site. -->
+	<siteAddress>www.cosylab.com</siteAddress>
+	
+	<!-- The directory on the web server where the web site can be found. -->
+	<siteDirectory>/www/${pom.artifactId}</siteDirectory>
+	
+	<!-- The server where the final distributions will be published. -->
+	<distributionSite>${maven.repo.central}</distributionSite>
+	
+	<!-- The directory on the web server where the final distributions will be published. -->
+	<distributionDirectory>${maven.repo.central.directory}</distributionDirectory>
+	
+	<!-- Information about a project's mailing lists. -->
+	<!--mailingLists>
+		<mailingList>
+			<name>Support (${pom.artifactId}@lists.cosylab.com)</name>
+			<subscribe>listmaster@cosylab.com?subject=Request subscription to lists-${pom.artifactId}</subscribe>
+			<unsubscribe>http://lists.cosylab.com/wws/signoff/lists-${pom.artifactId}</unsubscribe>
+			<archive>http://lists.cosylab.com/wws/arc/lists-${pom.artifactId}</archive>
+		</mailingList>
+	</mailingLists-->
+
+	<!-- The reports to include in the generated site. -->
+	<reports>
+		<report>maven-license-plugin</report>
+		<!--not supported report>maven-announcement-plugin</report-->
+        <!--report>maven-junit-report-plugin</report-->
+        <!--report>maven-jcoverage-plugin</report-->
+		<report>maven-changes-plugin</report>
+		<report>maven-javadoc-plugin</report>
+	</reports>
+
+
+
+
+	<!--
+	 ! Project ID, used for naming JARs and distribution files. By convention,
+	 ! only lower case letters can be used, with words separated using hyphens.
+	 !-->
+	<id>caj</id>
+	<!-- Full name of the project (used for JavaDoc titles, for example). -->
+	<name>Channel Access for Java</name>
+	
+	<!--
+	 ! Group ID, used for grouping deliverables that belong together in the
+	 ! same directory of the repository. By convention, only lower case
+	 ! letters can be used, with words separated using hyphens, "-". At
+	 ! Cosylab, use the last part of the repository path to designate the
+	 ! group.
+	 !-->
+	<groupId>epics</groupId>
+	
+	<!--
+	 ! Version of the project that is being built. It has the form:
+	 !
+	 !   <major>.<minor>-<release-type><release-number>
+	 !
+	 ! where:
+	 !
+	 ! * <major>.<minor>: the version number, e.g.,  1.0, 3.2, 5.14
+	 ! * <release-type>: alpha (a), beta(b), release candidate (rc) or
+	 !                   maintenance (m) release
+	 ! * <release-number>: the sequential number of the given release type.
+	 !
+	 ! DO NOT MODIFY THIS PROPERTY MANUALLY! Instead, use Maven goals
+	 ! cosybuild:release and cosybuild:maintain.
+	 !-->
+	<currentVersion>1.1.5b</currentVersion>
+	
+	<!-- A single-line description of the project. -->
+	<shortDescription>100% pure Java implementation of the EPICS Channel Access library.</shortDescription>
+	<!-- Description of the project. -->
+	<description><![CDATA[100% pure Java implementation of the EPICS Channel Access library.]]></description>
+	
+	<!--
+	 ! A list of all the previous versions of the project.
+	 ! When a historic version is no longer supported, outcomment it, and specify the
+	 ! date when the support ceased.
+	 !-->
+	<versions>
+		<version>
+			<id>1.1.5b</id>
+			<name>1.1.5b</name>
+			<tag>CAJ_20090325_1_1_5b</tag>
+		</version>
+		<version>
+			<id>1.1.5</id>
+			<name>1.1.5</name>
+			<tag>CAJ_20080527_1_1_5</tag>
+		</version>
+		<version>
+			<id>1.1.4</id>
+			<name>1.1.4</name>
+			<tag>CAJ_20070121_1_1_4</tag>
+		</version>
+		<version>
+			<id>1.1.3</id>
+			<name>1.1.3</name>
+			<tag>CAJ_20061220_1_1_3</tag>
+		</version>
+		<version>
+			<id>1.1.2</id>
+			<name>1.1.2</name>
+			<tag>CAJ_20061115_1_1_2</tag>
+		</version>
+		<version>
+			<id>1.1.1</id>
+			<name>1.1.1</name>
+			<tag>CAJ_20061026_1_1_1</tag>
+		</version>
+		<version>
+			<id>1.1.0</id>
+			<name>1.1.0</name>
+			<tag>CAJ_20060909_1_1_0</tag>
+		</version>
+		<version>
+			<id>1.0.6</id>
+			<name>1.0.6</name>
+			<tag>CAJ_20060728_1_0_6</tag>
+		</version>
+		<version>
+			<id>1.0.5</id>
+			<name>1.0.5</name>
+			<tag>CAJ_20060526_1_0_5</tag>
+		</version>
+		<version>
+			<id>1.0.4</id>
+			<name>1.0.4</name>
+			<tag>CAJ_20050907_1_0_4</tag>
+		</version>
+		<version>
+			<id>1.0.3</id>
+			<name>1.0.3</name>
+			<tag>CAJ_20050707_1_0_3</tag>
+		</version>
+		<version>
+			<id>1.0.2</id>
+			<name>1.0.2</name>
+			<tag>CAJ_20050201_1_0_2</tag>
+		</version>
+		<version>
+			<id>1.0.1</id>
+			<name>1.0.1</name>
+			<tag>CAJ_20041106_1_0_1</tag>
+		</version>
+		<version>
+			<id>1.0</id>
+			<name>1.0</name>
+			<tag>CAJ_20041027_1_0</tag>
+		</version>
+	</versions>
+	
+	<!-- A list of all branches of the project. -->
+	<branches>
+		<!--branch>
+			<tag></tag>
+		</branch-->
+	</branches>
+	
+	<!-- People participating in the development of the project. -->
+	<developers>
+		<developer>
+			<name>Matej Sekoranja</name>
+			<id>msekoranja</id>
+			<email>matej.sekoranja_AT_cosylab.com</email>
+			<organization>Cosylab</organization>
+			<roles>
+				<role>Principal Developer</role>
+			</roles>
+			<url>http://users.cosylab.com/~msekoranja</url>
+			<timezone>+1</timezone>
+		</developer>
+	</developers>
+	
+	<!-- Licenses of the project. Licenses of dependancies are not listed here! -->
+	<licenses>
+		<license>
+			<name>GNU General Public License Version 2</name>
+			<url>http://www.fsf.org/licenses/gpl.html</url>
+			<!-- Use "manual" if the user must manually download and install this project. -->
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	
+	<dependencies>
+		<dependency>
+			<groupId>concurrent</groupId>
+			<artifactId>backport-util-concurrent</artifactId>
+			<version>2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>epics</groupId>
+			<artifactId>jca</artifactId>
+			<version>2.3.2</version>
+		</dependency>
+	</dependencies>
+	
+	<!--
+	 ! All of the build properties associated with the project.
+	 !-->
+	<build>
+		<!-- An address to which notifications regarding the status of builds for this project can be sent. -->
+		<nagEmailAddress>matej.sekoranja@cosylab.com</nagEmailAddress>
+		
+		<!-- A directory containing the source of the project. -->
+		<sourceDirectory>src</sourceDirectory>
+		
+		<!--
+		 ! A list of modifications to source files. If the given className is NOT found,
+		 ! the modifications will be affected.
+		 !-->
+		<sourceModifications>
+			<sourceModification>
+				<className>NONEXISTENT_CLASS</className>
+				<!--excludes>
+					<exclude>**/test/**</exclude>
+				</excludes-->
+			</sourceModification>
+		</sourceModifications>
+		
+		<!-- Location of the sources for unit tests. -->
+		<unitTestSourceDirectory>test</unitTestSourceDirectory>
+
+		<!-- Aditional filters for unit tests. -->
+		<unitTest>
+			<includes>
+				<include>**/AllTests.java</include>
+			</includes>
+		</unitTest>
+		
+		<!-- Resources of the project. -->
+		<resources>
+			<resource>
+				<directory>src</directory>
+				<includes>
+					<include>JCALibrary.properties</include>
+				</includes>
+			</resource>
+		</resources>
+	</build>
+</project>
