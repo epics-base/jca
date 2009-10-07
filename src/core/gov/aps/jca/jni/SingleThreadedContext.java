@@ -31,6 +31,7 @@ import gov.aps.jca.event.*;
 import gov.aps.jca.configuration.*;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 final public class SingleThreadedContext extends JNIContext implements Configurable {
   
@@ -50,14 +51,25 @@ final public class SingleThreadedContext extends JNIContext implements Configura
   public SingleThreadedContext() {
     String cn=gov.aps.jca.jni.SingleThreadedContext.class.getName();
     JCALibrary jca=JCALibrary.getInstance();
-    setPreemptiveCallback(jca.getPropertyAsBoolean( cn+ ".preemptive_callback", getPreemptiveCallback() ));
-    setAddrList(jca.getProperty( cn+".addr_list", getAddrList() ));
-    setAutoAddrList(jca.getPropertyAsBoolean( cn+".auto_addr_list",  getAutoAddrList() ));
-    setConnectionTimeout(jca.getPropertyAsFloat( cn+".connection_timeout", getConnectionTimeout() ));
-    setBeaconPeriod(jca.getPropertyAsFloat( cn+".beacon_period", getBeaconPeriod() ));
-    setRepeaterPort(jca.getPropertyAsInt( cn+".repeater_port", getRepeaterPort() ));
-    setServerPort(jca.getPropertyAsInt( cn+".server_port", getServerPort() ));
-    setMaxArrayBytes(jca.getPropertyAsInt( cn+".max_array_bytes", getMaxArrayBytes() ));
+    
+	String logger= jca.getProperty( cn+".logger", null);
+	setLogger(logger==null?getLogger():Logger.getLogger(logger));
+	
+    if (Boolean.getBoolean(System.getProperty("jca.use_env")))
+    {
+	    setPreemptiveCallback(jca.getPropertyAsBoolean( cn+ ".preemptive_callback", getPreemptiveCallback() ));
+    }
+    else
+    {
+	    setPreemptiveCallback(jca.getPropertyAsBoolean( cn+ ".preemptive_callback", getPreemptiveCallback() ));
+	    setAddrList(jca.getProperty( cn+".addr_list", getAddrList() ));
+	    setAutoAddrList(jca.getPropertyAsBoolean( cn+".auto_addr_list",  getAutoAddrList() ));
+	    setConnectionTimeout(jca.getPropertyAsFloat( cn+".connection_timeout", getConnectionTimeout() ));
+	    setBeaconPeriod(jca.getPropertyAsFloat( cn+".beacon_period", getBeaconPeriod() ));
+	    setRepeaterPort(jca.getPropertyAsInt( cn+".repeater_port", getRepeaterPort() ));
+	    setServerPort(jca.getPropertyAsInt( cn+".server_port", getServerPort() ));
+	    setMaxArrayBytes(jca.getPropertyAsInt( cn+".max_array_bytes", getMaxArrayBytes() ));
+    }
     
     try {
       EventDispatcher ed= ( EventDispatcher )Class.forName( jca.getProperty( cn+".event_dispatcher", "" ) ).newInstance();

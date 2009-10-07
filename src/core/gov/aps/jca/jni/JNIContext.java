@@ -56,30 +56,66 @@ abstract public class JNIContext extends Context {
 
   protected JNIContext() {
     JCALibrary jca=JCALibrary.getInstance();
-
-	// Context default configuration
-    String dcn=gov.aps.jca.Context.class.getName();
-    setPreemptiveCallback(jca.getPropertyAsBoolean( dcn+ ".preemptive_callback", getPreemptiveCallback() ));
-    setAddrList(jca.getProperty( dcn+".addr_list", getAddrList() ));
-    setAutoAddrList(jca.getPropertyAsBoolean( dcn+".auto_addr_list",  getAutoAddrList() ));
-    setConnectionTimeout(jca.getPropertyAsFloat( dcn+".connection_timeout", getConnectionTimeout() ));
-    setBeaconPeriod(jca.getPropertyAsFloat( dcn+".beacon_period", getBeaconPeriod() ));
-    setRepeaterPort(jca.getPropertyAsInt( dcn+".repeater_port", getRepeaterPort() ));
-    setServerPort(jca.getPropertyAsInt( dcn+".server_port", getServerPort() ));
-    setMaxArrayBytes(jca.getPropertyAsInt( dcn+".max_array_bytes", getMaxArrayBytes() ));
-    String ed = jca.getProperty( dcn+".event_dispatcher", "" );
     
-    // JNIContext specific config (overrides default)
+    String ed;
     String cn=gov.aps.jca.jni.JNIContext.class.getName();
-    setPreemptiveCallback(jca.getPropertyAsBoolean( cn+ ".preemptive_callback", getPreemptiveCallback() ));
-    setAddrList(jca.getProperty( cn+".addr_list", getAddrList() ));
-    setAutoAddrList(jca.getPropertyAsBoolean( cn+".auto_addr_list",  getAutoAddrList() ));
-    setConnectionTimeout(jca.getPropertyAsFloat( cn+".connection_timeout", getConnectionTimeout() ));
-    setBeaconPeriod(jca.getPropertyAsFloat( cn+".beacon_period", getBeaconPeriod() ));
-    setRepeaterPort(jca.getPropertyAsInt( cn+".repeater_port", getRepeaterPort() ));
-    setServerPort(jca.getPropertyAsInt( cn+".server_port", getServerPort() ));
-    setMaxArrayBytes(jca.getPropertyAsInt( cn+".max_array_bytes", getMaxArrayBytes() ));
-    ed = jca.getProperty( cn+".event_dispatcher", ed );
+    if (Boolean.getBoolean("jca.use_env"))
+    {
+    	// Context default configuration
+        String dcn=gov.aps.jca.Context.class.getName();
+    	setPreemptiveCallback(jca.getPropertyAsBoolean( dcn+ ".preemptive_callback", getPreemptiveCallback() ));
+    	ed = jca.getProperty( dcn+".event_dispatcher", "" );
+
+        // JNIContext specific config (overrides default)
+        setPreemptiveCallback(jca.getPropertyAsBoolean( cn+ ".preemptive_callback", getPreemptiveCallback() ));
+        ed = jca.getProperty( cn+".event_dispatcher", ed );
+    	
+        String tmp = System.getenv("EPICS_CA_ADDR_LIST");
+        if (tmp != null) setAddrList(tmp);
+        
+    	tmp = System.getenv("EPICS_CA_AUTO_ADDR_LIST");
+    	if (tmp != null) setAutoAddrList(Boolean.parseBoolean(tmp));
+    	
+    	tmp = System.getenv("EPICS_CA_CONN_TMO");
+    	if (tmp != null) setConnectionTimeout(Float.parseFloat(tmp));
+    	
+    	tmp = System.getenv("EPICS_CA_BEACON_PERIOD");
+       	if (tmp != null) setBeaconPeriod(Float.parseFloat(tmp));
+           	
+    	tmp = System.getenv("EPICS_CA_REPEATER_PORT");
+    	if (tmp != null) setRepeaterPort(Integer.parseInt(tmp));
+    	
+    	tmp = System.getenv("EPICS_CA_SERVER_PORT");
+    	if (tmp != null) setServerPort(Integer.parseInt(tmp));
+
+    	tmp = System.getenv("EPICS_CA_MAX_ARRAY_BYTES");
+    	if (tmp != null) setMaxArrayBytes(Integer.parseInt(tmp));
+    }
+    else
+    {
+		// Context default configuration
+	    String dcn=gov.aps.jca.Context.class.getName();
+	    setPreemptiveCallback(jca.getPropertyAsBoolean( dcn+ ".preemptive_callback", getPreemptiveCallback() ));
+	    setAddrList(jca.getProperty( dcn+".addr_list", getAddrList() ));
+	    setAutoAddrList(jca.getPropertyAsBoolean( dcn+".auto_addr_list",  getAutoAddrList() ));
+	    setConnectionTimeout(jca.getPropertyAsFloat( dcn+".connection_timeout", getConnectionTimeout() ));
+	    setBeaconPeriod(jca.getPropertyAsFloat( dcn+".beacon_period", getBeaconPeriod() ));
+	    setRepeaterPort(jca.getPropertyAsInt( dcn+".repeater_port", getRepeaterPort() ));
+	    setServerPort(jca.getPropertyAsInt( dcn+".server_port", getServerPort() ));
+	    setMaxArrayBytes(jca.getPropertyAsInt( dcn+".max_array_bytes", getMaxArrayBytes() ));
+	    ed = jca.getProperty( dcn+".event_dispatcher", "" );
+	    
+	    // JNIContext specific config (overrides default)
+	    setPreemptiveCallback(jca.getPropertyAsBoolean( cn+ ".preemptive_callback", getPreemptiveCallback() ));
+	    setAddrList(jca.getProperty( cn+".addr_list", getAddrList() ));
+	    setAutoAddrList(jca.getPropertyAsBoolean( cn+".auto_addr_list",  getAutoAddrList() ));
+	    setConnectionTimeout(jca.getPropertyAsFloat( cn+".connection_timeout", getConnectionTimeout() ));
+	    setBeaconPeriod(jca.getPropertyAsFloat( cn+".beacon_period", getBeaconPeriod() ));
+	    setRepeaterPort(jca.getPropertyAsInt( cn+".repeater_port", getRepeaterPort() ));
+	    setServerPort(jca.getPropertyAsInt( cn+".server_port", getServerPort() ));
+	    setMaxArrayBytes(jca.getPropertyAsInt( cn+".max_array_bytes", getMaxArrayBytes() ));
+	    ed = jca.getProperty( cn+".event_dispatcher", ed );
+    }
     
     try {
       setEventDispatcher( ( EventDispatcher )Class.forName( ed ).newInstance());

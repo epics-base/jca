@@ -59,16 +59,23 @@ final public class ThreadSafeContext extends JNIContext implements Runnable, Con
 		String logger= jca.getProperty( cn+".logger", null);
 		setLogger(logger==null?getLogger():Logger.getLogger(logger));
 		
-		setPreemptiveCallback(jca.getPropertyAsBoolean( cn+ ".preemptive_callback", getPreemptiveCallback() ));
-		setAddrList(jca.getProperty( cn+".addr_list", getAddrList() ));
-		setAutoAddrList(jca.getPropertyAsBoolean( cn+".auto_addr_list",  getAutoAddrList() ));
-		setConnectionTimeout(jca.getPropertyAsFloat( cn+".connection_timeout", getConnectionTimeout() ));
-		setBeaconPeriod(jca.getPropertyAsFloat( cn+".beacon_period", getBeaconPeriod() ));
-		setRepeaterPort(jca.getPropertyAsInt( cn+".repeater_port", getRepeaterPort() ));
-		setServerPort(jca.getPropertyAsInt( cn+".server_port", getServerPort() ));
-		setMaxArrayBytes(jca.getPropertyAsInt( cn+".max_array_bytes", getMaxArrayBytes() ));
-		setPriority(jca.getPropertyAsInt( cn+".priority", getPriority()));
-		
+	    if (Boolean.getBoolean("jca.use_env"))
+	    {
+		    setPreemptiveCallback(jca.getPropertyAsBoolean( cn+ ".preemptive_callback", getPreemptiveCallback() ));
+	    }
+	    else
+	    {
+			setPreemptiveCallback(jca.getPropertyAsBoolean( cn+ ".preemptive_callback", getPreemptiveCallback() ));
+			setAddrList(jca.getProperty( cn+".addr_list", getAddrList() ));
+			setAutoAddrList(jca.getPropertyAsBoolean( cn+".auto_addr_list",  getAutoAddrList() ));
+			setConnectionTimeout(jca.getPropertyAsFloat( cn+".connection_timeout", getConnectionTimeout() ));
+			setBeaconPeriod(jca.getPropertyAsFloat( cn+".beacon_period", getBeaconPeriod() ));
+			setRepeaterPort(jca.getPropertyAsInt( cn+".repeater_port", getRepeaterPort() ));
+			setServerPort(jca.getPropertyAsInt( cn+".server_port", getServerPort() ));
+			setMaxArrayBytes(jca.getPropertyAsInt( cn+".max_array_bytes", getMaxArrayBytes() ));
+			setPriority(jca.getPropertyAsInt( cn+".priority", getPriority()));
+	    }
+	    
 		try {
 			EventDispatcher ed= ( EventDispatcher )Class.forName( jca.getProperty( cn+".event_dispatcher", "" ) ).newInstance();
 			setEventDispatcher(ed);
