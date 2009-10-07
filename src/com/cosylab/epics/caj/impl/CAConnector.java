@@ -47,7 +47,7 @@ public class CAConnector implements Connector {
 	/**
 	 * Context instance.
 	 */
-	private static final int LOCK_TIMEOUT = 10 * 6000;	// 10s
+	private static final int LOCK_TIMEOUT = 20 * 1000;	// 20s
 
 	/**
 	 * @param context
