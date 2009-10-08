@@ -85,12 +85,12 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
     /**
      * Maintenance version.
      */
-    private static final int CAJ_VERSION_MAINTENANCE = 5;
+    private static final int CAJ_VERSION_MAINTENANCE = 6;
 
     /**
      * Development version.
      */
-    private static final int CAJ_VERSION_DEVELOPMENT = 2;
+    private static final int CAJ_VERSION_DEVELOPMENT = 0;
 
     /**
      * Version.
@@ -344,7 +344,7 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 	 * @param name	env. var. name
 	 * @param defaultValue	default value
 	 * @return	value of env. var., default value if not defined
-	 */
+	 *
 	private static String getEnvironmentVariable(String name, String defaultValue) {
 	    String val = null;
 	    try {
@@ -357,7 +357,7 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 	        return defaultValue;
 	    else
 	        return val;
-	}
+	}*/
 	
 	/**
 	 * Load configuration.
@@ -377,7 +377,10 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 	        if (tmp != null) addressList = tmp;
 	        
 	    	tmp = System.getenv("EPICS_CA_AUTO_ADDR_LIST");
-	    	if (tmp != null) autoAddressList = Boolean.parseBoolean(tmp);
+	    	if (tmp != null)
+	    		autoAddressList = !tmp.equalsIgnoreCase("NO"); 
+	    	else
+	    		autoAddressList = true;
 	    	
 	    	tmp = System.getenv("EPICS_CA_CONN_TMO");
 	    	if (tmp != null) connectionTimeout = Float.parseFloat(tmp);

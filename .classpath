@@ -5,6 +5,5 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="JUNIT_HOME/junit.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/JCA"/>
-	<classpathentry kind="var" path="MAVEN_REPO/concurrent/jars/backport-util-concurrent-2.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
