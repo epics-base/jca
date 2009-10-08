@@ -74,7 +74,10 @@ abstract public class JNIContext extends Context {
         if (tmp != null) setAddrList(tmp);
         
     	tmp = System.getenv("EPICS_CA_AUTO_ADDR_LIST");
-    	if (tmp != null) setAutoAddrList(Boolean.parseBoolean(tmp));
+    	if (tmp != null)
+    		setAutoAddrList(!tmp.equalsIgnoreCase("NO"));
+    	else
+    		setAutoAddrList(true);
     	
     	tmp = System.getenv("EPICS_CA_CONN_TMO");
     	if (tmp != null) setConnectionTimeout(Float.parseFloat(tmp));
