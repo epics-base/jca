@@ -5,6 +5,15 @@
   </properties>
   
   <body>
+    <release version="2.3.3" date="2009-10-21" description="System env. variables support.">
+      <action dev="msekoranja" type="update">
+    	Added support for -Djca.use_env=true - reads EPICS system env. variables.
+      </action>              
+      <action dev="msekoranja" type="fix">
+      	QueuedEventDispatcher and LastMonitorOnlyEventDispatcher concurrency improvements.
+      </action>              
+    </release>
+
     <release version="2.3.2" date="2008-10-27" description="PUT_ACKT/ACKS support added.">
       <action dev="msekoranja" type="update">
       	PUT_ACKT/ACKS support added.
