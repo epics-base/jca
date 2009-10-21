@@ -53,6 +53,7 @@ public class Reactor {
 		
 		private SelectionKey key = null; 
 		private ClosedChannelException exception = null; 
+		private boolean done = false;
 		
 		/**
 		 * Contructor.
@@ -84,6 +85,7 @@ public class Reactor {
 			finally
 			{
 				// notify about completed registration process
+				done = true;
 				notifyAll();
 			}
 		}
@@ -94,6 +96,7 @@ public class Reactor {
 		public synchronized void cancelRegistration()
 		{
 			// notify about canceled registration process
+			done = true;
 			notifyAll();
 		}
 
@@ -111,6 +114,15 @@ public class Reactor {
 		 */
 		public SelectionKey getKey() {
 			return key;
+		}
+		
+		/**
+		 * Checks if registration is done (or canceled).
+		 * Note: note synced to this.
+		 * @return
+		 */
+		public boolean isDone() {
+			return done;
 		}
 
 	}
@@ -436,7 +448,8 @@ public class Reactor {
 			{
 				// wait for completion
 				try	{
-					rr.wait();
+					while (!rr.isDone())
+						rr.wait();
 				} catch(InterruptedException ie) { /* noop */ }
 			}
 		}

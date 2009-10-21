@@ -762,6 +762,7 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 				
 				try
 				{
+					// spurious wakeup wont hurt here... 
 					if (!registrationConfirmed)
 					    registrationConfirmedCondition.wait(100);
 				} catch (InterruptedException ie) {}
@@ -814,6 +815,12 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 		// cleanup
 		//
 		
+		// stop waiting
+		synchronized (zeroPendingRequestsCondition)
+		{
+			zeroPendingRequestsCondition.notifyAll();
+		}
+
 		// this will also close all CA transports
 		destroyAllChannels();
 		
@@ -1043,27 +1050,32 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 		throws TimeoutException, CAException, IllegalStateException {
 		checkState();
 
-		long time = System.currentTimeMillis();
+		final long time = System.currentTimeMillis();
 		flushIO();
-		time = System.currentTimeMillis() - time;
 		
-		long timeToWaitInMS = (long)(timeout*1000) - time;
-		if (timeout == 0.0 || timeToWaitInMS > 0)
+		long timeToWaitInMS = 0;
+		if (timeout >= 0.0)
 		{
-			synchronized (zeroPendingRequestsCondition)
+			try
 			{
-				// race condition check...
-				if (pendingRequestsCount.get() > 0)
+				synchronized (zeroPendingRequestsCondition)
 				{
-					try {
-						if (timeout == 0.0)
-							// wait until completed
+					// wait until completed
+					if (timeout == 0.0)
+					{
+						while (pendingRequestsCount.get() > 0 && state != DESTROYED)
 							zeroPendingRequestsCondition.wait();
-						else
+					}
+					else
+					{
+						final long endTime = time + (long)(timeout*1000);
+						while (pendingRequestsCount.get() > 0 && (timeToWaitInMS = (endTime - System.currentTimeMillis())) > 0 && state != DESTROYED)
+						{
 							zeroPendingRequestsCondition.wait(timeToWaitInMS);
-					} catch (InterruptedException e) { /* noop */ }
+						}
+					}
 				}
-			}
+			} catch (InterruptedException e) { /* noop */ }
 		}
 		
 		int stillPending;
@@ -1074,9 +1086,15 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 			stillPending = pendingRequestsCount.getAndSet(0);
 		}
 		
-		// throw timeout execption if not all requests where processed
-		if (stillPending > 0 && timeToWaitInMS > 0)
-			throw new TimeoutException("pendIO timed out");
+		// throw timeout exception if not all requests where processed
+		if (stillPending > 0)
+		{
+			if (state == DESTROYED)
+				throw new CAException("context destroyed during pendIO");
+				
+			if (timeToWaitInMS <= 0)
+				throw new TimeoutException("pendIO timed out");
+		}
 	}
 
 	/**

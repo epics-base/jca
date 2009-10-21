@@ -650,6 +650,8 @@ public class CAJServerContext extends ServerContext implements CAContext, Config
 		}
 
 	}
+	
+	private boolean runTerminated;
 	 
 	/**
 	 * Run server (process events).
@@ -684,8 +686,12 @@ public class CAJServerContext extends ServerContext implements CAContext, Config
 		beaconEmitter.start();
 		synchronized (runLock)
 		{
+			runTerminated = false;
 			try {
-				runLock.wait(seconds * 1000);
+				final long timeToWait = seconds * 1000;
+				final long start = System.currentTimeMillis();
+				while (!runTerminated && (timeToWait == 0 || ((System.currentTimeMillis() - start) < timeToWait)))
+					runLock.wait(timeToWait);
 			} catch (InterruptedException e) { /* noop */ }
 		}
 		
@@ -708,6 +714,7 @@ public class CAJServerContext extends ServerContext implements CAContext, Config
 		// notify to stop running...
 		synchronized (runLock)
 		{
+			runTerminated = true;
 			runLock.notifyAll();
 		}
 	}
