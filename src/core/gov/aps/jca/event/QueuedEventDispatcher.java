@@ -69,18 +69,19 @@ public class QueuedEventDispatcher extends AbstractEventDispatcher implements
     	// avoid deadlock allowing recursive queue-ing 
     	boolean doNotBlock = (Thread.currentThread() == _dispatcherThread);
     	incrementSyncCounter(ev, doNotBlock);
-    	if (_killed) return;
 
         synchronized (_queue)
         {
-        	if (!doNotBlock && _queue.size() >= _queueLimit)
+        	while (!doNotBlock && _queue.size() >= _queueLimit && !_killed)
         	{
 				try {
 					_queue.wait();
 				} catch (InterruptedException e) { }
         	}
         	
-            _queue.add(ev);
+        	if (_killed) return;
+
+        	_queue.add(ev);
             // notify event arrival
             _queue.notifyAll();
         }
@@ -154,11 +155,10 @@ public class QueuedEventDispatcher extends AbstractEventDispatcher implements
                 synchronized (_queue)
                 {
                     // wait for new requests
-                    if (!_killed && _queue.isEmpty()) {
+                    while (!_killed && _queue.isEmpty())
                         _queue.wait();
-                    }
                     
-                    if (!_killed && !_queue.isEmpty())
+                    if (!_killed)
                     {
                         eventsToProcess = _queue.size();
                         // create new instance of batch array only if necessary
