@@ -36,6 +36,11 @@ class JNIAccessRightsCallback extends JNICallback {
   }
 
   public void fire( boolean read, boolean write ) {
-    dispatch( new AccessRightsEvent( _source, read, write ) );
+	  try {
+		  dispatch( new AccessRightsEvent( _source, read, write ) );
+	  } catch (Throwable th) {
+		  // catch all exception not to break call from C++, report exception
+		  new RuntimeException("Unexpected exception caught.", th).printStackTrace();
+	  }
   }
 }

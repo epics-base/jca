@@ -476,6 +476,10 @@ final public class ThreadSafeContext extends JNIContext implements Runnable, Con
 					catch ( JNIException cae ) {
 						request.setException( cae );
 					}
+					catch ( Throwable th ) {
+						  // catch all exception not to break call this thread, report exception
+						  new RuntimeException("Unexpected exception caught.", th).printStackTrace();
+					}
 					request.notifyAll();
 				}
 				Thread.yield();

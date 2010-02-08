@@ -36,7 +36,12 @@ class JNIContextMessageCallback extends JNICallback {
   }
 
   public void fire( String msg ) {
-    dispatch( new ContextMessageEvent( _source, msg ) );
+	  try {
+		  dispatch( new ContextMessageEvent( _source, msg ) );
+	  } catch (Throwable th) {
+		  // catch all exception not to break call from C++, report exception
+		  new RuntimeException("Unexpected exception caught.", th).printStackTrace();
+	  }
   }
 
 }

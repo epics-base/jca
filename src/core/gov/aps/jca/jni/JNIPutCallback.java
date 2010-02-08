@@ -40,7 +40,12 @@ class JNIPutCallback extends JNICallback {
   }
 
   public void fire(int type, int count, long dbrid, int status) {
-    dispatch(new PutEvent(_source, DBRType.forValue(type), count, CAStatus.forValue(status)));
+	  try {
+		  dispatch(new PutEvent(_source, DBRType.forValue(type), count, CAStatus.forValue(status)));
+	  } catch (Throwable th) {
+		  // catch all exception not to break call from C++, report exception
+		  new RuntimeException("Unexpected exception caught.", th).printStackTrace();
+	  }
   }
 }
 

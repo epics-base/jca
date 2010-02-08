@@ -39,21 +39,27 @@ class JNIContextExceptionCallback extends JNICallback {
   }
 
   public void fire( long channelID, int type, int count, long dbrID, String status, String ctxtInfo, String file, int line ) {
-    Channel ch=null;
-    if( channelID!=0 ) {
-      ch=_source.lookupChannel( channelID );
-    }
-    DBR dbr=null;
-    if( dbrID!=0 ) {
-      dbr=DBRFactory.create( type, count );
-      JNI.dbr_update( dbr, dbrID );
-    }
-
-    String msg="Status: "+status+"\nInfo: "+ctxtInfo+"\nfile: "+file+" at line "+line;
-
-    ContextExceptionEvent ev=new ContextExceptionEvent( _source, ch, DBRType.forValue(type), count, dbr, msg );
-
-    dispatch( ev );
+	  try
+	  {
+		Channel ch=null;
+	    if( channelID!=0 ) {
+	      ch=_source.lookupChannel( channelID );
+	    }
+	    DBR dbr=null;
+	    if( dbrID!=0 ) {
+	      dbr=DBRFactory.create( type, count );
+	      JNI.dbr_update( dbr, dbrID );
+	    }
+	
+	    String msg="Status: "+status+"\nInfo: "+ctxtInfo+"\nfile: "+file+" at line "+line;
+	
+	    ContextExceptionEvent ev=new ContextExceptionEvent( _source, ch, DBRType.forValue(type), count, dbr, msg );
+	
+	    dispatch( ev );
+	  } catch (Throwable th) {
+		  // catch all exception not to break call from C++, report exception
+		  new RuntimeException("Unexpected exception caught.", th).printStackTrace();
+	  }
   }
 
 }

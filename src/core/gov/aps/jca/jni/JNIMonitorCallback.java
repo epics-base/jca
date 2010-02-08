@@ -42,9 +42,14 @@ class JNIMonitorCallback extends JNICallback {
   }
 
   public void fire(int type, int count, long dbrid, int status) {
-    DBR dbr= DBRFactory.create(type,count);
-    JNI.dbr_update(dbr,dbrid);
-    dispatch(new MonitorEvent(_source, dbr, CAStatus.forValue(status)));
+	  try {
+	    DBR dbr= DBRFactory.create(type,count);
+	    JNI.dbr_update(dbr,dbrid);
+	    dispatch(new MonitorEvent(_source, dbr, CAStatus.forValue(status)));
+	  } catch (Throwable th) {
+		  // catch all exception not to break call from C++, report exception
+		  new RuntimeException("Unexpected exception caught.", th).printStackTrace();
+	  }
   }
 }
 

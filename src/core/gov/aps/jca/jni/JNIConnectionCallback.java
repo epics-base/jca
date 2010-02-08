@@ -38,7 +38,13 @@ class JNIConnectionCallback extends JNICallback {
   }
 
   public void fire(boolean isConnected) {
-    dispatch(new ConnectionEvent(_source,isConnected));
+	  try
+	  {
+		  dispatch(new ConnectionEvent(_source,isConnected));
+	  } catch (Throwable th) {
+		  // catch all exception not to break call from C++, report exception
+		  new RuntimeException("Unexpected exception caught.", th).printStackTrace();
+	  }
   }
 }
 
