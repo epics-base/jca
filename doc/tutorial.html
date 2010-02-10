@@ -403,6 +403,22 @@ where <b><font color="#006600">&lt;your arch&gt;</font></b> is the epics archite
           </td>
         </tr>
         <tr> 
+          <td class="title3"><a name="4"></a><b>4) Using standard EPICS system environment variables as configuration</b></td>
+        </tr>
+        <tr> 
+          <td> 
+            <p><br>
+              If Java system property <i>jca.use_env</i> is set to <i>true</i>, JCA/CAJ will use
+              standard EPICS system environment variables as configuration (e.g. EPICS_CA_ADDR_LIST).<br/>
+              In addition, the following line in JCALibrary.properties has the same effect: 
+              <pre>
+gov.aps.jca.jni.JNIContext.jca.use_env=true
+              </pre>
+            </p>
+            <p>&nbsp;</p>
+          </td>
+        </tr>
+        <tr> 
           <td class="title2"><a name="3"></a><b>3) A real life example</b></td>
         </tr>
         <tr> 
