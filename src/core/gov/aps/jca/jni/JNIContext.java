@@ -53,13 +53,14 @@ abstract public class JNIContext extends Context {
   
   protected long _ctxtID=0;
 
-
+  protected boolean _jca_use_env=false;
+  
   protected JNIContext() {
     JCALibrary jca=JCALibrary.getInstance();
     
     String ed;
     String cn=gov.aps.jca.jni.JNIContext.class.getName();
-    if (Boolean.getBoolean("jca.use_env"))
+    if (Boolean.getBoolean("jca.use_env") || jca.getPropertyAsBoolean(cn+".jca.use_env", getJcaUseEnv()))
     {
     	// Context default configuration
         String dcn=gov.aps.jca.Context.class.getName();
@@ -270,7 +271,11 @@ abstract public class JNIContext extends Context {
   public int getMaxArrayBytes() {
     return _max_array_bytes;
   }
-
+  
+  public boolean getJcaUseEnv() {
+    return _jca_use_env;
+  }
+ 
   protected void setEventDispatcher(EventDispatcher eventDispatcher) {
     if(eventDispatcher==null) throw new IllegalArgumentException("EventDispatcher cannot be null");
     _eventDispatcher= eventDispatcher;
