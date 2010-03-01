@@ -15,6 +15,7 @@
 package com.cosylab.epics.caj.impl;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
@@ -95,15 +96,29 @@ public class BroadcastTransport implements Transport, ReactorHandler {
 		this.connectAddress = connectAddress;
 		this.remoteTransportRevision = remoteTransportRevision;
 		
-		// TODO consider broadcast address of subnet
-		this.broadcastAddresses = 
-		    	new InetSocketAddress[] { new InetSocketAddress("255.255.255.255", context.getBroadcastPort()) };
+		this.broadcastAddresses = getBroadcastAddresses(context.getBroadcastPort());
 
 		socketAddress = (InetSocketAddress)channel.socket().getRemoteSocketAddress();
 
 		// allocate receive buffer
 		receiveBuffer = ByteBuffer.allocate(CAConstants.MAX_UDP_RECV);
 		receiveBufferArray = new ByteBuffer[] { receiveBuffer };
+	}
+
+	public InetSocketAddress[] getBroadcastAddresses(int port) {
+		try
+		{
+			String NIF_CLASSNAME = System.getProperty("CAJ_NIF_CLASSNAME", "com.cosylab.epics.caj.util.nif.InetAddressUtilV6");
+			Class clazz = Class.forName(NIF_CLASSNAME);
+			Method method = clazz.getMethod("getBroadcastAddresses", new Class[] { int.class });
+			InetSocketAddress[] retVal = (InetSocketAddress[])method.invoke(null, new Object[] { Integer.valueOf(context.getBroadcastPort()) });
+			//context.getLogger().finer("Using broadcast address(es): " + Arrays.toString(retVal));
+			return retVal;
+		} catch (Throwable th) {
+			// fallback
+			context.getLogger().fine("Failed to introspect network interfaces for broadcast addresses, using '255.255.255.255'.");
+			return new InetSocketAddress[] { new InetSocketAddress("255.255.255.255", context.getBroadcastPort()) };
+		}
 	}
 	
 	/**
