@@ -8,6 +8,7 @@
     <release version="1.1.6" date="2009-10-08" description="Searching improved.">
     	CA UDP search improved.
     	Added support for -Djca.use_env=true - reads EPICS system env. variables.
+    	If Java 6 or newer is being use, CAJ introspects network interfaces for their broadcast addresses.
     </release>
 
     <release version="1.1.5b" date="2009-03-27" description="CAS public release.">
