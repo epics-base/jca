@@ -61,13 +61,23 @@ public class QueuedEventDispatcher extends AbstractEventDispatcher implements
     }
 
     
+    protected void nonBlockingQueueEvent(Event ev)
+    {
+    	queueEvent(ev, true);
+	}    
+
     protected void queueEvent(Event ev)
+    {
+    	queueEvent(ev, false);
+	}    
+
+    protected void queueEvent(Event ev, boolean doNotBlockRequired)
     {
     	if (_killed) return;
 
     	// increment counter, will block if limit will be reached
     	// avoid deadlock allowing recursive queue-ing 
-    	boolean doNotBlock = (Thread.currentThread() == _dispatcherThread);
+    	boolean doNotBlock = doNotBlockRequired || (Thread.currentThread() == _dispatcherThread);
     	incrementSyncCounter(ev, doNotBlock);
 
         synchronized (_queue)
@@ -250,7 +260,7 @@ public class QueuedEventDispatcher extends AbstractEventDispatcher implements
     public void dispatch(ContextMessageEvent ev, List listeners)
     {
     	if (_killed) return;
-        queueEvent(new Event(ev, listeners.toArray()) {
+    	nonBlockingQueueEvent(new Event(ev, listeners.toArray()) {
             public void dispatch()
             {
                 for (int t = 0; t < _listeners.length; ++t)
@@ -268,7 +278,7 @@ public class QueuedEventDispatcher extends AbstractEventDispatcher implements
     public void dispatch(ContextExceptionEvent ev, List listeners)
     {
     	if (_killed) return;
-        queueEvent(new Event(ev, listeners.toArray()) {
+    	nonBlockingQueueEvent(new Event(ev, listeners.toArray()) {
             public void dispatch()
             {
                 for (int t = 0; t < _listeners.length; ++t)
@@ -286,7 +296,7 @@ public class QueuedEventDispatcher extends AbstractEventDispatcher implements
     public void dispatch(ConnectionEvent ev, List listeners)
     {
     	if (_killed) return;
-        queueEvent(new Event(ev, listeners.toArray()) {
+    	nonBlockingQueueEvent(new Event(ev, listeners.toArray()) {
             public void dispatch()
             {
                 for (int t = 0; t < _listeners.length; ++t)
@@ -304,7 +314,7 @@ public class QueuedEventDispatcher extends AbstractEventDispatcher implements
     public void dispatch(AccessRightsEvent ev, List listeners)
     {
     	if (_killed) return;
-        queueEvent(new Event(ev, listeners.toArray()) {
+    	nonBlockingQueueEvent(new Event(ev, listeners.toArray()) {
             public void dispatch()
             {
                 for (int t = 0; t < _listeners.length; ++t)
@@ -380,7 +390,7 @@ public class QueuedEventDispatcher extends AbstractEventDispatcher implements
 
   public void dispatch( ContextMessageEvent ev, ContextMessageListener cml) {
   	if (_killed) return;
-    queueEvent(new Event(ev, cml) {
+  	nonBlockingQueueEvent(new Event(ev, cml) {
         public void dispatch()
         {
             try {
@@ -395,7 +405,7 @@ public class QueuedEventDispatcher extends AbstractEventDispatcher implements
 
   public void dispatch( ContextExceptionEvent ev, ContextExceptionListener cel ) {
   	if (_killed) return;
-    queueEvent(new Event(ev, cel) {
+  	nonBlockingQueueEvent(new Event(ev, cel) {
         public void dispatch()
         {
             try {
@@ -409,7 +419,7 @@ public class QueuedEventDispatcher extends AbstractEventDispatcher implements
 
   public void dispatch( ConnectionEvent ev, ConnectionListener cl ) {
   	if (_killed) return;
-    queueEvent(new Event(ev, cl) {
+    nonBlockingQueueEvent(new Event(ev, cl) {
         public void dispatch()
         {
             try {
@@ -423,7 +433,7 @@ public class QueuedEventDispatcher extends AbstractEventDispatcher implements
 
   public void dispatch( AccessRightsEvent ev, AccessRightsListener arl ) {
   	if (_killed) return;
-    queueEvent(new Event(ev, arl) {
+  	nonBlockingQueueEvent(new Event(ev, arl) {
         public void dispatch()
         {
             try {
