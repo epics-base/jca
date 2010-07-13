@@ -101,6 +101,8 @@ public class CAResponseHandler implements ResponseHandler {
 			context.getLogger().fine("Invalid response header (" + CAConstants.CA_MESSAGE_HEADER_SIZE + " bytes expected, " + headerBufferSize + " received) from " + responseFrom + ".");
 			// TODO remove debug output
 			HexDump.hexDump("Invalid CA Header", headerBuffer.array(), headerBuffer.position(), headerBufferSize);
+			// flush all header buffer (needed for UDP packed responses)
+			headerBuffer.position(headerBuffer.limit());
 			return;
 		}
 
@@ -111,6 +113,8 @@ public class CAResponseHandler implements ResponseHandler {
 			context.getLogger().fine("Invalid (or unsupported) command: " + commandID + ".");
 			// TODO remove debug output
 			HexDump.hexDump("Invalid CA Header", headerBuffer.array(), headerBuffer.position(), headerBufferSize);
+			// flush all header buffer (needed for UDP packed responses)
+			headerBuffer.position(headerBuffer.limit());
 			return;
 		}
 		
