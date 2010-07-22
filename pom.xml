@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>epics</groupId>
+    <artifactId>jca</artifactId>
+    <version>2.3.3</version>
+    <name>Java Channel Access</name>
+    <description>JCA is an EPICS Channel Access library for Java. For more information concerning EPICS or Channel Access please refer to the &lt;a href="http://www.aps.anl.gov/epics">EPICS Web pages&lt;/a> or read the &lt;a href="http://www.aps.anl.gov/epics/base/R3-14/8-docs/CAref.html">Channel Access manual (3.14)&lt;/a>.
+	&lt;p>This page does not provide any native JNI libraries used by JNI implemenation of JCA, they can be obtained from &lt;a href="http://www.aps.anl.gov/bcda/jca/jca/">EPICS JCA page&lt;/a> or built from source distribution.&lt;/p>
+	&lt;p>In June 2004 CosyLab agreed to become the "official" maintainer of JCA.&lt;/p>
+    </description>
+    <url>${pom.organization.url}/${pom.artifactId}</url>
+    <inceptionYear>2004</inceptionYear>
+    <organization>
+        <name>Cosylab</name>
+        <url>http://www.cosylab.com</url>
+    </organization>
+    <developers>
+        <developer>
+            <id>msekoranja</id>
+            <name>Matej Sekoranja</name>
+            <email>matej.sekoranja_AT_cosylab.com</email>
+            <url>http://users.cosylab.com/~msekoranja</url>
+            <organization>Cosylab</organization>
+            <roles>
+                <role>Principal Developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+    </developers>
+    <issueManagement>
+        <url>mailto:bug_AT_jca.cosylab.com</url>
+    </issueManagement>
+    <ciManagement>
+        <notifiers>
+            <notifier>
+                <configuration>
+                    <address>matej.sekoranja@cosylab.com</address>
+                </configuration>
+            </notifier>
+        </notifiers>
+    </ciManagement>
+    <build>
+        <sourceDirectory>src/core</sourceDirectory>
+        <testSourceDirectory>test</testSourceDirectory>
+        <resources>
+            <resource>
+                <targetPath>gov/aps/jca</targetPath>
+                <directory>src/core/gov/aps/jca</directory>
+                <includes>
+                    <include>JCALibrary.properties</include>
+                </includes>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.0.2</version>
+                <configuration>
+                    <source>1.4</source>
+                    <target>1.4</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <source>1.4</source>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.2</version>
+        </dependency>
+    </dependencies>
+    <distributionManagement>
+        <repository>
+            <id>default</id>
+            <name>Default Repository</name>
+            <url>${maven.repo.central}/${maven.repo.central.directory}</url>
+        </repository>
+        <site>
+            <id>default</id>
+            <name>Default Site</name>
+            <url>scp://www.cosylab.com/www/${pom.artifactId}</url>
+        </site>
+    </distributionManagement>
+  <reporting>
+    <plugins>
+<!--      <plugin>
+        <artifactId>maven-changes-plugin</artifactId>
+        <configuration>
+          <xmlPath>${basedir}/xdocs/changes.xml</xmlPath>
+        </configuration>
+      </plugin>-->
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <version>2.3</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>changes-report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+        <configuration>
+          <xmlPath>${basedir}/xdocs/changes.xml</xmlPath>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+</project>
