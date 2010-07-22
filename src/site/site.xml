@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="JCA">
 
-    <title>Java Channel Access</title>
-
     <body>
         <links>
             <item name="EPICS JCA Page" href="http://www.aps.anl.gov/bcda/jca/jca"/>
