@@ -1,0 +1,18 @@
+   ----
+   Home
+   ----
+   ----
+
+JCA (Java Channel Access)
+
+   JCA is an EPICS Channel Access library for Java. For more information concerning
+EPICS or Channel Access please refer to the
+{{{http://www.aps.anl.gov/epics}EPICS Web pages}}
+ or read the {{{http://www.aps.anl.gov/epics/base/R3-14/8-docs/CAref.html}Channel Access manual (3.14)}}.
+
+   This page does not provide any native JNI libraries used by JNI implemenation of
+JCA, they can be obtained from {{{http://www.aps.anl.gov/bcda/jca/jca/}EPICS JCA page}}
+or built from source distribution.
+
+   In June 2004 CosyLab agreed to become the "official" maintainer of JCA.
+
