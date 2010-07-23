@@ -82,6 +82,7 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>3.8.2</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <distributionManagement>
@@ -98,12 +99,6 @@
     </distributionManagement>
     <reporting>
         <plugins>
-<!--      <plugin>
-        <artifactId>maven-changes-plugin</artifactId>
-        <configuration>
-          <xmlPath>${basedir}/xdocs/changes.xml</xmlPath>
-        </configuration>
-      </plugin>-->
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
             </plugin>
