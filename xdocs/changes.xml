@@ -59,7 +59,7 @@
 		added at channel creation of already created (cached) channel.
       </action>              
       <action dev="msekoranja" type="fix">
-		Behaviour of <code>auto_addr_list</code> fixed (now it adds auto list to <code>addr_list</code> and does not override it as before).
+		Behaviour of &lt;code&gt;auto_addr_list&lt;/code&gt; fixed (now it adds auto list to &lt;code&gt;addr_list&lt;/code&gt; and does not override it as before).
       </action>              
       <action dev="msekoranja" type="fix">
 		Massive connection fixed (UDP sent buffer was too big).
@@ -83,7 +83,7 @@
 
     <release version="1.1.0" date="2006-09-09" description="JCAS implementation, CA repeater, CAJ fixes.">
       <action dev="msekoranja" type="fix">
-      	<code>CAStatus</code> fixes (readNotify, writeNotify, eventAdd).
+      	&lt;code&gt;CAStatus&lt;/code&gt; fixes (readNotify, writeNotify, eventAdd).
       </action>              
       <action dev="msekoranja" type="fix">
       	Added support to workaround (strip) FQDN hostname returned from getHostname(), only hostname expected.
@@ -92,23 +92,23 @@
       	Flow control added.
       </action>              
       <action dev="msekoranja" type="update">
-      	Pure Java CA Repeater implemented, <code>com.cosylab.epics.caj.CARepeater</code>.
+      	Pure Java CA Repeater implemented, &lt;code&gt;com.cosylab.epics.caj.CARepeater&lt;/code&gt;.
       </action>              
       <action dev="msekoranja" type="update">
-      	Pure Java CA Server (JCAS) implemented, <code>com.cosylab.epics.caj.cas.CAJServerContext</code> context.
+      	Pure Java CA Server (JCAS) implemented, &lt;code&gt;com.cosylab.epics.caj.cas.CAJServerContext&lt;/code&gt; context.
       </action>              
     </release>
 
     <release version="1.0.5" date="2006-05-26" description="Channel.put(value) and context exception notification fixes.">
       <action dev="msekoranja" type="fix">
-      	Synchronous (non-callback) version of <code>Channel.put()</code> fixed to use CA_WRITE request instead of CA_WRITE_NOTIFY.
+      	Synchronous (non-callback) version of &lt;code&gt;Channel.put()&lt;/code&gt; fixed to use CA_WRITE request instead of CA_WRITE_NOTIFY.
       </action>              
       <action dev="msekoranja" type="update">
-      	Added dispatching of <code>ContextExceptionListener.contextVirtualCircuitException()</code>.
+      	Added dispatching of &lt;code&gt;ContextExceptionListener.contextVirtualCircuitException()&lt;/code&gt;.
       </action>              
       <action dev="msekoranja" type="update">
       	I/O event listeners (write, read, monitors) no loger get error state events (disconnect, destroyed),
-		<code>ContextExceptionListener.contextException()</code> is used instead.
+		&lt;code&gt;ContextExceptionListener.contextException()&lt;/code&gt; is used instead.
       </action>              
     </release>
 
@@ -117,7 +117,7 @@
       	Timed-out pendIO() fixed.
       </action>              
       <action dev="msekoranja" type="update">
-      	<code>JNIRepeater</code> support for MacOS.
+      	&lt;code&gt;JNIRepeater&lt;/code&gt; support for MacOS.
       </action>              
     </release>
 
@@ -136,7 +136,7 @@
 
     <release version="1.0.2" date="2005-02-01" description="String array and high port numbers fix.">
       <action dev="msekoranja" type="fix">
-      	Port numbers above <code>0x7000</code> fixed.
+      	Port numbers above &lt;code&gt;0x7000&lt;/code&gt; fixed.
       </action>              
       <action dev="msekoranja" type="fix">
       	String array fix.
@@ -145,12 +145,12 @@
 
     <release version="1.0.1" date="2004-11-06" description="JCA 2.1.5 compatibility and access rights fix.">
       <action dev="msekoranja" type="add">
-        Added support for <code>gov.aps.jca.Context.getVersion()</code> method.
+        Added support for &lt;code&gt;gov.aps.jca.Context.getVersion()&lt;/code&gt; method.
         Now users can retrieve context name and version information (at runtime).
       </action>              
       <action dev="msekoranja" type="add">
-		Added global context configuration defined in <code>JCALibrary.property</code>.
-		Prefix <code>gov.aps.jca.Context</code> can be used instead of specific
+		Added global context configuration defined in &lt;code&gt;JCALibrary.property&lt;/code&gt;.
+		Prefix &lt;code&gt;gov.aps.jca.Context&lt;/code&gt; can be used instead of specific
 		prefixes to set global context configuration. Of course, specific configuration overrides default configuration(s).
       </action>              
       <action dev="msekoranja" type="fix">
