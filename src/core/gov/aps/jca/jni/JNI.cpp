@@ -1110,6 +1110,8 @@ JNIEXPORT jlong JNICALL Java_gov_aps_jca_jni_JNI__1ch_1addMonitor(JNIEnv *env, j
 JNIEXPORT void JNICALL Java_gov_aps_jca_jni_JNI__1ch_1clearMonitor(JNIEnv *env, jclass, jlong monitorID) {
   checkstatus( env, ca_clear_event(((MonitorID*)monitorID)->pevid) );
   env->DeleteGlobalRef(((MonitorID*)monitorID)->callback);
+  // Delete monitor allocated in addMonitor to prevent memory leak
+  delete ((MonitorID*)monitorID);
 }
 
 
