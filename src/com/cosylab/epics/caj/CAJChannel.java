@@ -1190,21 +1190,23 @@ public class CAJChannel extends Channel implements TransportClient {
 		else
 			status = CAStatus.DISCONN;
 			
+		ResponseRequest[] rrs;
 		synchronized (responseRequests)
 		{
-			ResponseRequest[] rrs = new ResponseRequest[responseRequests.size()];
+			rrs = new ResponseRequest[responseRequests.size()];
 			responseRequests.keySet().toArray(rrs);
-			for (int i = 0; i < rrs.length; i++)
+		}
+		
+		for (int i = 0; i < rrs.length; i++)
+		{
+			try
 			{
-				try
-				{
-					rrs[i].exception(status.getStatusCode(), null);
-				}
-				catch (Throwable th)
-				{
-					// TODO remove
-					th.printStackTrace();
-				}
+				rrs[i].exception(status.getStatusCode(), null);
+			}
+			catch (Throwable th)
+			{
+				// TODO remove
+				th.printStackTrace();
 			}
 		}
 		
