@@ -139,6 +139,11 @@
 	 !-->
 	<versions>
 		<version>
+			<id>1.1.7</id>
+			<name>1.1.7</name>
+			<tag>CAJ_20101001_1_1_7</tag>
+		</version>
+		<version>
 			<id>1.1.6</id>
 			<name>1.1.6</name>
 			<tag>CAJ_20091008_1_1_6</tag>

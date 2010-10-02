@@ -184,17 +184,20 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 	 * Close connection.
 	 * @param forced	flag indicating if forced (e.g. forced disconnect) is required 
 	 */
-	public synchronized void close(boolean forced) {
+	public void close(boolean forced) {
 
-		// already closed check
-		if (closed)
-			return;
-		closed = true;
-
-		Timer.cancel(taskID);
-		
-		// remove from registry
-		context.getTransportRegistry().remove(socketAddress, priority);
+		synchronized (this)
+		{
+			// already closed check
+			if (closed)
+				return;
+			closed = true;
+	
+			Timer.cancel(taskID);
+			
+			// remove from registry
+			context.getTransportRegistry().remove(socketAddress, priority);
+		}
 
 		// flush first
 		if (!forced)

@@ -5,6 +5,15 @@
   </properties>
   
   <body>
+    <release version="1.1.7" date="2010-10-01" description="Stability improved.">
+      <action dev="msekoranja" type="update">
+    	Annoying stdout println removed of UDP transport (makes users happier, but there is less diagnostic).           
+      </action>              
+      <action dev="msekoranja" type="fix">
+    	Possible deadlock fixed under heavy request and disconnect actions.
+      </action>              
+    </release>
+
     <release version="1.1.6" date="2009-10-08" description="Searching improved.">
       <action dev="msekoranja" type="update">
     	CA UDP search improved.

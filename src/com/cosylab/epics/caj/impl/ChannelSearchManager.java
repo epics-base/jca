@@ -289,7 +289,17 @@ public class ChannelSearchManager {
 				
 				boolean requestSent = true;
 				boolean allowNewFrame = (framesSent+1) < framesPerTry;
-				boolean frameWasSent = generateSearchRequestMessage(channel, allowNewFrame);
+				boolean frameWasSent;
+				try
+				{
+					frameWasSent = generateSearchRequestMessage(channel, allowNewFrame);
+				} catch (Throwable th) {
+					// make sure that channel is owned
+					// and add it to response list not to cause dead-loops
+					channel.addAndSetListOwnership(responsePendingChannels, timerIndex);
+					// do not report any error
+					break;
+				}
 				if (frameWasSent) {
 					framesSent++;
 					triesInFrame = 0;
@@ -316,8 +326,13 @@ public class ChannelSearchManager {
 
 		    // flush out the search request buffer
 			if (triesInFrame > 0) {
-				flushSendBuffer();
-				framesSent++;
+				try
+				{
+					flushSendBuffer();
+					framesSent++;
+				} catch (Throwable th) {
+					// noop
+				}
 			}
 			
 			endSequenceNumber = getSequenceNumber();
