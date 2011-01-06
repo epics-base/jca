@@ -5,6 +5,12 @@
   </properties>
   
   <body>
+    <release version="2.3.4" date="2011-01-06" description="JNI CA Status check.">
+      <action dev="msekoranja" type="fix">
+        JNI CA Status check before DBR creation patch by Ike.
+      </action>
+    </release>
+
     <release version="2.3.3" date="2009-10-21" description="System env. variables support.">
       <action dev="msekoranja" type="update">
     	Added support for -Djca.use_env=true - reads EPICS system env. variables.

@@ -129,7 +129,7 @@
 	 ! * <release-number>: the sequential number of the given release type.
 	 !
 	 !-->
-	<currentVersion>2.3.3</currentVersion>
+	<currentVersion>2.3.4</currentVersion>
 	
 	<!--
 	 ! A list of all the previous versions of the project.
@@ -137,6 +137,11 @@
 	 ! date when the support ceased.
 	 !-->
 	<versions>
+               <version>
+                        <id>2.3.4</id>
+                        <name>2.3.4</name>
+                        <tag>JCA_20110106_2_3_4</tag>
+                </version>
 		<version>
 			<id>2.3.3</id>
 			<name>2.3.3</name>
