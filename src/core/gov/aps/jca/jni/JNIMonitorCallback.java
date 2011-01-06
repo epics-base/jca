@@ -46,15 +46,16 @@ class JNIMonitorCallback extends JNICallback {
             // dbrid, the actual value, can be null if for example
             // the server's EPICS_CA_MAX_ARRAY_BYTES is too small
             // to send an array.
-            DBR dbr;
-            if (dbrid == 0)
+			CAStatus st= CAStatus.forValue(status);
+			DBR dbr;
+            if (dbrid == 0 || !st.isSuccessful())
                 dbr = null;
             else
             {
                 dbr = DBRFactory.create(type,count);
                 JNI.dbr_update(dbr,dbrid);
             }
-	    dispatch(new MonitorEvent(_source, dbr, CAStatus.forValue(status)));
+	    dispatch(new MonitorEvent(_source, dbr, st));
 	  } catch (Throwable th) {
 		  // catch all exception not to break call from C++, report exception
 		  new RuntimeException("Unexpected exception caught.", th).printStackTrace();
