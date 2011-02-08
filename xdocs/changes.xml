@@ -5,6 +5,12 @@
   </properties>
   
   <body>
+    <release version="2.3.5" date="2011-02-08" description="JNIException made public.">
+      <action dev="msekoranja" type="fix">
+        JNIException class made public. 
+      </action>
+    </release>
+
     <release version="2.3.4" date="2011-01-06" description="JNI CA Status check.">
       <action dev="msekoranja" type="fix">
         JNI CA Status check before DBR creation patch by Ike.

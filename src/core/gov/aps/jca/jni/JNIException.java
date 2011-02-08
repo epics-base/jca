@@ -31,7 +31,7 @@ import gov.aps.jca.*;
 /**
  * A marker class for Channel Access exceptions.
  */
-class JNIException extends Exception {
+public class JNIException extends Exception {
   private CAStatus _status;
 
   public JNIException(int status) {
