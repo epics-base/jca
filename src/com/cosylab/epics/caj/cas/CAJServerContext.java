@@ -809,7 +809,7 @@ public class CAJServerContext extends ServerContext implements CAContext, Config
 				transport.close(true);
 			} catch (Throwable th) {
 				// do all exception safe, print stack in case of an error
-				th.printStackTrace();
+				logger.log(Level.SEVERE, "", th);
 			}
 		}
 	}
