@@ -22,6 +22,8 @@ import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.cosylab.epics.caj.impl.reactor.ReactorHandler;
 
@@ -35,6 +37,9 @@ import com.cosylab.epics.caj.impl.reactor.ReactorHandler;
 // TODO buffer out of memory bug (on massive connect)?! 
 public class BroadcastTransport implements Transport, ReactorHandler {
 
+	// Get Logger
+	private static final Logger logger = Logger.getLogger(BroadcastTransport.class.getName());
+	
 	/**
 	 * Context instance.
 	 */
@@ -204,7 +209,7 @@ public class BroadcastTransport implements Transport, ReactorHandler {
 			
 		} catch (IOException ioex) {
 			// TODO what to do here
-			//ioex.printStackTrace();
+			logger.log(Level.SEVERE, "", ioex);
 		}
 	}
 
@@ -235,7 +240,7 @@ public class BroadcastTransport implements Transport, ReactorHandler {
 			catch (IOException ioex) 
 			{
 				// TODO what to do here
-				ioex.printStackTrace(); 
+				logger.log(Level.SEVERE, "", ioex);
 			}
 		}
 	}
