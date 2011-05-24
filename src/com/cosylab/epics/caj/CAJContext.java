@@ -617,7 +617,7 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 			catch (Throwable th)
 			{
 				// TODO remove
-				th.printStackTrace();
+				logger.log(Level.SEVERE, "", th);
 			}
 		}
 	}
@@ -871,7 +871,7 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 			}
 			catch (Throwable th)
 			{
-				th.printStackTrace();
+				logger.log(Level.SEVERE, "", th);
 			}
 		}
 	}

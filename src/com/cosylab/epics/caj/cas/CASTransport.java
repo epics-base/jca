@@ -27,6 +27,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.cosylab.epics.caj.impl.CAConstants;
 import com.cosylab.epics.caj.impl.CAContext;
@@ -45,6 +47,9 @@ import com.cosylab.epics.caj.util.IntHashMap;
  */
 public class CASTransport implements Transport, ReactorHandler, Runnable {
 
+	// Get Logger
+	private static final Logger logger = Logger.getLogger(CASTransport.class.getName());
+	
 	/**
 	 * Connection status.
 	 */
@@ -256,7 +261,7 @@ public class CASTransport implements Transport, ReactorHandler, Runnable {
 			}
 			catch (Throwable th)
 			{
-				th.printStackTrace();
+				logger.log(Level.SEVERE, "", th);
 			}
 		}
 	}
@@ -371,7 +376,7 @@ public class CASTransport implements Transport, ReactorHandler, Runnable {
 					catch (Throwable th)
 					{
 						// catch all bad code responses...	
-						th.printStackTrace();
+						logger.log(Level.SEVERE, "", th);
 					}
 
 					// reset header buffer
@@ -400,7 +405,7 @@ public class CASTransport implements Transport, ReactorHandler, Runnable {
 					catch (Throwable th)
 					{
 						// catch all bad code responses...	
-						th.printStackTrace();
+						logger.log(Level.SEVERE, "", th);
 					}
 
 					// reset header buffer
@@ -410,7 +415,6 @@ public class CASTransport implements Transport, ReactorHandler, Runnable {
 			}
 			
 		} catch (IOException ioex) {
-			//ioex.printStackTrace();
 			// close connection
 			close(true);
 		} 
@@ -616,7 +620,6 @@ public class CASTransport implements Transport, ReactorHandler, Runnable {
 		}
 		catch (IOException ioex)
 		{
-			//ioex.printStackTrace();
 			// close connection
 			close(true);
 			return false;
@@ -947,7 +950,7 @@ public class CASTransport implements Transport, ReactorHandler, Runnable {
 			try {
 				event.run();
 			} catch (Throwable th) {
-				th.printStackTrace();
+				logger.log(Level.SEVERE, "", th);
 			}
 		}
 	}

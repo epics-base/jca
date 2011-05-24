@@ -40,6 +40,10 @@ import com.cosylab.epics.caj.util.logging.ConsoleLogHandler;
  */
 public class CARepeater implements Runnable
 {
+	
+	// Get Logger
+	private static final Logger logger2 = Logger.getLogger(CARepeater.class.getName());
+	
 	static
 	{
 		// force only IPv4 sockets, since EPICS does not work right with IPv6 sockets
@@ -572,7 +576,7 @@ public class CARepeater implements Runnable
 			return true;
 		} catch (Throwable th) {
 			// unexpected error
-			th.printStackTrace();
+			logger2.log(Level.WARNING, "", th);
 			return false;
 		}
 	}
@@ -622,14 +626,14 @@ public class CARepeater implements Runnable
 					Runtime.getRuntime().exec(commandLine);
 				} catch (Throwable th) {
 					System.err.println("Failed to exec '" + commandLine[0] + "', trying to start native repeater...");
-					th.printStackTrace();
+					logger2.log(Level.SEVERE, "Failed to exec '" + commandLine[0] + "', trying to start native repeater...", th);
 
 					try {
 						//  fallback: try to run native repeater
 						JNIRepeater.repeaterInit();
 					} catch (Throwable th2) {
 						System.err.println("Failed to start native repeater.");
-						th.printStackTrace();
+						logger2.log(Level.SEVERE, "Failed to start native repeater.", th);
 					}
 				}
 

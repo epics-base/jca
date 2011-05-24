@@ -7,7 +7,7 @@
 	<property name="javadoc.packages" value="com.cosylab.epics.caj.*"/>
 
 	<path id="build.classpath">
-		<pathelement location="../jca-2.3.0.jar"/>
+		<pathelement location="jca-2.3.3.jar"/>
 	</path>
 
 

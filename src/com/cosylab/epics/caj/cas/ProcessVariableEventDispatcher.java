@@ -15,6 +15,8 @@
 package com.cosylab.epics.caj.cas;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import gov.aps.jca.cas.ProcessVariable;
 import gov.aps.jca.cas.ProcessVariableEventCallback;
@@ -28,6 +30,10 @@ import gov.aps.jca.dbr.DBR;
 // TODO optimize
 public class ProcessVariableEventDispatcher implements ProcessVariableEventCallback {
 
+	
+	// Get Logger
+	private static final Logger logger = Logger.getLogger(ProcessVariableEventDispatcher.class.getName());
+	
 	/**
 	 * PV to dispatch for.
 	 */
@@ -86,7 +92,7 @@ public class ProcessVariableEventDispatcher implements ProcessVariableEventCallb
 					cachedList[i].postEvent(select, event);
 				} catch (Throwable th) {
 					// print exception trace, do nothing
-					th.printStackTrace();
+					logger.log(Level.SEVERE, "", th);
 				}
 			}
 		}

@@ -23,6 +23,8 @@ import java.net.SocketAddress;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.cosylab.epics.caj.impl.CAContext;
 import com.cosylab.epics.caj.impl.reactor.ReactorHandler;
@@ -35,6 +37,9 @@ import com.cosylab.epics.caj.impl.reactor.lf.LeaderFollowersHandler;
  */
 public class CASAcceptor implements ReactorHandler {
 
+	// Get Logger
+	private static final Logger logger = Logger.getLogger(CASAcceptor.class.getName());
+	
 	/**
 	 * Context instance.
 	 */
@@ -105,7 +110,7 @@ public class CASAcceptor implements ReactorHandler {
 			} 
 			catch (Throwable th)
 			{
-				th.printStackTrace();
+				logger.log(Level.SEVERE, "", th);
 			}
 		}
 	}

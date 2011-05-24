@@ -19,13 +19,18 @@ import gov.aps.jca.JCALibrary;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author <a href="mailto:matej.sekoranjaATcosylab.com">Matej Sekoranja</a>
  * @version $id$
  */
 public class LeaderFollowersThreadPool {
-
+	
+	// Get Logger
+	private static final Logger logger = Logger.getLogger(LeaderFollowersThreadPool.class.getName());
+	
 	/**
 	 * Default thread pool size.
 	 */
@@ -84,7 +89,10 @@ public class LeaderFollowersThreadPool {
         try
         {
             executor.execute(task);
-        } catch (Throwable th) { /* noop */ th.printStackTrace(); }
+        } catch (Throwable th) { 
+        	/* noop */
+        	logger.log(Level.SEVERE, "", th);
+        }
     }
     
     /**

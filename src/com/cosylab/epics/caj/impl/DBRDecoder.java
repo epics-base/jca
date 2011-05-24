@@ -61,6 +61,8 @@ import gov.aps.jca.dbr.TIME;
 import gov.aps.jca.dbr.TimeStamp;
 
 import java.nio.ByteBuffer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * DBR decoder - deserializes data payload.
@@ -75,6 +77,9 @@ import java.nio.ByteBuffer;
  */
 public class DBRDecoder {
 
+	// Get Logger
+	private static final Logger logger = Logger.getLogger(DBRDecoder.class.getName());
+	
 	/**
 	 * Get (deserialize) data payload buffer to DBR structure.
 	 * @param inDBR	DBR to be used (set), do not create a new instance of DBR if non-<code>null</code>.
@@ -144,7 +149,7 @@ public class DBRDecoder {
 		catch (Throwable th)
 		{
 			// TODO remove
-			th.printStackTrace();
+			logger.log(Level.SEVERE, "", th);
 			return null;
 		}
 	}

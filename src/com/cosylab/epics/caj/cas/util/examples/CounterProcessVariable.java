@@ -14,6 +14,9 @@
 
 package com.cosylab.epics.caj.cas.util.examples;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.cosylab.epics.caj.cas.handlers.AbstractCASResponseHandler;
 import com.cosylab.epics.caj.cas.util.NumericProcessVariable;
 
@@ -42,6 +45,9 @@ import gov.aps.jca.dbr.TimeStamp;
  */
 public class CounterProcessVariable extends NumericProcessVariable implements Runnable {
 
+	// Get Logger
+	private static final Logger logger = Logger.getLogger(CounterProcessVariable.class.getName());
+	
 	/**
 	 * Counter start value.
 	 */
@@ -379,7 +385,7 @@ public class CounterProcessVariable extends NumericProcessVariable implements Ru
 				try {
 					write(valueHolder, null);
 				} catch (CAException e) {
-					e.printStackTrace();
+					logger.log(Level.SEVERE, "", e);
 				}
 
 			}

@@ -37,6 +37,8 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.cosylab.epics.caj.impl.CAConstants;
 import com.cosylab.epics.caj.impl.CATransport;
@@ -58,6 +60,9 @@ import com.cosylab.epics.caj.util.ArrayFIFO;
  * @version $id$
  */
 public class CAJChannel extends Channel implements TransportClient {
+	
+	// Get Logger
+	private static final Logger logger = Logger.getLogger(CAJChannel.class.getName());
 	
 	/**
 	 * Client channel ID.
@@ -409,7 +414,7 @@ public class CAJChannel extends Channel implements TransportClient {
 				catch (IOException ioex)
 				{
 					// TODO remove?
-					ioex.printStackTrace();
+					logger.log(Level.SEVERE, "", ioex);
 				}
 			}
 			
@@ -1148,7 +1153,7 @@ public class CAJChannel extends Channel implements TransportClient {
 			}
 			catch (Throwable th)
 			{
-				th.printStackTrace();
+				logger.log(Level.SEVERE, "", th);
 			}
 		}
 	}
@@ -1206,7 +1211,7 @@ public class CAJChannel extends Channel implements TransportClient {
 			catch (Throwable th)
 			{
 				// TODO remove
-				th.printStackTrace();
+				logger.log(Level.SEVERE, "", th);
 			}
 		}
 		
@@ -1237,7 +1242,7 @@ public class CAJChannel extends Channel implements TransportClient {
 				catch (Throwable th)
 				{
 					// TODO remove
-					th.printStackTrace();
+					logger.log(Level.SEVERE, "", th);
 				}
 			}
 		}
@@ -1265,7 +1270,7 @@ public class CAJChannel extends Channel implements TransportClient {
 				catch (Throwable th)
 				{
 					// TODO remove
-					th.printStackTrace();
+					logger.log(Level.SEVERE, "", th);
 				}
 			}
 		}
