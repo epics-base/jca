@@ -366,8 +366,14 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 					return; 
 				}
 				else if (bytesRead == 0)
+				{
+					// no more data, disable flow control
+					bufferFullCount = 0;
+					if (flowControlActive)
+						disableFlowControl();
 					break;
-
+				}
+				
 				// flow control check
 				if (socketBuffer.hasRemaining())
 				{
