@@ -7,6 +7,9 @@
   <body>
     <release version="1.1.8b" date="2011-06-09" description="Stability improved.">
       <action dev="msekoranja" type="fix">
+      	Robustness of Reactor improved (in case of CancelledKeyException).
+      </action>              
+      <action dev="msekoranja" type="fix">
       	Disabling flow control.
       </action>              
       <action dev="msekoranja" type="fix">

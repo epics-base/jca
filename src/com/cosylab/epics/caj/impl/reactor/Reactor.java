@@ -15,6 +15,7 @@
 package com.cosylab.epics.caj.impl.reactor;
 
 import java.io.IOException;
+import java.nio.channels.CancelledKeyException;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
@@ -378,9 +379,15 @@ public class Reactor {
 			// the definition of OP_WRITE in select agrees with the Unix definition, ie. not edge triggered like Win32
 			// this means that you must add and remove OP_WRITE from the interestOps depending on the actual ability to write
 			// clear SelectionKey.OP_WRITE here...
-			int ops = selectedKey.interestOps(); 
-			if ((ops & SelectionKey.OP_WRITE) == SelectionKey.OP_WRITE)
-			    selectedKey.interestOps(ops & (~SelectionKey.OP_WRITE));
+			int ops = 0;
+			try
+			{
+				ops = selectedKey.interestOps(); 
+				if ((ops & SelectionKey.OP_WRITE) == SelectionKey.OP_WRITE)
+				    selectedKey.interestOps(ops & (~SelectionKey.OP_WRITE));
+			} catch (CancelledKeyException cke) {
+				// noop
+			}
 			
 			// get handler as attachment
 			ReactorHandler handler = (ReactorHandler) selectedKey.attachment();
