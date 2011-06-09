@@ -5,6 +5,15 @@
   </properties>
   
   <body>
+    <release version="1.1.8b" date="2011-06-09" description="Stability improved.">
+      <action dev="msekoranja" type="fix">
+      	Disabling flow control.
+      </action>              
+      <action dev="msekoranja" type="fix">
+    	More robust behavior in case JVM fails to get hostname.
+      </action>              
+    </release>
+
     <release version="1.1.7" date="2010-10-01" description="Stability improved.">
       <action dev="msekoranja" type="update">
     	Annoying stdout println removed of UDP transport (makes users happier, but there is less diagnostic).           

@@ -29,25 +29,56 @@ import com.cosylab.epics.caj.impl.Transport;
  */
 public class HostNameRequest extends AbstractCARequest {
 
+	private static String hostName = null;
+	private static final String HOSTNAME_KEY = "HOSTNAME";
+	
+	private static synchronized String getHostName() 
+	{
+		if (hostName == null)
+		{
+			// default fallback
+			hostName = "localhost";
+			
+			try {
+				InetAddress localAddress = InetAddress.getLocalHost();
+				hostName = localAddress.getHostName();
+			} catch (Throwable uhe) {	// not only UnknownHostException
+				// try with environment variable
+				try {
+					String envHN = System.getenv(HOSTNAME_KEY);
+					if (envHN != null)
+						hostName = envHN;
+				} catch (Throwable th) {
+					// in case not supported by JVM/OS
+				}
+				
+				// and system property (overrides env. var.)
+				hostName = System.getProperty(HOSTNAME_KEY, hostName);
+			}
+			
+			if (System.getProperties().contains(CAJConstants.CAJ_STRIP_HOSTNAME))
+			{
+				int dotPos = hostName.indexOf('.');
+				if (dotPos > 0)
+					hostName = hostName.substring(0, dotPos);
+			}
+		}
+		
+		return hostName;
+	}
+	
 	/**
 	 * @param transport
 	 */
-	public HostNameRequest(Transport transport) throws UnknownHostException {
+	public HostNameRequest(Transport transport) {
 		super(transport);
 		
 		// compatibility check
-		if ( transport.getMinorRevision() < 1)
+		if (transport.getMinorRevision() < 1)
 			return;
 
-		InetAddress localAddress = InetAddress.getLocalHost();
-		String hostName = localAddress.getHostName();
-		if (System.getProperties().contains(CAJConstants.CAJ_STRIP_HOSTNAME))
-		{
-			int dotPos = hostName.indexOf('.');
-			if (dotPos > 0)
-				hostName = hostName.substring(0, dotPos);
-		}
-
+		String hostName = getHostName();
+		
 		int alignedMessageSize = calculateAlignedSize(8, CAConstants.CA_MESSAGE_HEADER_SIZE + hostName.length() + 1);
 		requestMessage = ByteBuffer.allocate(alignedMessageSize);
 		requestMessage = insertCAHeader(transport, requestMessage,
