@@ -391,11 +391,13 @@ public class DBREncoder {
 				GR gr = (GR)value;
 	
 				// write units
-				String units = gr.getUnits();
-				payloadBuffer.put(units.getBytes());
-				
 				final int MAX_UNITS_SIZE = 8;
-				final int zeros = MAX_UNITS_SIZE - units.length();
+				String units = gr.getUnits();
+				int unitsLength = units.length();
+				int toCopy = Math.min(MAX_UNITS_SIZE-1, unitsLength);
+				payloadBuffer.put(units.getBytes(), 0, toCopy);
+				
+				final int zeros = MAX_UNITS_SIZE - toCopy;
 				for (int i = zeros; i > 0; i--)
 					payloadBuffer.put((byte)0);
 				
