@@ -804,7 +804,7 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 				    throw new IllegalStateException("transport closed");
 			    
 			    // forced flush check
-				if (message.limit()+sendBuffer.position() > sendBuffer.capacity())
+				if (message.limit()+sendBuffer.position() >= sendBuffer.capacity())
 				    flush();
 				
 				// TODO !!! check message size, it can exceed sendBuffer capacity
