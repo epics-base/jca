@@ -85,12 +85,12 @@ public class ChannelSearchManager {
 	    /**
 		 * Ordered (as inserted) list of channels with search request pending.
 		 */
-	    ArrayFIFO requestPendingChannels = new ArrayFIFO();
+	    final ArrayFIFO requestPendingChannels = new ArrayFIFO();
 
 		/**
 		 * Ordered (as inserted) list of channels with search request pending.
 		 */
-	    ArrayFIFO responsePendingChannels = new ArrayFIFO();
+	    final ArrayFIFO responsePendingChannels = new ArrayFIFO();
 
 		/**
 		 * Timer ID.
@@ -276,7 +276,7 @@ public class ChannelSearchManager {
 				}
 			}
 			
-			startSequenceNumber = getSequenceNumber() + 1;
+			startSequenceNumber = getSequenceNumber();
 			
 			searchAttempts = 0;
 			searchRespones = 0;
@@ -290,6 +290,8 @@ public class ChannelSearchManager {
 				boolean requestSent = true;
 				boolean allowNewFrame = (framesSent+1) < framesPerTry;
 				boolean frameWasSent;
+				// guess next
+				endSequenceNumber = getSequenceNumber() + 1;
 				try
 				{
 					frameWasSent = generateSearchRequestMessage(channel, allowNewFrame);
@@ -328,6 +330,8 @@ public class ChannelSearchManager {
 			if (triesInFrame > 0) {
 				try
 				{
+					// guess next
+					endSequenceNumber = getSequenceNumber() + 1;
 					flushSendBuffer();
 					framesSent++;
 				} catch (Throwable th) {

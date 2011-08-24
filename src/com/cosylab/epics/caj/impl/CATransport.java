@@ -21,6 +21,7 @@ import gov.aps.jca.event.ContextVirtualCircuitExceptionEvent;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
@@ -611,18 +612,16 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 						// bytesSend == buffer.position(), so there is no need for flip()
 						if (buffer.position() != buffer.limit())
 						{
-							if (tries == TRIES)
-							{ 
-								// TODO do sth ... and do not close transport
-								context.getLogger().warning("Failed to send message to " + socketAddress + " - buffer full.");
-								return;
+							if (tries >= TRIES)
+							{
+								context.getLogger().warning("Failed to send message to " + socketAddress + " - buffer full, will retry.");
 							}
 							
 							// flush & wait for a while...
 							context.getLogger().finest("Send buffer full for " + socketAddress + ", waiting...");
 							channel.socket().getOutputStream().flush();
 							try {
-								Thread.sleep(10+tries*100);
+								Thread.sleep(Math.min(15000,10+tries*100));
 							} catch (InterruptedException e) {
 								// noop
 							}
