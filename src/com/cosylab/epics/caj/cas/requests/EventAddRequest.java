@@ -63,20 +63,20 @@ public class EventAddRequest extends AbstractCARequest {
 		if (!extendedHeader)
 		{
 			requestMessage = insertCAHeader(transport, requestMessage,
-											(short)1, (short)alignedPayloadSize, (short)dataType, (short)dataCount,
+											(short)1, alignedPayloadSize, dataType, dataCount,
 											status.getStatusCode(), ioid);
 		}
 		else
 		{
 			requestMessage = insertCAHeader(transport, requestMessage,
-											(short)1, (short)0xFFFF, (short)dataType, (short)0,
+											(short)1, 0xFFFF, dataType, 0,
 											status.getStatusCode(), ioid);
 			requestMessage.putInt(alignedPayloadSize);
 			requestMessage.putInt(dataCount);
 		}
 											
 		// append value and align message
-		DBREncoder.insertPayload(requestMessage, (short)dataType, dataCount, value);
+		DBREncoder.insertPayload(requestMessage, dataType, dataCount, value);
 		
 		// it can happen that value.getCount() < dataCount and
 		// insertPayload will not fill-up the whole message

@@ -125,7 +125,7 @@
 	 ! DO NOT MODIFY THIS PROPERTY MANUALLY! Instead, use Maven goals
 	 ! cosybuild:release and cosybuild:maintain.
 	 !-->
-	<currentVersion>1.1.8beta</currentVersion>
+	<currentVersion>1.1.8</currentVersion>
 	
 	<!-- A single-line description of the project. -->
 	<shortDescription>100% pure Java implementation of the EPICS Channel Access library.</shortDescription>

@@ -66,13 +66,13 @@ public class ReadNotifyRequest extends AbstractCARequest {
 		if (!extendedHeader)
 		{
 			requestMessage = insertCAHeader(transport, requestMessage,
-											(short)15, (short)alignedPayloadSize, (short)dataType, (short)dataCount,
+											(short)15, alignedPayloadSize, (short)dataType, dataCount,
 											sid, ioid);
 		}
 		else
 		{
 			requestMessage = insertCAHeader(transport, requestMessage,
-											(short)15, (short)0xFFFF, (short)dataType, (short)0,
+											(short)15, 0xFFFF, (short)dataType, 0,
 											sid, ioid);
 			requestMessage.putInt(alignedPayloadSize);
 			requestMessage.putInt(dataCount);

@@ -121,13 +121,13 @@ public class ReadNotifyRequest extends AbstractCARequest implements NotifyRespon
 		if (dataCount < 0xFFFF)
 		{
 		    requestMessage = insertCAHeader(transport, null,
-		            						(short)15, (short)0, (short)dataType, (short)dataCount,
+		            						(short)15, 0, (short)dataType, dataCount,
 		            						sid, ioid);
 		}
 		else {
 			requestMessage = ByteBuffer.allocate(CAConstants.CA_EXTENDED_MESSAGE_HEADER_SIZE);
 		    requestMessage = insertCAHeader(transport, requestMessage,
-		            						(short)15, (short)0xFFFF, (short)dataType, (short)0,
+		            						(short)15, 0xFFFF, (short)dataType, 0,
 		            						sid, ioid);
 		    requestMessage.putInt(0);
 		    requestMessage.putInt(dataCount);

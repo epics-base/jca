@@ -108,13 +108,13 @@ public class WriteNotifyRequest extends AbstractCARequest implements NotifyRespo
 		if (!extendedHeader)
 		{
 			requestMessage = insertCAHeader(transport, requestMessage,
-											(short)19, (short)alignedPayloadSize, (short)dataType, (short)dataCount,
+											(short)19, alignedPayloadSize, (short)dataType, dataCount,
 											sid, ioid);
 		}
 		else
 		{
 			requestMessage = insertCAHeader(transport, requestMessage,
-											(short)19, (short)0xFFFF, (short)dataType, (short)0,
+											(short)19, 0xFFFF, (short)dataType, 0,
 											sid, ioid);
 			requestMessage.putInt(alignedPayloadSize);
 			requestMessage.putInt(dataCount);

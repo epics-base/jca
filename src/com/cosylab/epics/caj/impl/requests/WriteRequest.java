@@ -75,13 +75,13 @@ public class WriteRequest extends AbstractCARequest {
 		if (!extendedHeader)
 		{
 			requestMessage = insertCAHeader(transport, requestMessage,
-											(short)4, (short)alignedPayloadSize, (short)dataType, (short)dataCount,
+											(short)4, alignedPayloadSize, (short)dataType, dataCount,
 											sid, cid);
 		}
 		else
 		{
 			requestMessage = insertCAHeader(transport, requestMessage,
-											(short)4, (short)0xFFFF, (short)dataType, (short)0,
+											(short)4, 0xFFFF, (short)dataType, 0,
 											sid, cid);
 			requestMessage.putInt(alignedPayloadSize);
 			requestMessage.putInt(dataCount);
