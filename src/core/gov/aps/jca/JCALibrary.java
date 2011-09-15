@@ -69,7 +69,7 @@ public final class JCALibrary {
   static private final int VERSION=2;
   static private final int REVISION=3;
   // TODO version to be incremented - do not forget
-  static private final int MODIFICATION=4;
+  static private final int MODIFICATION=6;
   static private final String VERSION_STRING=""+VERSION+"."+REVISION+"."+MODIFICATION;
   
   static private JCALibrary _instance=null;
