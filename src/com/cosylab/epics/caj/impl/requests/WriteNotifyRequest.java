@@ -104,21 +104,9 @@ public class WriteNotifyRequest extends AbstractCARequest implements NotifyRespo
 		}
 		
 		requestMessage = ByteBuffer.allocate(alignedMessageSize);
-
-		if (!extendedHeader)
-		{
-			requestMessage = insertCAHeader(transport, requestMessage,
-											(short)19, alignedPayloadSize, (short)dataType, dataCount,
-											sid, ioid);
-		}
-		else
-		{
-			requestMessage = insertCAHeader(transport, requestMessage,
-											(short)19, 0xFFFF, (short)dataType, 0,
-											sid, ioid);
-			requestMessage.putInt(alignedPayloadSize);
-			requestMessage.putInt(dataCount);
-		}
+		requestMessage = insertCAHeader(transport, requestMessage,
+										(short)19, alignedPayloadSize, (short)dataType, dataCount,
+										sid, ioid);
 											
 		// append value and align message
 		DBREncoder.insertPayload(requestMessage, (short)dataType, dataCount, value);

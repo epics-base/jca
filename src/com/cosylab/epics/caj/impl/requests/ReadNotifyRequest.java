@@ -118,20 +118,9 @@ public class ReadNotifyRequest extends AbstractCARequest implements NotifyRespon
 		ioid = context.registerResponseRequest(this);
 		channel.registerResponseRequest(this);
 		
-		if (dataCount < 0xFFFF)
-		{
-		    requestMessage = insertCAHeader(transport, null,
-		            						(short)15, 0, (short)dataType, dataCount,
-		            						sid, ioid);
-		}
-		else {
-			requestMessage = ByteBuffer.allocate(CAConstants.CA_EXTENDED_MESSAGE_HEADER_SIZE);
-		    requestMessage = insertCAHeader(transport, requestMessage,
-		            						(short)15, 0xFFFF, (short)dataType, 0,
-		            						sid, ioid);
-		    requestMessage.putInt(0);
-		    requestMessage.putInt(dataCount);
-		}
+	    requestMessage = insertCAHeader(transport, null,
+	            						(short)15, 0, (short)dataType, dataCount,
+	            						sid, ioid);
 	}
 
 	/**

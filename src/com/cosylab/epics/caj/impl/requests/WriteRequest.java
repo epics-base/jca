@@ -71,21 +71,9 @@ public class WriteRequest extends AbstractCARequest {
 		}
 		
 		requestMessage = ByteBuffer.allocate(alignedMessageSize);
-
-		if (!extendedHeader)
-		{
-			requestMessage = insertCAHeader(transport, requestMessage,
-											(short)4, alignedPayloadSize, (short)dataType, dataCount,
-											sid, cid);
-		}
-		else
-		{
-			requestMessage = insertCAHeader(transport, requestMessage,
-											(short)4, 0xFFFF, (short)dataType, 0,
-											sid, cid);
-			requestMessage.putInt(alignedPayloadSize);
-			requestMessage.putInt(dataCount);
-		}
+		requestMessage = insertCAHeader(transport, requestMessage,
+										(short)4, alignedPayloadSize, (short)dataType, dataCount,
+										sid, cid);
 											
 		// append value and align message
 		DBREncoder.insertPayload(requestMessage, (short)dataType, dataCount, value);

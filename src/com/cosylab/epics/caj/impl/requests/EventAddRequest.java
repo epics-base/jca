@@ -112,11 +112,9 @@ public class EventAddRequest extends AbstractCARequest implements NotifyResponse
 		else 
 		{
 			requestMessage = ByteBuffer.allocate(CAConstants.CA_EXTENDED_MESSAGE_HEADER_SIZE + 16);
-		    requestMessage = insertCAHeader(transport, requestMessage,
-		            						(short)1, 0xFFFF, (short)dataType, 0,
-		            						sid, subsid);
-		    requestMessage.putInt(16);
-		    requestMessage.putInt(dataCount);
+			requestMessage = insertCAHeader(transport, requestMessage,
+					(short)1, 16, (short)dataType, dataCount,
+					sid, subsid);
 		}
 
 		// low, high, to - all 0.0
@@ -140,7 +138,7 @@ public class EventAddRequest extends AbstractCARequest implements NotifyResponse
 			subscriptionUpdateNeeded = false;
 			new SubscriptionUpdateRequest(transport,
 					   requestMessage.getInt(8), requestMessage.getInt(12),
-					   requestMessage.getShort(4), requestMessage.getShort(6)).submit();
+					   requestedDataType, requestedDataCount).submit();
 		}
 	}
 
