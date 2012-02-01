@@ -5,6 +5,12 @@
   </properties>
   
   <body>
+    <release version="2.3.6-SNAPSHOT" date="2012-02-01" description="DBE_PROPERTY support">
+      <action dev="msekoranja" type="update">
+         DBE_PROPERTY support.
+      </action>
+    </release>
+
     <release version="2.3.5" date="2011-02-08" description="JNIException made public.">
       <action dev="msekoranja" type="fix">
         JNIException class made public. 

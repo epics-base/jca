@@ -37,6 +37,7 @@ abstract public class Monitor {
   static final public int VALUE=1;
   static final public int LOG  =2;
   static final public int ALARM=4;
+  static final public int PROPERTY=8;
 
 
   abstract public Context  getContext();
@@ -47,6 +48,7 @@ abstract public class Monitor {
            public boolean  isMonitoringValue() { return (getMask() & VALUE)!=0; }
            public boolean  isMonitoringLog()   { return (getMask() & LOG)!=0; }
            public boolean  isMonitoringAlarm() { return (getMask() & ALARM)!=0; }
+           public boolean  isMonitoringProperty() { return (getMask() & PROPERTY)!=0; }
   /*
    * @deprecated
    */
