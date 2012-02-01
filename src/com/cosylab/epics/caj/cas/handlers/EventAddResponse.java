@@ -72,7 +72,7 @@ public class EventAddResponse extends AbstractCASResponseHandler {
 		// check monitor mask
 		final int MASK_OFFSET = 12;
 		short mask = response[1].getShort(MASK_OFFSET);
-		if ((mask & (Monitor.ALARM | Monitor.LOG | Monitor.VALUE)) == 0)
+		if ((mask & (Monitor.ALARM | Monitor.LOG | Monitor.VALUE | Monitor.PROPERTY)) == 0)
 		{
 			sendException(transport, channel.getCID(), CAStatus.BADMASK, response[0], 
 					"event add req with mask=" + Integer.toHexString(mask));
