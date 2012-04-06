@@ -67,7 +67,7 @@ public class CachedByteBufferAllocator {
         }
 
         if (buffer == null) {
-            buffer = ByteBuffer.allocate(bufferSize); 
+            buffer = ByteBuffer.allocateDirect(bufferSize); 
         } 
 
         return buffer;

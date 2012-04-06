@@ -77,6 +77,19 @@ import java.util.logging.Logger;
  */
 public class DBRDecoder {
 
+	/**
+	 * Threshold at which the method to copy the buffer is changed.
+	 * If lower, the elements are copied one by one. If higher, the
+	 * data is copied with ByteBuffer bulk operations.
+	 * <p>
+	 * As of JDK 1.7 the optimization at lower count is desirable because there is a
+	 * fair amount of logic implemented in ByteBuffer bulk operations
+	 * to determine which methods are available and which one is more
+	 * efficient. As always, this optimization may or may not be
+	 * needed in future versions.
+	 */
+	private static final int OPTIMIZED_COPY_THRESHOLD = 10;
+
 	// Get Logger
 	private static final Logger logger = Logger.getLogger(DBRDecoder.class.getName());
 	
@@ -237,17 +250,32 @@ public class DBRDecoder {
 				arr = new String[dataCount];
 
 			if (dataCount == 1) {
-				byte[] data = dataPayloadBuffer.array();
 				int start = dataPayloadBuffer.position();
 				final int bufferEnd = dataPayloadBuffer.limit();
 				int end = start;
 				
 				// find zero char (string terminator)
-				while (data[end] != 0 && end < bufferEnd)
+				while (dataPayloadBuffer.get(end) != 0 && end < bufferEnd)
 					end++;
-				// NOTE: rest of the bytes are left in the buffer
-	
-				arr[0] = new String(data, start, end-start);
+
+				// If the buffer is array backed, we can simply
+				// use it directly. If not, we need to make a copy
+				if (dataPayloadBuffer.hasArray()) {
+					// NOTE: rest of the bytes are left in the buffer
+					arr[0] = new String(dataPayloadBuffer.array(), start, end-start);
+				}
+				else
+				{
+					int length = end-start;
+					byte[] data = new byte[end-start];
+					if (length < OPTIMIZED_COPY_THRESHOLD) {
+						for (int i = 0; i < length; i++)
+							data[i] = dataPayloadBuffer.get();
+					} else {
+						dataPayloadBuffer.get(data);
+					}
+					arr[0] = new String(data, 0, end-start);
+				}
 			}
 			else 
 			{
@@ -269,8 +297,14 @@ public class DBRDecoder {
 			else
 				arr = new short[dataCount];
 
-			for (int i = 0; i < dataCount; i++)
-				arr[i] = dataPayloadBuffer.getShort();
+			if (dataCount < OPTIMIZED_COPY_THRESHOLD) {
+				for (int i = 0; i < dataCount; i++)
+					arr[i] = dataPayloadBuffer.getShort();
+			}
+			else
+			{
+				dataPayloadBuffer.asShortBuffer().get(arr);
+			}
 			return arr;
 		}
 		else if (dataType == DBR_Float.TYPE)
@@ -281,8 +315,14 @@ public class DBRDecoder {
 			else
 				arr = new float[dataCount];
 
-			for (int i = 0; i < dataCount; i++)
-				arr[i] = dataPayloadBuffer.getFloat();
+			if (dataCount < OPTIMIZED_COPY_THRESHOLD) {
+				for (int i = 0; i < dataCount; i++)
+					arr[i] = dataPayloadBuffer.getFloat();
+			}
+			else
+			{
+				dataPayloadBuffer.asFloatBuffer().get(arr);
+			}
 			return arr;
 		}
 		else if (dataType == DBR_Enum.TYPE)
@@ -294,8 +334,14 @@ public class DBRDecoder {
 			else
 				arr = new short[dataCount];
 
-			for (int i = 0; i < dataCount; i++)
-				arr[i] = dataPayloadBuffer.getShort();
+			if (dataCount < OPTIMIZED_COPY_THRESHOLD) {
+				for (int i = 0; i < dataCount; i++)
+					arr[i] = dataPayloadBuffer.getShort();
+			}
+			else
+			{
+				dataPayloadBuffer.asShortBuffer().get(arr);
+			}
 			return arr;
 		}
 		else if (dataType == DBR_Byte.TYPE)
@@ -306,8 +352,14 @@ public class DBRDecoder {
 			else
 				arr = new byte[dataCount];
 
-			for (int i = 0; i < dataCount; i++)
-				arr[i] = dataPayloadBuffer.get();
+			if (dataCount < OPTIMIZED_COPY_THRESHOLD) {
+				for (int i = 0; i < dataCount; i++)
+					arr[i] = dataPayloadBuffer.get();
+			}
+			else
+			{
+				dataPayloadBuffer.get(arr);
+			}
 			return arr;
 		}
 		else if (dataType == DBR_Int.TYPE)
@@ -318,8 +370,14 @@ public class DBRDecoder {
 			else
 				arr = new int[dataCount];
 
-			for (int i = 0; i < dataCount; i++)
-				arr[i] = dataPayloadBuffer.getInt();
+			if (dataCount < OPTIMIZED_COPY_THRESHOLD) {
+				for (int i = 0; i < dataCount; i++)
+					arr[i] = dataPayloadBuffer.getInt();
+			}
+			else
+			{
+				dataPayloadBuffer.asIntBuffer().get(arr);
+			}
 			return arr;
 		}
 		else if (dataType == DBR_Double.TYPE)
@@ -330,8 +388,14 @@ public class DBRDecoder {
 			else
 				arr = new double[dataCount];
 
-			for (int i = 0; i < dataCount; i++)
-				arr[i] = dataPayloadBuffer.getDouble();
+			if (dataCount < OPTIMIZED_COPY_THRESHOLD) {
+				for (int i = 0; i < dataCount; i++)
+					arr[i] = dataPayloadBuffer.getDouble();
+			}
+			else
+			{
+				dataPayloadBuffer.asDoubleBuffer().get(arr);
+			}
 			return arr;
 		}
 		else

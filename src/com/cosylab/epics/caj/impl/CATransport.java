@@ -161,13 +161,13 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 		
 		// initialize buffers
 		receiveBuffer = new ByteBuffer[] {
-							ByteBuffer.allocate(CAConstants.CA_EXTENDED_MESSAGE_HEADER_SIZE),
-							ByteBuffer.allocate(Math.max(CAConstants.MAX_TCP_RECV, context.getMaxArrayBytes()))
+							ByteBuffer.allocateDirect(CAConstants.CA_EXTENDED_MESSAGE_HEADER_SIZE),
+							ByteBuffer.allocateDirect(Math.max(CAConstants.MAX_TCP_RECV, context.getMaxArrayBytes()))
 						};
 		// first limit to a reading of an standard message header
 		receiveBuffer[0].limit(CAConstants.CA_MESSAGE_HEADER_SIZE);
 
-		socketBuffer = ByteBuffer.allocate(CAConstants.MAX_TCP_RECV);
+		socketBuffer = ByteBuffer.allocateDirect(CAConstants.MAX_TCP_RECV);
 		
 		
 		// initialize owners list, send queue
@@ -457,7 +457,7 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 
 				// check payload buffer capacity
 				if (payloadSize > payloadBuffer.capacity()) {
-					receiveBuffer[1] = ByteBuffer.allocate(payloadSize);
+					receiveBuffer[1] = ByteBuffer.allocateDirect(payloadSize);
 					payloadBuffer = receiveBuffer[1];
 				}
 
@@ -529,7 +529,9 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 		int srcBufferPosition = srcBuffer.position();
 		int destPosition = destBuffer.position();
 		int bytesToRead = Math.min(destBuffer.remaining(), srcBuffer.remaining());
-		System.arraycopy(srcBuffer.array(), srcBufferPosition, destBuffer.array(), destPosition, bytesToRead);
+                ByteBuffer toCopy = srcBuffer.slice();
+                toCopy.limit(bytesToRead);
+                destBuffer.put(toCopy);
 		destBuffer.position(destPosition + bytesToRead);
 		srcBuffer.position(srcBufferPosition + bytesToRead);
 	}
