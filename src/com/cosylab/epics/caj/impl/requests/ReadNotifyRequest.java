@@ -26,7 +26,6 @@ import java.nio.ByteBuffer;
 
 import com.cosylab.epics.caj.CAJChannel;
 import com.cosylab.epics.caj.CAJContext;
-import com.cosylab.epics.caj.impl.CAConstants;
 import com.cosylab.epics.caj.impl.DBRDecoder;
 import com.cosylab.epics.caj.impl.NotifyResponseRequest;
 import com.cosylab.epics.caj.impl.Transport;

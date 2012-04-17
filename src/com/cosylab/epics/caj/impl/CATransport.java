@@ -21,7 +21,6 @@ import gov.aps.jca.event.ContextVirtualCircuitExceptionEvent;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;

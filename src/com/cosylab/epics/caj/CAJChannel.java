@@ -909,6 +909,31 @@ public class CAJChannel extends Channel implements TransportClient {
 			throw new IllegalStateException("No channel transport available, channel disconnected.");
 	}
 
+	public DBR get(DBR preallocatedDBR, DBRType type, int count)
+	throws CAException, IllegalStateException {
+	connectionRequiredCheck();
+
+	if (!getReadAccess())
+		throw new CAException("No read access rights granted."); 
+
+	Transport t = getTransport();
+	if (t != null)
+	{
+		try
+		{
+			DBR retVal = preallocatedDBR; //DBRFactory.create(type, count);
+			new ReadNotifyRequest(this, null, retVal, t, getServerChannelID(), type.getValue(), count).submit();
+			return retVal;
+		}
+		catch (IOException ioex)
+		{
+			throw new CAException("Failed to retrieve value.", ioex);
+		} 
+	}
+	else
+		throw new IllegalStateException("No channel transport available, channel disconnected.");
+}
+
 	/**
 	 * @see gov.aps.jca.Channel#get(gov.aps.jca.dbr.DBRType, int, gov.aps.jca.event.GetListener)
 	 */

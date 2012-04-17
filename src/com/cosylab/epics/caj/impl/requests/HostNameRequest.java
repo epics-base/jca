@@ -15,7 +15,6 @@
 package com.cosylab.epics.caj.impl.requests;
 
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
 import com.cosylab.epics.caj.CAJConstants;

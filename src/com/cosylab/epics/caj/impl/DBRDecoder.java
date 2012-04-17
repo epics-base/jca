@@ -267,14 +267,14 @@ public class DBRDecoder {
 				else
 				{
 					int length = end-start;
-					byte[] data = new byte[end-start];
+					byte[] data = new byte[length];
 					if (length < OPTIMIZED_COPY_THRESHOLD) {
 						for (int i = 0; i < length; i++)
 							data[i] = dataPayloadBuffer.get();
 					} else {
-						dataPayloadBuffer.get(data);
+						dataPayloadBuffer.get(data, 0, length);
 					}
-					arr[0] = new String(data, 0, end-start);
+					arr[0] = new String(data, 0, length);
 				}
 			}
 			else 
@@ -303,7 +303,7 @@ public class DBRDecoder {
 			}
 			else
 			{
-				dataPayloadBuffer.asShortBuffer().get(arr);
+				dataPayloadBuffer.asShortBuffer().get(arr, 0, dataCount);
 			}
 			return arr;
 		}
@@ -321,7 +321,7 @@ public class DBRDecoder {
 			}
 			else
 			{
-				dataPayloadBuffer.asFloatBuffer().get(arr);
+				dataPayloadBuffer.asFloatBuffer().get(arr, 0, dataCount);
 			}
 			return arr;
 		}
@@ -340,7 +340,7 @@ public class DBRDecoder {
 			}
 			else
 			{
-				dataPayloadBuffer.asShortBuffer().get(arr);
+				dataPayloadBuffer.asShortBuffer().get(arr, 0, dataCount);
 			}
 			return arr;
 		}
@@ -358,7 +358,7 @@ public class DBRDecoder {
 			}
 			else
 			{
-				dataPayloadBuffer.get(arr);
+				dataPayloadBuffer.get(arr, 0, dataCount);
 			}
 			return arr;
 		}
@@ -376,7 +376,7 @@ public class DBRDecoder {
 			}
 			else
 			{
-				dataPayloadBuffer.asIntBuffer().get(arr);
+				dataPayloadBuffer.asIntBuffer().get(arr, 0, dataCount);
 			}
 			return arr;
 		}
@@ -394,7 +394,7 @@ public class DBRDecoder {
 			}
 			else
 			{
-				dataPayloadBuffer.asDoubleBuffer().get(arr);
+				dataPayloadBuffer.asDoubleBuffer().get(arr, 0, dataCount);
 			}
 			return arr;
 		}
