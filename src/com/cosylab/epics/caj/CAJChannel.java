@@ -1037,6 +1037,7 @@ public class CAJChannel extends Channel implements TransportClient {
 		MonitorListener l)
 		throws CAException, IllegalStateException {
 		checkNotClosedState();
+                checkMonitorSize(type, count, context.getMaxArrayBytes());
 		return new CAJMonitor(context, type, count, this, l, mask);
 	}
 
