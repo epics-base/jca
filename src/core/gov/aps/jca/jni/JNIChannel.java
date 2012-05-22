@@ -367,6 +367,7 @@ public class JNIChannel extends Channel {
    */
   public Monitor addMonitor(DBRType type, int count, int mask, MonitorListener l) throws CAException {
     assertState(isValid(), "Invalid channel");
+    checkMonitorSize(type, count, _jnicontext.getMaxArrayBytes());
     try {
       return _jnicontext.ch_addMonitor(type,count,this,l,mask);
     } catch(JNIException jniex) {
