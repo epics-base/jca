@@ -662,14 +662,21 @@ abstract public class Channel {
    * @param maxArrayBytes maximum size of the array
    */
   protected void checkMonitorSize(DBRType type, int count, int maxArrayBytes) {
-      int bytesPerElement = 1;
-      if (type.isSHORT()) {
+      int bytesPerElement = 0;
+      if (type.isBYTE()) {
+          bytesPerElement = 1;
+      } else if (type.isSHORT() || type.isENUM() || (type == DBRType.PUT_ACKT) || (type == DBRType.PUT_ACKS)) {
           bytesPerElement = 2;
       } else if (type.isINT() || type.isFLOAT()) {
           bytesPerElement = 4;
       } else if (type.isDOUBLE()) {
           bytesPerElement = 8;
+      } else if (type.isSTRING()) {
+          bytesPerElement = 40; // MAX_STRING_SIZE
+      } else {
+          throw new IllegalArgumentException("Unsupported data type: " + type);
       }
+
       if (bytesPerElement * count > maxArrayBytes)
           throw new IllegalArgumentException("Size of the monitor exceeds maxArrayBytes (" + count + " * " + bytesPerElement + " > " + maxArrayBytes + ")");
   }
