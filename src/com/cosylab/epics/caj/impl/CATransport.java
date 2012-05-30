@@ -37,6 +37,7 @@ import com.cosylab.epics.caj.impl.requests.EchoRequest;
 import com.cosylab.epics.caj.impl.requests.EventsOffRequest;
 import com.cosylab.epics.caj.impl.requests.EventsOnRequest;
 import com.cosylab.epics.caj.util.Timer;
+import java.nio.BufferOverflowException;
 
 /**
  * CA transport implementation.
@@ -808,7 +809,11 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 				    flush();
 				
 				// TODO !!! check message size, it can exceed sendBuffer capacity
-				sendBuffer.put(message);
+                                try {
+					sendBuffer.put(message);
+                                } catch(BufferOverflowException ex) {
+                                	throw new RuntimeException("Message exceeds write buffer size (com.cosylab.epics.caj.impl.CachedByteBufferAllocator.buffer_size)", ex);
+                                }
 			}
 		}
 	}
