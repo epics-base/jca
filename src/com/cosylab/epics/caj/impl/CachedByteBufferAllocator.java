@@ -31,7 +31,7 @@ public class CachedByteBufferAllocator {
      * according to properties.
      */
     // TODO determine (if possible)...
-    public static int bufferSize = 16000;
+    public static int bufferSize = 16*1024 + CAConstants.CA_EXTENDED_MESSAGE_HEADER_SIZE;
     
     static {
         String strSize = JCALibrary.getInstance().getProperty(CachedByteBufferAllocator.class.getName() + ".buffer_size");

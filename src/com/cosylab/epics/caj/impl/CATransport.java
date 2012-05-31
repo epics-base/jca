@@ -139,6 +139,11 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 	 * Process priority.
 	 */
 	protected short priority;
+	
+	/**
+	 * Initial receive buffer size.
+	 */
+	private static final int INITIAL_RX_BUFFER_SIZE = 1024;
 
 	/**
 	 * @param context
@@ -161,13 +166,12 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 		// initialize buffers
 		receiveBuffer = new ByteBuffer[] {
 							ByteBuffer.allocateDirect(CAConstants.CA_EXTENDED_MESSAGE_HEADER_SIZE),
-							ByteBuffer.allocateDirect(Math.max(CAConstants.MAX_TCP_RECV, context.getMaxArrayBytes()))
+							ByteBuffer.allocateDirect(INITIAL_RX_BUFFER_SIZE)
 						};
 		// first limit to a reading of an standard message header
 		receiveBuffer[0].limit(CAConstants.CA_MESSAGE_HEADER_SIZE);
 
 		socketBuffer = ByteBuffer.allocateDirect(CAConstants.MAX_TCP_RECV);
-		
 		
 		// initialize owners list, send queue
 		owners = new HashMap();
@@ -456,7 +460,25 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 
 				// check payload buffer capacity
 				if (payloadSize > payloadBuffer.capacity()) {
-					receiveBuffer[1] = ByteBuffer.allocateDirect(payloadSize);
+					
+					int maxPayloadSize = context.getMaxArrayBytes();
+					if (payloadSize > maxPayloadSize)
+					{
+						// for now we drop connection
+						// TODO implement skip message logic
+						logger.log(Level.SEVERE,
+								"Received payload size (" + payloadSize + 
+								") is larger than configured maximum array size (" +
+								context.getMaxArrayBytes() + "), disconnecting...");
+						close(true);
+						return;
+						
+					}
+					
+					final int PAGE_SIZE = 4096;
+					int newSize = Math.min(maxPayloadSize, (payloadSize & ~(PAGE_SIZE-1)) + PAGE_SIZE);
+
+					receiveBuffer[1] = ByteBuffer.allocateDirect(newSize);
 					payloadBuffer = receiveBuffer[1];
 				}
 
