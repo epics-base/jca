@@ -5,13 +5,23 @@
   </properties>
   
   <body>
-    <release version="1.1.10-SNAPSHOT" date="2012-04-13" description="DBE_PROPERTY support">
+    <release version="1.1.10" date="2012-06-14" description="DBE_PROPERTY support">
       <action dev="msekoranja" type="update">
         DBE_PROPERTY support.
       </action>
      <action dev="msekoranja" type="update">
         More efficient decoding of big arrays. Work done by Gabriele Carcassi.
       </action>
+     <action dev="carcassi" type="update">
+        Variable sized array support (elementCount=0).
+      </action>
+     <action dev="msekoranja" type="update">
+        Monitor payload check at creation time.
+      </action>
+     <action dev="msekoranja" type="update">
+        Optimized receive buffer size handling (starts with small initial receive buffer, resizes up to MAX_ARRAY_BYTES on demand.)
+      </action>
+
     </release>
 
     <release version="1.1.9" date="2011-10-26" description="Extended header fixed.">
