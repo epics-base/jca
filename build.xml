@@ -1,5 +1,5 @@
 <project name="jca" default="build">
-  <property name="version" value="2.3.1"/>
+  <property name="version" value="2.3.6"/>
   <property name="jca" value="jca"/>
   <property name="debug" value="true"/>
   <property environment="env"/>
