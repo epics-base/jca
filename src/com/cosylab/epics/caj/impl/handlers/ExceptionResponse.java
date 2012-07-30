@@ -24,6 +24,7 @@ import com.cosylab.epics.caj.CAJContext;
 import com.cosylab.epics.caj.impl.CAConstants;
 import com.cosylab.epics.caj.impl.ExceptionHandler;
 import com.cosylab.epics.caj.impl.Transport;
+import java.nio.charset.Charset;
 
 /**
  * @author <a href="mailto:matej.sekoranjaATcosylab.com">Matej Sekoranja</a>
@@ -127,15 +128,18 @@ public class ExceptionResponse extends AbstractCAJResponseHandler
 			else
 				originalHeaderSize = CAConstants.CA_MESSAGE_HEADER_SIZE;
 			
-			originalHeaderBuffer = ByteBuffer.wrap(payloadBuffer.array(), payloadStart, originalHeaderSize);
+			originalHeaderBuffer = payloadBuffer.slice();
+                        originalHeaderBuffer.limit(originalHeaderSize);
 
 			// find zero-termination (from end is efficient, but not error-proof)
-			int errorMessageEnd = payloadStart + originalHeaderSize;
-			byte[] bufferArray = payloadBuffer.array();
-			while (bufferArray[errorMessageEnd] != 0)
+			int errorMessageStart = payloadStart + originalHeaderSize;
+			int errorMessageEnd = errorMessageStart;
+			while (payloadBuffer.get(errorMessageEnd) != 0)
 				errorMessageEnd++;
-			errorMessage = new String(bufferArray, payloadStart + originalHeaderSize,
-												   errorMessageEnd - payloadStart - originalHeaderSize);
+                        payloadBuffer.position(errorMessageStart);
+                        ByteBuffer errorMessageBuffer = payloadBuffer.slice();
+                        errorMessageBuffer.limit(errorMessageEnd - errorMessageStart);
+                        errorMessage = Charset.defaultCharset().decode(errorMessageBuffer).toString();
 		}
 		
 		// read rest of the payload (needed for UDP)
