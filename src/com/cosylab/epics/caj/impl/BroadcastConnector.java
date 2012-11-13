@@ -68,12 +68,14 @@ public class BroadcastConnector implements Connector {
 
 			// create transport
 			BroadcastTransport transport = new BroadcastTransport(context, responseHandler, socket, connectAddress, transportRevision);
-			ReactorHandler handler = transport;
-			if (context.getLeaderFollowersThreadPool() != null)
-			    handler = new LeaderFollowersHandler(context.getReactor(), handler, context.getLeaderFollowersThreadPool());
+
 			
+			// registration moved out due to JDK7 "AlreadyBoundException" problems (bug?)
+			//ReactorHandler handler = transport;
+			//if (context.getLeaderFollowersThreadPool() != null)
+			    //handler = new LeaderFollowersHandler(context.getReactor(), handler, context.getLeaderFollowersThreadPool());
 			// register to reactor  
-			context.getReactor().register(socket, SelectionKey.OP_READ, handler);
+			//context.getReactor().register(socket, SelectionKey.OP_READ, handler);
 
 			return transport;
 		}

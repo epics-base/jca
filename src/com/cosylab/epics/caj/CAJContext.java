@@ -14,10 +14,29 @@
 
 package com.cosylab.epics.caj;
 
+import gov.aps.jca.CAException;
+import gov.aps.jca.Channel;
+import gov.aps.jca.Context;
+import gov.aps.jca.JCALibrary;
+import gov.aps.jca.TimeoutException;
+import gov.aps.jca.Version;
+import gov.aps.jca.configuration.Configurable;
+import gov.aps.jca.configuration.Configuration;
+import gov.aps.jca.configuration.ConfigurationException;
+import gov.aps.jca.event.ConnectionListener;
+import gov.aps.jca.event.ContextExceptionEvent;
+import gov.aps.jca.event.ContextExceptionListener;
+import gov.aps.jca.event.ContextMessageListener;
+import gov.aps.jca.event.DirectEventDispatcher;
+import gov.aps.jca.event.EventDispatcher;
+
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+import java.nio.channels.ClosedChannelException;
+import java.nio.channels.DatagramChannel;
+import java.nio.channels.SelectionKey;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,28 +61,14 @@ import com.cosylab.epics.caj.impl.ResponseRequest;
 import com.cosylab.epics.caj.impl.Transport;
 import com.cosylab.epics.caj.impl.TransportClient;
 import com.cosylab.epics.caj.impl.reactor.Reactor;
+import com.cosylab.epics.caj.impl.reactor.ReactorHandler;
+import com.cosylab.epics.caj.impl.reactor.lf.LeaderFollowersHandler;
 import com.cosylab.epics.caj.impl.reactor.lf.LeaderFollowersThreadPool;
 import com.cosylab.epics.caj.impl.sync.NamedLockPattern;
 import com.cosylab.epics.caj.util.InetAddressUtil;
 import com.cosylab.epics.caj.util.IntHashMap;
 import com.cosylab.epics.caj.util.Timer;
 import com.cosylab.epics.caj.util.logging.ConsoleLogHandler;
-
-import gov.aps.jca.CAException;
-import gov.aps.jca.Channel;
-import gov.aps.jca.Context;
-import gov.aps.jca.JCALibrary;
-import gov.aps.jca.TimeoutException;
-import gov.aps.jca.Version;
-import gov.aps.jca.configuration.Configurable;
-import gov.aps.jca.configuration.Configuration;
-import gov.aps.jca.configuration.ConfigurationException;
-import gov.aps.jca.event.ConnectionListener;
-import gov.aps.jca.event.ContextExceptionEvent;
-import gov.aps.jca.event.ContextExceptionListener;
-import gov.aps.jca.event.ContextMessageListener;
-import gov.aps.jca.event.DirectEventDispatcher;
-import gov.aps.jca.event.EventDispatcher;
 
 /**
  * Implementation of CAJ JCA <code>Context</code>. 
@@ -740,6 +745,25 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 						repeaterLocalAddress, CAConstants.CA_MINOR_PROTOCOL_REVISION,
 						CAConstants.CA_DEFAULT_PRIORITY);
 		
+			
+			// moved from BroadcastConnector due to JDK7 problem
+			ReactorHandler handler = broadcastTransport;
+			if (getLeaderFollowersThreadPool() != null)
+			    handler = new LeaderFollowersHandler(getReactor(), handler, getLeaderFollowersThreadPool());
+			try {
+				DatagramChannel channel = broadcastTransport.getChannel();
+				
+				// explicitly bind first
+				channel.socket().setReuseAddress(true);
+				channel.socket().bind(new InetSocketAddress(0));
+				
+				// and register to the selector
+				getReactor().register(channel, SelectionKey.OP_READ, handler);
+			} catch (Throwable e) {
+				// TODO
+				throw new RuntimeException(e);
+			}
+			
 			// set broadcast address list
 			if (addressList != null && addressList.length() > 0)
 			{

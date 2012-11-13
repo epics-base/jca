@@ -356,4 +356,11 @@ public class BroadcastTransport implements Transport, ReactorHandler {
 	public void setIgnoredAddresses(InetSocketAddress[] addresses) {
 		ignoredAddresses = addresses;
 	}
+
+	/**
+	 * @return the channel
+	 */
+	public DatagramChannel getChannel() {
+		return channel;
+	}
 }

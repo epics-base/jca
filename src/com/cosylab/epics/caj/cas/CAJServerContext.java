@@ -31,6 +31,8 @@ import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
+import java.nio.channels.DatagramChannel;
+import java.nio.channels.SelectionKey;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
@@ -47,6 +49,8 @@ import com.cosylab.epics.caj.impl.CachedByteBufferAllocator;
 import com.cosylab.epics.caj.impl.ConnectionException;
 import com.cosylab.epics.caj.impl.Transport;
 import com.cosylab.epics.caj.impl.reactor.Reactor;
+import com.cosylab.epics.caj.impl.reactor.ReactorHandler;
+import com.cosylab.epics.caj.impl.reactor.lf.LeaderFollowersHandler;
 import com.cosylab.epics.caj.impl.reactor.lf.LeaderFollowersThreadPool;
 import com.cosylab.epics.caj.util.InetAddressUtil;
 import com.cosylab.epics.caj.util.Timer;
@@ -615,12 +619,30 @@ public class CAJServerContext extends ServerContext implements CAContext, Config
 										listenLocalAddress, CAConstants.CA_MINOR_PROTOCOL_REVISION,
 										CAConstants.CA_DEFAULT_PRIORITY);
 
+			// moved from BroadcastConnector due to JDK7 problem
+			ReactorHandler handler = broadcastTransport;
+			if (getLeaderFollowersThreadPool() != null)
+			    handler = new LeaderFollowersHandler(getReactor(), handler, getLeaderFollowersThreadPool());
+			try {
+				DatagramChannel channel = broadcastTransport.getChannel();
+				
+				broadcastTransport.bind(true);
+				
+				// and register to the selector
+				getReactor().register(channel, SelectionKey.OP_READ, handler);
+			} catch (Throwable e) {
+				// TODO
+				throw new RuntimeException(e);
+			}
+
+			/*
 			// bind UDP socket
 			try {
 				broadcastTransport.bind(true);
 			} catch (SocketException se) {
 				logger.log(Level.WARNING, "Failed to bind UDP socket to: " + listenLocalAddress, se);
 			}
+			*/
 			
 			// set ignore address list
 			if (ignoreAddressList != null && ignoreAddressList.length() > 0)
