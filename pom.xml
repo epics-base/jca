@@ -2,7 +2,7 @@
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>epics</groupId>
+    <groupId>org.epics</groupId>
     <artifactId>jca</artifactId>
     <version>2.3.6</version>
     <name>Java Channel Access</name>
@@ -16,6 +16,17 @@
         <name>Cosylab</name>
         <url>http://www.cosylab.com</url>
     </organization>
+    <licenses>
+        <license>
+            <name>EPICS Open License</name>
+            <url>LICENSE.txt</url>
+        </license>
+    </licenses>
+    <scm>
+        <connection>scm:hg:http://epics-jca.hg.sourceforge.net:8000/hgroot/epics-jca/jca</connection>
+        <developerConnection>scm:hg:ssh://epics-jenkins@epics-jca.hg.sourceforge.net/hgroot/epics-jca/jca</developerConnection>
+        <url>http://epics-jca.hg.sourceforge.net/hgweb/epics-jca/jca/</url>
+    </scm>
     <developers>
         <developer>
             <id>msekoranja</id>
