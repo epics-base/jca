@@ -5,6 +5,16 @@
   </properties>
   
   <body>
+
+    <release version="1.1.11" date="2013-02-12" description="JDK7 support">
+      <action dev="msekoranja" type="update">
+        JDK7 support.
+      </action>
+      <action dev="msekoranja" type="fix">
+        Decoding of strings of length 40 fixed.
+      </action>
+    </release>
+
     <release version="1.1.10" date="2012-06-14" description="DBE_PROPERTY support">
       <action dev="msekoranja" type="update">
         DBE_PROPERTY support.

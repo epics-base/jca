@@ -584,7 +584,8 @@ public class DBRDecoder {
 	private static String extractString(byte[] rawBuffer)
 	{
 		int len = 0;
-		while (rawBuffer[len] != 0 && len < rawBuffer.length)
+		final int rawBufferLen = rawBuffer.length;
+		while (len < rawBufferLen && rawBuffer[len] != 0)
 			len++;
 		return new String(rawBuffer, 0, len);
 	}
