@@ -6,7 +6,7 @@
   
   <body>
 
-    <release version="1.1.11" date="2013-02-12" description="JDK7 support">
+    <release version="1.1.11" date="2013-02-21" description="JDK7 support">
       <action dev="msekoranja" type="update">
         JDK7 support.
       </action>

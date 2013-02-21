@@ -125,7 +125,7 @@
 	 ! DO NOT MODIFY THIS PROPERTY MANUALLY! Instead, use Maven goals
 	 ! cosybuild:release and cosybuild:maintain.
 	 !-->
-	<currentVersion>1.1.11-SNAPSHOT</currentVersion>
+	<currentVersion>1.1.11</currentVersion>
 	
 	<!-- A single-line description of the project. -->
 	<shortDescription>100% pure Java implementation of the EPICS Channel Access library.</shortDescription>
@@ -138,6 +138,11 @@
 	 ! date when the support ceased.
 	 !-->
 	<versions>
+                <version>
+                        <id>1.1.11</id>
+                        <name>1.1.11</name>
+                        <tag>CAJ_20120221_1_1_11</tag>
+                </version>
                 <version>
                         <id>1.1.10</id>
                         <name>1.1.10</name>
