@@ -1,7 +1,7 @@
 /*
  * Status.java
  *
- * Created on 15 décembre 2003, 09:32
+ * Created on 15 dicembre 2003, 09:32
  */
 
 package gov.aps.jca.dbr;
