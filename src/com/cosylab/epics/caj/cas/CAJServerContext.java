@@ -83,12 +83,12 @@ public class CAJServerContext extends ServerContext implements CAContext, Config
     /**
      * Maintenance version.
      */
-    private static final int CAS_VERSION_MAINTENANCE = 11;
+    private static final int CAS_VERSION_MAINTENANCE = 12;
 
     /**
      * Development version.
      */
-    private static final int CAS_VERSION_DEVELOPMENT = 0;
+    private static final int CAS_VERSION_DEVELOPMENT = 1;
 
     /**
      * Version.
