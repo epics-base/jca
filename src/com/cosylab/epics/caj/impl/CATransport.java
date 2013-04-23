@@ -263,30 +263,33 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 	 * Notifies clients about disconnect.
 	 */
 	private void closedNotifyClients() {
+		TransportClient[] clients;
 		synchronized (owners)
 		{
 			// check if still acquired
 			int refs = owners.size();
-			if (refs > 0)
-			{ 
-				context.getLogger().fine("Transport to " + socketAddress + " still has " + refs + " client(s) active and closing...");
-				TransportClient[] clients = new TransportClient[refs];
-				owners.keySet().toArray(clients);
-				for (int i = 0; i < clients.length; i++)
-				{
-					try
-					{
-						clients[i].transportClosed();
-					}
-					catch (Throwable th)
-					{
-						// TODO remove
-						logger.log(Level.SEVERE, "", th);
-					}
-				}
-			}
+			if (refs == 0)
+				return;
 			
+			context.getLogger().fine("Transport to " + socketAddress + " still has " + refs + " client(s) active and closing...");
+			clients = new TransportClient[refs];
+			owners.keySet().toArray(clients);
 			owners.clear();
+		}
+
+		// NOTE: not perfect, but holding a lock on owners
+		// and calling external method leads to deadlocks
+		for (int i = 0; i < clients.length; i++)
+		{
+			try
+			{
+				clients[i].transportClosed();
+			}
+			catch (Throwable th)
+			{
+				// TODO remove
+				logger.log(Level.SEVERE, "", th);
+			}
 		}
 	}
 
@@ -604,9 +607,9 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 	// TODO optimize !!!
 	public void send(ByteBuffer buffer) throws IOException
 	{
-		synchronized (sendLock)
+		try
 		{
-			try
+			synchronized (sendLock)
 			{
 				// prepare buffer
 				buffer.flip();
@@ -658,12 +661,12 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 				}
 				
 			}
-			catch (IOException ioex) 
-			{
-				// close connection
-				close(true);
-				throw ioex;
-			}
+		}
+		catch (IOException ioex) 
+		{
+			// close connection
+			close(true);
+			throw ioex;
 		}
 	}
 
@@ -999,23 +1002,29 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 		if (unresponsiveTransport)
 		{
 		    unresponsiveTransport = false;
+		    
+		    TransportClient[] clients;
 			synchronized (owners)
 			{
-				TransportClient[] clients = new TransportClient[owners.size()];
+				clients = new TransportClient[owners.size()];
 				owners.keySet().toArray(clients);
-				for (int i = 0; i < clients.length; i++)
+			}
+
+			// NOTE: not perfect, but holding a lock on owners
+			// and calling external method leads to deadlocks
+			for (int i = 0; i < clients.length; i++)
+			{
+				try
 				{
-					try
-					{
-						clients[i].transportResponsive(this);
-					}
-					catch (Throwable th)
-					{
-						// TODO remove
-						logger.log(Level.SEVERE, "", th);
-					}
+					clients[i].transportResponsive(this);
+				}
+				catch (Throwable th)
+				{
+					// TODO remove
+					logger.log(Level.SEVERE, "", th);
 				}
 			}
+			
 		}
 	}
 
@@ -1044,41 +1053,20 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 				}
 			}
 		    
+			TransportClient[] clients;
 			synchronized (owners)
 			{
-				TransportClient[] clients = new TransportClient[owners.size()];
+				clients = new TransportClient[owners.size()];
 				owners.keySet().toArray(clients);
-				for (int i = 0; i < clients.length; i++)
-				{
-					try
-					{
-						clients[i].transportUnresponsive();
-					}
-					catch (Throwable th)
-					{
-						// TODO remove
-						logger.log(Level.SEVERE, "", th);
-					}
-				}
 			}
-		}
-	}
-
-
-	/**
-	 * Changed transport (server restared) notify. 
-	 */
-	public void changedTransport()
-	{
-		synchronized (owners)
-		{
-			TransportClient[] clients = new TransportClient[owners.size()];
-			owners.keySet().toArray(clients);
+			
+			// NOTE: not perfect, but holding a lock on owners
+			// and calling external method leads to deadlocks
 			for (int i = 0; i < clients.length; i++)
 			{
 				try
 				{
-					clients[i].transportChanged();
+					clients[i].transportUnresponsive();
 				}
 				catch (Throwable th)
 				{
@@ -1087,5 +1075,35 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 				}
 			}
 		}
+	}
+
+
+	/**
+	 * Changed transport (server restarted) notify. 
+	 */
+	public void changedTransport()
+	{
+		TransportClient[] clients;
+		synchronized (owners)
+		{
+			clients = new TransportClient[owners.size()];
+			owners.keySet().toArray(clients);
+		}
+		
+		// NOTE: not perfect, but holding a lock on owners
+		// and calling external method leads to deadlocks
+		for (int i = 0; i < clients.length; i++)
+		{
+			try
+			{
+				clients[i].transportChanged();
+			}
+			catch (Throwable th)
+			{
+				// TODO remove
+				logger.log(Level.SEVERE, "", th);
+			}
+		}
+		
 	}
 }
