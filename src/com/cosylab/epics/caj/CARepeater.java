@@ -574,6 +574,9 @@ public class CARepeater implements Runnable
 		} catch (BindException be) {
 			// bind failed, socket in use
 			return true;
+		} catch (SocketException se) {
+			// Win7 "version" of: bind failed, socket in use
+			return true;
 		} catch (Throwable th) {
 			// unexpected error
 			logger2.log(Level.WARNING, "", th);
