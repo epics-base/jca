@@ -6,12 +6,15 @@
   
   <body>
 
-    <release version="1.1.11" date="2013-02-21" description="JDK7 support">
+    <release version="1.1.12" date="2013-05-30" description="JDK7 support">
       <action dev="msekoranja" type="update">
         JDK7 support.
       </action>
+    </release>
+
+    <release version="1.1.11" date="2013-02-21" description="String decoding fix">
       <action dev="msekoranja" type="fix">
-        Decoding of strings of length 40 fixed.
+        Decoding of strings of length 40 fixed (in some special cases).
       </action>
     </release>
 
