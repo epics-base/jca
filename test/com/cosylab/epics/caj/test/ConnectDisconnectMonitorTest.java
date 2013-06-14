@@ -190,7 +190,7 @@ public class ConnectDisconnectMonitorTest {
 	public static void main(String[] args) {
 
 	    // check command-line arguments
-		if (args.length != 1) {
+		if (args.length < 1) {
 			System.out.println(
 				"usage: java " + ConnectDisconnectMonitorTest.class.getName() + " <channel name> <dummy channel name>");
 			System.exit(1);
