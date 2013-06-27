@@ -90,12 +90,12 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
     /**
      * Maintenance version.
      */
-    private static final int CAJ_VERSION_MAINTENANCE = 12;
+    private static final int CAJ_VERSION_MAINTENANCE = 13;
 
     /**
      * Development version.
      */
-    private static final int CAJ_VERSION_DEVELOPMENT = 0;
+    private static final int CAJ_VERSION_DEVELOPMENT = 1;
 
     /**
      * Version.
@@ -308,6 +308,8 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 	 * Last UDP recived sequence number.
 	 */
 	private AtomicInteger lastReceivedSequenceNumber = new AtomicInteger(0);
+	
+	private final boolean doNotShareChannels = System.getProperties().containsValue("CAJ_DO_NOT_SHARE_CHANNELS");
 	
 	/**
 	 * Constructor.
@@ -996,7 +998,8 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 		synchronized (channelsByCID)
 		{
 			channelsByCID.put(channel.getChannelID(), channel);
-			channelsByName.put(getUniqueChannelName(channel.getName(), channel.getPriority()), channel);
+			if (!doNotShareChannels)
+				channelsByName.put(getUniqueChannelName(channel.getName(), channel.getPriority()), channel);
 		}
 	}
 
@@ -1009,7 +1012,8 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 		synchronized (channelsByCID)
 		{
 			channelsByCID.remove(channel.getChannelID());
-			channelsByName.remove(getUniqueChannelName(channel.getName(), channel.getPriority()));
+			if (!doNotShareChannels)
+				channelsByName.remove(getUniqueChannelName(channel.getName(), channel.getPriority()));
 		}
 	}
 
@@ -1047,6 +1051,9 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 	 */
 	public CAJChannel getChannel(String name, short priority, boolean acquire)
 	{
+		if (doNotShareChannels)
+			return null;
+		
 		synchronized (channelsByName)
 		{
 			CAJChannel channel = (CAJChannel)channelsByName.get(getUniqueChannelName(name, priority));
