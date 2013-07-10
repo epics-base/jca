@@ -69,6 +69,7 @@ import com.cosylab.epics.caj.util.InetAddressUtil;
 import com.cosylab.epics.caj.util.IntHashMap;
 import com.cosylab.epics.caj.util.Timer;
 import com.cosylab.epics.caj.util.logging.ConsoleLogHandler;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Implementation of CAJ JCA <code>Context</code>. 
@@ -309,7 +310,7 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 	 */
 	private AtomicInteger lastReceivedSequenceNumber = new AtomicInteger(0);
 	
-	private final boolean doNotShareChannels = System.getProperties().containsValue("CAJ_DO_NOT_SHARE_CHANNELS");
+	private AtomicBoolean doNotShareChannels = new AtomicBoolean(System.getProperties().containsValue("CAJ_DO_NOT_SHARE_CHANNELS"));
 	
 	/**
 	 * Constructor.
@@ -327,6 +328,27 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
     public Version getVersion()
     {
         return VERSION;
+    }
+    
+    public boolean isDoNotShareChannels() {
+        return doNotShareChannels.get();
+    }
+    
+    public void setDoNotShareChannels(boolean doNotShareChannels) {
+        // Ignore if the value is the same, to avoid an
+        // exception if the context was initialized but the new setting
+        // is equal to the old.
+        // Note that the value could change after this,
+        // so in principle one could still get an exception.
+        if (this.doNotShareChannels.get() == doNotShareChannels) {
+            return;
+        }
+        
+        if (state == NOT_INITIALIZED) {
+            this.doNotShareChannels.set(doNotShareChannels);
+        } else {
+            throw new IllegalStateException("Cannot change doNotShareChannels after the Context is initialized.");
+        }
     }
     
 	/**
@@ -998,7 +1020,7 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 		synchronized (channelsByCID)
 		{
 			channelsByCID.put(channel.getChannelID(), channel);
-			if (!doNotShareChannels)
+			if (!doNotShareChannels.get())
 				channelsByName.put(getUniqueChannelName(channel.getName(), channel.getPriority()), channel);
 		}
 	}
@@ -1012,7 +1034,7 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 		synchronized (channelsByCID)
 		{
 			channelsByCID.remove(channel.getChannelID());
-			if (!doNotShareChannels)
+			if (!doNotShareChannels.get())
 				channelsByName.remove(getUniqueChannelName(channel.getName(), channel.getPriority()));
 		}
 	}
@@ -1051,7 +1073,7 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 	 */
 	public CAJChannel getChannel(String name, short priority, boolean acquire)
 	{
-		if (doNotShareChannels)
+		if (doNotShareChannels.get())
 			return null;
 		
 		synchronized (channelsByName)
