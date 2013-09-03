@@ -99,7 +99,7 @@ public abstract class AbstractCAResponseHandler implements ResponseHandler {
 		if (debug)
 		{
 			// payload dump
-			if (payloadSize > 0 && response.length > 1)
+			if (payloadSize > 0 && response.length > 1 && response[1].hasArray())
 			{
 				HexDump.hexDump(description + " payload", response[1].array(),
 								response[1].position(),
@@ -167,11 +167,43 @@ public abstract class AbstractCAResponseHandler implements ResponseHandler {
 		// TODO remove debug output
 		if (debug)
 		{
-			// payload is stored in response[1]
-			HexDump.hexDump(description, headerBuffer.array(),
-							startPos,
-							isExtended ? CAConstants.CA_EXTENDED_MESSAGE_HEADER_SIZE:
-									 	 CAConstants.CA_MESSAGE_HEADER_SIZE);
+			if (headerBuffer.hasArray())
+			{
+				// payload is stored in response[1]
+				HexDump.hexDump(description, headerBuffer.array(),
+								startPos,
+								isExtended ? CAConstants.CA_EXTENDED_MESSAGE_HEADER_SIZE:
+										 	 CAConstants.CA_MESSAGE_HEADER_SIZE);
+			}
+			else
+			{
+				int len = isExtended ? CAConstants.CA_EXTENDED_MESSAGE_HEADER_SIZE:
+				 	 				   CAConstants.CA_MESSAGE_HEADER_SIZE;
+				ByteBuffer bb = ByteBuffer.allocate(len);
+				if (!isExtended)
+				{
+					bb.putShort((byte)command);
+					bb.putShort((short)payloadSize);
+					bb.putShort((short)dataType);
+					bb.putShort((short)dataCount);
+					bb.putInt((int)parameter1);
+					bb.putInt((int)parameter2);
+				}
+				else
+				{
+					bb.putShort((byte)command);
+					bb.putShort((short)0xFFFF);
+					bb.putShort((short)dataType);
+					bb.putShort((short)0x0000);
+					bb.putInt((int)parameter1);
+					bb.putInt((int)parameter2);
+					bb.putInt((int)payloadSize);
+					bb.putInt((int)dataCount);
+				}
+				HexDump.hexDump(description, bb.array(),
+						0,
+						len);
+			}
 		}
 
 	}

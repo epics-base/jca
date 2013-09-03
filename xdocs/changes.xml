@@ -6,6 +6,18 @@
   
   <body>
 
+    <release version="1.1.14-SNAPSHOT" date="2013-09-03" description="Stability fixes">
+      <action dev="msekoranja" type="fix">
+        CAJ search live-lock.
+      </action>
+      <action dev="msekoranja" type="update">
+        CAJ_DEBUG support for direct allocated byte buffers.
+      </action>
+      <!--action dev="msekoranja" type="update">
+        No need to flush Monitor.clear() anymore - same behavior as native implementation.
+      </action-->
+    </release>
+
     <release version="1.1.13" date="2013-08-05" description="CAJ channel sharing disable support">
       <action dev="msekoranja" type="update">
         CAJ channel sharing disable support.

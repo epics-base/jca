@@ -91,12 +91,12 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
     /**
      * Maintenance version.
      */
-    private static final int CAJ_VERSION_MAINTENANCE = 13;
+    private static final int CAJ_VERSION_MAINTENANCE = 14;
 
     /**
      * Development version.
      */
-    private static final int CAJ_VERSION_DEVELOPMENT = 0;
+    private static final int CAJ_VERSION_DEVELOPMENT = 1;
 
     /**
      * Version.

@@ -215,17 +215,22 @@ public class ChannelSearchManager {
 			// boost search period (if necessary) for channels not recently searched
 			if (allowBoost && searchRespones > 0)
 			{
-				synchronized (requestPendingChannels) {
-					while (!requestPendingChannels.isEmpty()) {
-						CAJChannel channel = (CAJChannel)requestPendingChannels.peek();
-						// boost needed check
+				synchronized (requestPendingChannels)
+				{
+					int sz = requestPendingChannels.size();
+					for (int i = 0; i < sz; i++)
+					{
+						CAJChannel channel = (CAJChannel)requestPendingChannels.pop();						// boost needed check
 						//final int boostIndex = searchRespones >= searchAttempts * SUCCESS_RATE ? Math.min(Math.max(0, timerIndex - 1), beaconAnomalyTimerIndex) : beaconAnomalyTimerIndex;
 						final int boostIndex = beaconAnomalyTimerIndex;
 						if (channel.getOwnerIndex() > boostIndex)
 						{
-							requestPendingChannels.pop();
 							channel.unsetListOwnership();
 							boostSearching(channel, boostIndex);
+                        } 
+						else
+						{
+							requestPendingChannels.addLast(channel);
 						}
 					}
 				}
