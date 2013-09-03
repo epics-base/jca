@@ -9,7 +9,7 @@
         <menu name="Quick Links">
             <item name="About" href="index.html"/>
             <item name="Changes" href="changes-report.html"/>
-            <item name="Download" href="http://epics.sourceforge.net/maven2/epics/caj/"/>
+            <item name="Download" href="http://search.maven.org/#browse|-1437972145"/>
             <item name="Sourceforge" href="http://sourceforge.net/projects/epics-jca/"/>
         </menu>
 
