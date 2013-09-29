@@ -635,7 +635,10 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 					{
 						
 						// send
-						/*int bytesSent =*/ channel.write(buffer);
+						int bytesSent = channel.write(buffer);
+						if (bytesSent < 0)
+							throw new IOException("bytesSent < 0");
+						
 						// bytesSend == buffer.position(), so there is no need for flip()
 						if (buffer.position() != buffer.limit())
 						{
