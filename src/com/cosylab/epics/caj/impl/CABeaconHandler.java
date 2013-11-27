@@ -144,15 +144,7 @@ public class CABeaconHandler  {
 		{
 			averagePeriod = currentPeriod;
 
-			// check beacons arriving with a short
-			// period because the server was rebooted
-			// soon after the client starts up.
-			// this check if only valid if lastBeaconTimeStamp is timestamp of fist seen beacon
-			final long totalRunningTime = lastBeaconTimeStamp - initializationTimeStamp;
-			if (averagePeriod == Long.MIN_VALUE && currentPeriod <= (totalRunningTime * 0.95))
-				networkChange = true;
-			else
-				beaconArrivalNotify();
+			beaconArrivalNotify();
 		}
 		else
 		{

@@ -1446,6 +1446,8 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 		if (channel == null)
 			return;
 
+		boolean issueCreateRequest;
+		
 		// check for multiple responses
 		synchronized (channel)
 		{
@@ -1473,8 +1475,11 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 			}
 
 			// create channel
-			channel.createChannel(transport, sid, type, count);
+			issueCreateRequest = channel.createChannel(transport, sid, type, count);
 		}
+		
+		if (issueCreateRequest)
+			channel.issueCreateChannelRequest();
 			
 	}
 

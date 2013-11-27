@@ -194,6 +194,7 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 	 * Close connection.
 	 * @param forced	flag indicating if forced (e.g. forced disconnect) is required 
 	 */
+	// NOTE: do not call this methods with lock on transport/channels - high deadlock risk possibility!
 	public void close(boolean forced) {
 
 		synchronized (this)
@@ -215,9 +216,9 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 		
 		freeSendBuffers();
 
+		// NOTE: do not call next two methods with lock on transport/channels - high deadlock risk possibility!
 		if (forced)
 			closedNotifyContext();
-		
 		closedNotifyClients();
 		
 		context.getLogger().finer("Connection to " + socketAddress + " closed.");
@@ -597,7 +598,7 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 			logger.log(Level.SEVERE, "", e);
 		}
 	}
-
+	
 	/**
 	 * Send a buffer through the transport.
 	 * NOTE: TCP sent buffer/sending has to be synchronized. 
@@ -605,7 +606,7 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 	 * @throws IOException 
 	 */
 	// TODO optimize !!!
-	public void send(ByteBuffer buffer) throws IOException
+	public void send(ByteBuffer buffer, boolean asyncCloseOnError) throws IOException
 	{
 		try
 		{
@@ -780,7 +781,7 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 				}
 				
 				try {
-				    send(buf);
+				    send(buf, false);
 				}
 				finally {
 				    // return back to the cache
@@ -822,7 +823,7 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 				
 		// send or enqueue
 		if (requestMessage.getPriority() == Request.SEND_IMMEDIATELY_PRIORITY)
-			send(message);
+			send(message, true);
 		else
 		{
 			message.flip();

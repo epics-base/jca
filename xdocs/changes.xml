@@ -8,6 +8,9 @@
 
     <release version="1.1.14-SNAPSHOT" date="2013-09-03" description="Stability fixes">
       <action dev="msekoranja" type="fix">
+        CAJ possible deadlock resolved when IOC is shutdown while CAJ is creating channels on it.
+      </action>
+      <action dev="msekoranja" type="fix">
         CAJ search live-lock.
       </action>
       <action dev="msekoranja" type="update">

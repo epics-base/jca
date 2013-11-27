@@ -42,22 +42,22 @@ public class EventAddRequest extends AbstractCARequest implements NotifyResponse
 	/**
 	 * Context.
 	 */
-	protected CAJContext context;
+	protected final CAJContext context;
 
 	/**
 	 * Subscription ID given by the context when registered.
 	 */
-	protected int subsid;
+	protected final int subsid;
 
 	/**
 	 * Response callback listener.
 	 */
-	protected CAJMonitor monitor;
+	protected final CAJMonitor monitor;
 
 	/**
 	 * Channel.
 	 */
-	protected CAJChannel channel;
+	protected final CAJChannel channel;
 
 	/**
 	 * Request send priority.

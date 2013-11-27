@@ -217,13 +217,14 @@ public class CAJChannel extends Channel implements TransportClient {
 	 * @param sid
 	 * @param typeCode
 	 * @param elementCount
+	 * @return <code>true</code> if real create channel request needs to be sent to the server.
 	 */
-	public synchronized void createChannel(CATransport transport, int sid, short typeCode, int elementCount) 
+	public synchronized boolean createChannel(CATransport transport, int sid, short typeCode, int elementCount) 
 	{
 
 		// do not allow duplicate creation to the same transport
 		if (!allowCreation)
-			return;
+			return false;
 		allowCreation = false;
 		
 		// TODO is this really necesarry... 1. priority is to take channel from the existing one,
@@ -239,7 +240,7 @@ public class CAJChannel extends Channel implements TransportClient {
 		{
 			// request to sent create request to same transport, ignore
 			// this happens when server is slower (processing search requests) than client generating it
-			return;
+			return false;
 		}
 		
 		this.transport = transport;
@@ -254,6 +255,14 @@ public class CAJChannel extends Channel implements TransportClient {
 			this.elementCount = elementCount;
 		}
 
+		// do not submit CreateChannelRequest here, connection loss while submitting and lock
+		// on this channel instance may cause deadlock
+		return true;
+	}
+	
+	// this is completely not sycned
+	public void issueCreateChannelRequest()
+	{
 		try
 		{
 			// submit (immediately)
@@ -264,7 +273,6 @@ public class CAJChannel extends Channel implements TransportClient {
 			createChannelFailed();
 		}
 	}
-	
 
 	/**
 	 * Cancelation status.
@@ -409,6 +417,8 @@ public class CAJChannel extends Channel implements TransportClient {
 			{
 				try
 				{
+					// NOTE: this does not submit message immediately, waits for flush to be triggered somehow.. hmmm.
+					// possible deadlock if sent immediately (since lock on this channel instance is held)
 					new ClearChannelRequest(transport, channelID, serverChannelID).submit();
 				}
 				catch (IOException ioex)
@@ -510,9 +520,10 @@ public class CAJChannel extends Channel implements TransportClient {
 	/**
 	 * @see com.cosylab.epics.caj.impl.TransportClient#transportChanged()
 	 */
-	public void transportChanged() {
+	public synchronized void transportChanged() {
 //System.err.println("CHANNEL transportChanged");
-		initiateSearch();
+		if (connectionState == ConnectionState.DISCONNECTED)
+			initiateSearch();
 	}
 
 	/**
