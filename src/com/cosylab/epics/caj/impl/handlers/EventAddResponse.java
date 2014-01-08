@@ -43,11 +43,15 @@ public class EventAddResponse extends AbstractCAJResponseHandler {
 		InetSocketAddress responseFrom,
 		Transport transport,
 		ByteBuffer[] response) {
+
+		// clear subscription ack. response check
+		if (response[1].remaining() == 0)
+			return;
 		
 		NotifyResponseRequest nrr = (NotifyResponseRequest)context.getResponseRequest(parameter2);
 		if (nrr == null)
 			return;
-				
+
 		int status;
 		if (transport.getMinorRevision() < 1)
 			status = CAStatus.NORMAL.getStatusCode();

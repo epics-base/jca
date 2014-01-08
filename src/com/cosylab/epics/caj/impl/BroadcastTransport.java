@@ -240,7 +240,7 @@ public class BroadcastTransport implements Transport, ReactorHandler {
 			catch (IOException ioex) 
 			{
 				// TODO what to do here
-				logger.log(Level.SEVERE, "", ioex);
+				logger.log(Level.WARNING, "Failed to sent a datagram to:" + broadcastAddresses[i], ioex);
 			}
 		}
 	}
