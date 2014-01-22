@@ -16,6 +16,7 @@ package com.cosylab.epics.caj.impl;
 
 import java.nio.ByteBuffer;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 
 import com.cosylab.epics.caj.CAJChannel;
@@ -259,7 +260,7 @@ public class ChannelSearchManager {
 				if (searchAttempts > 0)
 				{
 		            // increase UDP frames per try if we have a good score
-					if (searchRespones >= searchAttempts * SUCCESS_RATE)
+					if (searchRespones >= searchAttempts * CAJ_SEARCH_INC_THRESHOLD)
 					{
 						// increase frames per try
 		                // a congestion avoidance threshold similar to TCP is now used
@@ -271,12 +272,15 @@ public class ChannelSearchManager {
 								framesPerTry += 1.0/framesPerTry;
 						}
 					}
-					else
+					else if (searchRespones < searchAttempts * CAJ_SEARCH_DEC_THRESHOLD)
 					{
 						// decrease frames per try, fallback
 						framesPerTryCongestThresh = framesPerTry / 2.0;
 						framesPerTry = 1;
 					}
+					//else { 
+						// Do nothing here - leave framesPerTry as is.
+					//}
 				
 				}
 			}
@@ -422,9 +426,38 @@ public class ChannelSearchManager {
 	private static final long MAX_RTT = 2 * MIN_RTT;
 
 	/**
-	 * Rate to be considered as OK.
+	 * Search faster if the success rate is greater than this
 	 */
-	private static final double SUCCESS_RATE = 0.9;
+	private static double CAJ_SEARCH_INC_THRESHOLD = 0.9;
+	
+	/**
+	 * Search slower if the success rate is lower than this
+	 */
+	private static double CAJ_SEARCH_DEC_THRESHOLD = 0.875;
+
+	static { 
+		// Allow clients to override the search increment and decrement thresholds.
+		// Use with caution: this is essentially a compromise between overwhelming the IOC's and connecting/reconnecting quickly.
+		String incOverrideKey = ChannelSearchManager.class.getName() + ".CAJ_SEARCH_INC_THRESHOLD";
+		if(System.getProperties().containsKey(incOverrideKey)) {
+			try {
+				double incThreshold = Double.parseDouble((String)System.getProperties().get(incOverrideKey));
+				CAJ_SEARCH_INC_THRESHOLD = incThreshold;
+			} catch(Exception ex) { 
+				ex.printStackTrace(System.err);
+			}
+		}
+
+		String decOverrideKey = ChannelSearchManager.class.getName() + ".CAJ_SEARCH_DEC_THRESHOLD";
+		if(System.getProperties().containsKey(decOverrideKey)) {
+			try {
+				double decThreshold = Double.parseDouble((String)System.getProperties().get(decOverrideKey));
+				CAJ_SEARCH_DEC_THRESHOLD = decThreshold;
+			} catch(Exception ex) { 
+				ex.printStackTrace(System.err);
+			}
+		}
+	}
 
 	/**
 	 * Context.
@@ -522,7 +555,7 @@ public class ChannelSearchManager {
 		// create timers
 		timers = new SearchTimer[numberOfTimers];
 		for (int i = 0; i < numberOfTimers; i++)
-			timers[i] = new SearchTimer(i, i > beaconAnomalyTimerIndex, i != (numberOfTimers-1));
+			timers[i] = new SearchTimer(i, i > beaconAnomalyTimerIndex, i != (numberOfTimers-1));		
 	}
 	
 	/**
