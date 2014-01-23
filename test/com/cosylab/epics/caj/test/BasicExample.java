@@ -98,6 +98,8 @@ public class BasicExample {
 		// Create a context with default configuration values.
 		context = jca.createContext(JCALibrary.CHANNEL_ACCESS_JAVA);
 
+		context.initialize();
+		
 		// Display basic information about the context.
         System.out.println(context.getVersion().getVersionString());
         context.printInfo(); System.out.println();

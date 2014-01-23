@@ -38,6 +38,7 @@ import java.nio.channels.ClosedChannelException;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -96,7 +97,7 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
     /**
      * Development version.
      */
-    private static final int CAJ_VERSION_DEVELOPMENT = 1;
+    private static final int CAJ_VERSION_DEVELOPMENT = 14;
 
     /**
      * Version.
@@ -800,6 +801,11 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 				if (list != null && list.length > 0)
 					broadcastTransport.setBroadcastAddresses(list);
 			}
+			else if (autoAddressList == false)
+			{
+				logger.log(Level.WARNING, "Empty broadcast search address list, all connects will fail.");
+				broadcastTransport.setBroadcastAddresses(null);
+			}
 
 			RepeaterRegistrationTask registrationTask = new RepeaterRegistrationTask(this, repeaterLocalAddress);
 			
@@ -1220,6 +1226,8 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 		super.printInfo(out);
 		out.println("ADDR_LIST : " + addressList);
 		out.println("AUTO_ADDR_LIST : " + autoAddressList);
+		if (broadcastTransport != null)
+			out.println("AUTO_ADDR_LIST (active): " + Arrays.toString(broadcastTransport.getBroadcastAddresses()));
 		out.println("CONNECTION_TIMEOUT : " + connectionTimeout);
 		out.println("BEACON_PERIOD : " + beaconPeriod);
 		out.println("REPEATER_PORT : " + repeaterPort);
