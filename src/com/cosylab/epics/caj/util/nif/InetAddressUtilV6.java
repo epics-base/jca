@@ -48,25 +48,34 @@ public class InetAddressUtilV6 {
 
 		ArrayList list = new ArrayList(10);
 
-			while (nets.hasMoreElements())
+		while (nets.hasMoreElements())
+		{
+			NetworkInterface net = (NetworkInterface)nets.nextElement();
+			try
 			{
-				NetworkInterface net = (NetworkInterface)nets.nextElement();
-				//if (net.isUp())
+				if (net.isUp())
 				{
 					List interfaceAddresses = net.getInterfaceAddresses();
-					Iterator iter = interfaceAddresses.iterator();
-					while (iter.hasNext())
+					if (interfaceAddresses != null)
 					{
-						InterfaceAddress addr = (InterfaceAddress)iter.next();
-						if (addr.getBroadcast() != null)
+						Iterator iter = interfaceAddresses.iterator();
+						while (iter.hasNext())
 						{
-							InetSocketAddress isa = new InetSocketAddress(addr.getBroadcast(), port);
-							if (!list.contains(isa))
-								list.add(isa);
+							InterfaceAddress addr = (InterfaceAddress)iter.next();
+							if (addr.getBroadcast() != null)
+							{
+								InetSocketAddress isa = new InetSocketAddress(addr.getBroadcast(), port);
+								if (!list.contains(isa))
+									list.add(isa);
+							}
 						}
 					}
 				}
+			} catch (Throwable th) {
+				// some methods throw exceptions, some return null (and they shouldn't)
+				// noop, skip that interface
 			}
+		}
 		
 		InetSocketAddress[] retVal = new InetSocketAddress[list.size()];
 		list.toArray(retVal);
