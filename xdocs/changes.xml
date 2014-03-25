@@ -6,7 +6,11 @@
   
   <body>
 
-    <release version="1.1.14" date="2014-01-22" description="Stability fixes">
+    <release version="1.1.14" date="2014-02-23" description="Stability fixes">
+      <action dev="msekoranja" type="update">
+        More robust handling when server stops reading from TCP socket (send buffer get full).
+        Disconnect in case of persistent passive state of the server (e.g. possible deadlock on the server side).
+      </action>
       <action dev="msekoranja" type="update">
         Tunable SearchChannelManager. Thanks to Murali Shankar.
       </action>

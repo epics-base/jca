@@ -27,6 +27,8 @@ import java.nio.channels.SocketChannel;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -110,9 +112,9 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 	private Map owners;
 	
 	/**
-	 * Send sync. object lock.
+	 * Send lock.
 	 */
-	private Object sendLock = new Object();
+	private ReentrantLock sendLock = new ReentrantLock();
 
 	/**
 	 * Flu8sh pending status.
@@ -197,6 +199,9 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 	// NOTE: do not call this methods with lock on transport/channels - high deadlock risk possibility!
 	public void close(boolean forced) {
 
+		if (closed)
+			return;
+		
 		synchronized (this)
 		{
 			// already closed check
@@ -605,65 +610,87 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 	 * @param buffer	buffer to be sent
 	 * @throws IOException 
 	 */
-	// TODO optimize !!!
 	public void send(ByteBuffer buffer, boolean asyncCloseOnError) throws IOException
+	{
+		sendLock.lock();
+		try
+		{
+			noSyncSend(buffer, asyncCloseOnError);
+		}
+		finally 
+		{
+			sendLock.unlock();
+		}
+	}
+
+	/**
+	 * Send a buffer through the transport.
+	 * NOTE: TCP sent buffer/sending has to be synchronized. 
+	 * @param buffer	buffer to be sent
+	 * @throws IOException 
+	 */
+	// TODO optimize !!!
+	private void noSyncSend(ByteBuffer buffer, boolean asyncCloseOnError) throws IOException
 	{
 		try
 		{
-			synchronized (sendLock)
+			// prepare buffer
+			buffer.flip();
+
+			final int SEND_BUFFER_LIMIT = 16000;
+			int bufferLimit = buffer.limit();
+
+			// TODO remove?!
+			context.getLogger().finest("Sending " + bufferLimit + " bytes to " + socketAddress + ".");
+
+			// limit sending large buffers, split the into parts
+			int parts = (buffer.limit()-1) / SEND_BUFFER_LIMIT + 1;
+			for (int part = 1; part <= parts; part++)
 			{
-				// prepare buffer
-				buffer.flip();
-
-				final int SEND_BUFFER_LIMIT = 16000;
-				int bufferLimit = buffer.limit();
-
-				// TODO remove?!
-				context.getLogger().finest("Sending " + bufferLimit + " bytes to " + socketAddress + ".");
-
-				// limit sending large buffers, split the into parts
-				int parts = (buffer.limit()-1) / SEND_BUFFER_LIMIT + 1;
-				for (int part = 1; part <= parts; part++)
+				if (parts > 1)
 				{
-					if (parts > 1)
-					{
-						buffer.limit(Math.min(part * SEND_BUFFER_LIMIT, bufferLimit));
-						context.getLogger().finest("[Parted] Sending (part " + part + "/" + parts + ") " + (buffer.limit()-buffer.position()) + " bytes to " + socketAddress + ".");
-					}
-					
-					final int TRIES = 10;
-					for (int tries = 0; /* tries <= TRIES */ ; tries++)
-					{
-						
-						// send
-						int bytesSent = channel.write(buffer);
-						if (bytesSent < 0)
-							throw new IOException("bytesSent < 0");
-						
-						// bytesSend == buffer.position(), so there is no need for flip()
-						if (buffer.position() != buffer.limit())
-						{
-							if (tries >= TRIES)
-							{
-								context.getLogger().warning("Failed to send message to " + socketAddress + " - buffer full, will retry.");
-							}
-							
-							// flush & wait for a while...
-							context.getLogger().finest("Send buffer full for " + socketAddress + ", waiting...");
-							channel.socket().getOutputStream().flush();
-							try {
-								Thread.sleep(Math.min(15000,10+tries*100));
-							} catch (InterruptedException e) {
-								// noop
-							}
-							continue;
-						}
-						else
-							break;
-					}
-				
+					buffer.limit(Math.min(part * SEND_BUFFER_LIMIT, bufferLimit));
+					context.getLogger().finest("[Parted] Sending (part " + part + "/" + parts + ") " + (buffer.limit()-buffer.position()) + " bytes to " + socketAddress + ".");
 				}
 				
+				final int TRIES = 10;
+				for (int tries = 0; /* tries <= TRIES */ ; tries++)
+				{
+					
+					// send
+					int bytesSent = channel.write(buffer);
+					if (bytesSent < 0)
+						throw new IOException("bytesSent < 0");
+					
+					// bytesSend == buffer.position(), so there is no need for flip()
+					if (buffer.position() != buffer.limit())
+					{
+						if (closed)
+							throw new IOException("transport closed on the client side");
+						
+						if (tries >= TRIES)
+						{
+							context.getLogger().warning("Failed to send message to " + socketAddress + " - buffer full, will retry.");
+
+							if (tries >= 2*TRIES)
+								throw new IOException("TCP send buffer persistently full, disconnecting!");
+							
+						}
+						
+						// flush & wait for a while...
+						context.getLogger().finest("Send buffer full for " + socketAddress + ", waiting...");
+						channel.socket().getOutputStream().flush();
+						try {
+							Thread.sleep(Math.min(15000,10+tries*100));
+						} catch (InterruptedException e) {
+							// noop
+						}
+						continue;
+					}
+					else
+						break;
+				}
+			
 			}
 		}
 		catch (IOException ioex) 
@@ -823,8 +850,29 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 				
 		// send or enqueue
 		if (requestMessage.getPriority() == Request.SEND_IMMEDIATELY_PRIORITY)
-			send(message, true);
-		else
+		{
+			try
+			{
+				if (sendLock.tryLock(100, TimeUnit.MILLISECONDS))
+				{
+					try
+					{
+						noSyncSend(message, true);
+						return;
+					}
+					finally
+					{
+						sendLock.unlock();
+					}
+				}
+			}
+			catch (InterruptedException ie) {
+				// noop
+			}
+		}
+		
+		
+		
 		{
 			message.flip();
 
