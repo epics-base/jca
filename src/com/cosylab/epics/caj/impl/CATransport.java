@@ -672,8 +672,8 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 						{
 							context.getLogger().warning("Failed to send message to " + socketAddress + " - buffer full, will retry.");
 
-							if (tries >= 2*TRIES)
-								throw new IOException("TCP send buffer persistently full, disconnecting!");
+							//if (tries >= 2*TRIES)
+							//	throw new IOException("TCP send buffer persistently full, disconnecting!");
 							
 						}
 						
