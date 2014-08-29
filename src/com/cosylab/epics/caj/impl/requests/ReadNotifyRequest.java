@@ -110,7 +110,12 @@ public class ReadNotifyRequest extends AbstractCARequest implements NotifyRespon
 		this.dbr = dbr; 
 		this.sid = sid;
 		this.requestedDataType = dataType;
+		
+		if (dataCount == 0 && channel.getTransport().getMinorRevision() < 13)
+			dataCount = channel.getElementCount();
+
 		this.requestedDataCount = dataCount;
+		
 		sync = (dbr != null); 
 		// TODO not clean
 		context = (CAJContext)transport.getContext(); // or channel.getContext()
