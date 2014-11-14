@@ -7,3 +7,5 @@
 # Ignore generated files
 syntax: glob
 O.*/*
+target/*
+*~
