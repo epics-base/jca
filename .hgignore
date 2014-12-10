@@ -3,3 +3,9 @@
 \.chg\..*$
 \.rej$
 \.conflict\~$
+
+# Ignore generated files
+syntax: glob
+O.*/*
+target/*
+*~
