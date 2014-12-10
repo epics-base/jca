@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.sonatype.oss</groupId>
         <artifactId>oss-parent</artifactId>
-        <version>7</version>
+        <version>9</version>
     </parent>
     <groupId>org.epics</groupId>
     <artifactId>jca</artifactId>
@@ -57,6 +57,20 @@
             </notifier>
         </notifiers>
     </ciManagement>
+    <!-- With Java 8, there are more than 100 errors in the Javadocs, and the
+    build fails for that. Temporary solution is to disable the strict Javadoc check.
+    Use profiles to add the option only for JDK 1.8 and up.-->
+    <profiles>
+        <profile>
+            <id>java8-disable-strict-javadoc</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <properties>
+                <javadoc.doclint.none>-Xdoclint:none</javadoc.doclint.none>
+            </properties>
+        </profile>
+    </profiles>
     <build>
         <sourceDirectory>src/core</sourceDirectory>
         <testSourceDirectory>test</testSourceDirectory>
@@ -70,6 +84,31 @@
             </resource>
         </resources>
         <plugins>
+            <!-- Includes the OSGi manifest -->
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.5.3</version>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>process-classes</phase>
+                        <goals>    
+                            <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <archive>  
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                    </archive> 
+                </configuration>
+            </plugin> 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -107,6 +146,7 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.9</version>
                 <configuration>
+                    <additionalparam>${javadoc.doclint.none}</additionalparam>
                     <source>1.4</source>
                 </configuration>
                 <executions>
