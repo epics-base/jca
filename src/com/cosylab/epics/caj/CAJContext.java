@@ -34,13 +34,13 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
-import java.nio.channels.ClosedChannelException;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -70,7 +70,6 @@ import com.cosylab.epics.caj.util.InetAddressUtil;
 import com.cosylab.epics.caj.util.IntHashMap;
 import com.cosylab.epics.caj.util.Timer;
 import com.cosylab.epics.caj.util.logging.ConsoleLogHandler;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Implementation of CAJ JCA <code>Context</code>. 
@@ -92,12 +91,12 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
     /**
      * Maintenance version.
      */
-    private static final int CAJ_VERSION_MAINTENANCE = 14;
+    private static final int CAJ_VERSION_MAINTENANCE = 15;
 
     /**
      * Development version.
      */
-    private static final int CAJ_VERSION_DEVELOPMENT = 0;
+    private static final int CAJ_VERSION_DEVELOPMENT = 1;
 
     /**
      * Version.
@@ -1659,6 +1658,25 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 				beaconHandlers.put(responseFrom, handler);
 			}
 			return handler;
+		}
+	}
+	
+	/**
+	 * Sends client username message to the server.
+	 * User name is taken from System property "user.name".
+	 */
+	public void updateUserName()
+	{
+		Transport[] transports = getTransportRegistry().toArray();
+		for (int i = 0; i < transports.length; i++)
+		{
+			CATransport transport = (CATransport)transports[i];
+			try {
+				transport.updateUserName();
+			}
+			catch (Throwable th) {
+				logger.log(Level.WARNING, "Failed to update username for transport: " + transport.getRemoteAddress(), th);
+			}
 		}
 	}
 }

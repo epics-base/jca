@@ -38,7 +38,9 @@ import com.cosylab.epics.caj.impl.reactor.lf.LeaderFollowersThreadPool;
 import com.cosylab.epics.caj.impl.requests.EchoRequest;
 import com.cosylab.epics.caj.impl.requests.EventsOffRequest;
 import com.cosylab.epics.caj.impl.requests.EventsOnRequest;
+import com.cosylab.epics.caj.impl.requests.UserNameRequest;
 import com.cosylab.epics.caj.util.Timer;
+
 import java.nio.BufferOverflowException;
 
 /**
@@ -572,6 +574,20 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 	 */
 	protected void processWrite() {
 		flushInternal();                
+	}
+
+	/**
+	 * Sends client username message to the server.
+	 * User name is taken from System property "user.name".
+	 */
+	public void updateUserName()
+	{
+		try {
+			new UserNameRequest(this).submit();
+		} catch (IOException e) {
+			// TODO remove
+			logger.log(Level.SEVERE, "", e);
+		}
 	}
 
 	/**
