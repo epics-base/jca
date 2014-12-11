@@ -121,8 +121,8 @@ public class GasperHocePikico {
 		    initialize();
 
 			// Create the Channel to connect to the PV.
-			context.createChannel("msekoranjaHost:aiExample1", new ConnectionListenerImpl());
-			context.createChannel("msekoranjaHost:aiExample2", new ConnectionListenerImpl());
+			//context.createChannel("msekoranjaHost:aiExample1", new ConnectionListenerImpl());
+			//context.createChannel("msekoranjaHost:aiExample2", new ConnectionListenerImpl());
 		    ConnectionListenerImpl cl = new ConnectionListenerImpl();
 			Channel channel = context.createChannel(channelName, cl);
 

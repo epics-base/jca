@@ -37,6 +37,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -52,7 +53,6 @@ import com.cosylab.epics.caj.impl.requests.ReadNotifyRequest;
 import com.cosylab.epics.caj.impl.requests.SearchRequest;
 import com.cosylab.epics.caj.impl.requests.WriteNotifyRequest;
 import com.cosylab.epics.caj.impl.requests.WriteRequest;
-import com.cosylab.epics.caj.util.ArrayFIFO;
 
 /**
  * Implementation of CAJ JCA <code>Channel</code>.
@@ -1336,46 +1336,18 @@ public class CAJChannel extends Channel implements TransportClient {
 	}
 
 	
-	protected Object ownerLock = new Object();
-	protected ArrayFIFO owner = null;
-	protected int ownerIndex = -1;
+	protected final AtomicReference timerIdRef = new AtomicReference();
 	
-	public void unsetListOwnership() {
-		synchronized (ownerLock) {
-			owner = null;
-		}
+	public void setTimerId(Object timerId)
+	{
+		timerIdRef.set(timerId);
 	}
 	
-	public void addAndSetListOwnership(ArrayFIFO newOwner, int index) {
-		synchronized (newOwner) {
-			synchronized (ownerLock) {
-				//System.out.println("changing list ownership of " + name + " to index:" + index);			
-				newOwner.push(this);
-				owner = newOwner;
-				ownerIndex = index;
-			}
-		}
-	}
-
-	public void removeAndUnsetListOwnership() {
-		if (owner == null)
-			return;
-		
-		synchronized (owner) {
-			synchronized (ownerLock) {
-				if (owner != null) {
-					owner.remove(this);
-					owner = null;
-				}
-			}
-		}
+	public Object getTimerId()
+	{
+		return timerIdRef.get();
 	}
 	
-	public final int getOwnerIndex() {
-		synchronized (ownerLock) {
-			return ownerIndex;
-		}
-	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
