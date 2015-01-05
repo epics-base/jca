@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.SocketException;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.util.ArrayList;
@@ -1068,5 +1067,13 @@ public class CAJServerContext extends ServerContext implements CAContext, Config
 	public final void invalidateLastReceivedSequence()
 	{
 		lastReceivedSequenceNumber.set(0);
+	}
+	
+	/**
+	 * @see com.cosylab.epics.caj.impl.CAContext#getUserName()
+	 */
+	public String getUserName()
+	{
+		return System.getProperty("user.name", "nobody");
 	}
 }

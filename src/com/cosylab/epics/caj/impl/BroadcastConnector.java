@@ -16,10 +16,6 @@ package com.cosylab.epics.caj.impl;
 
 import java.net.InetSocketAddress;
 import java.nio.channels.DatagramChannel;
-import java.nio.channels.SelectionKey;
-
-import com.cosylab.epics.caj.impl.reactor.ReactorHandler;
-import com.cosylab.epics.caj.impl.reactor.lf.LeaderFollowersHandler;
 
 /**
  * Channel Access broadcast/repeater UDP connector.

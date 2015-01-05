@@ -15,19 +15,16 @@
 package com.cosylab.epics.caj.impl.handlers;
 
 import gov.aps.jca.CAStatus;
-import gov.aps.jca.event.ContextExceptionEvent;
-import gov.aps.jca.event.ContextVirtualCircuitExceptionEvent;
 
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 
 import com.cosylab.epics.caj.CAJConstants;
 import com.cosylab.epics.caj.CAJContext;
 import com.cosylab.epics.caj.impl.CAConstants;
 import com.cosylab.epics.caj.impl.ExceptionHandler;
 import com.cosylab.epics.caj.impl.Transport;
-
-import java.nio.charset.Charset;
 
 /**
  * @author <a href="mailto:matej.sekoranjaATcosylab.com">Matej Sekoranja</a>

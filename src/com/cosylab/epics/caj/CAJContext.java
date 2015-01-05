@@ -312,6 +312,8 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 	
 	private AtomicBoolean doNotShareChannels = new AtomicBoolean(System.getProperties().containsValue("CAJ_DO_NOT_SHARE_CHANNELS"));
 	
+	private volatile String userName = System.getProperty("user.name", "nobody");
+	
 	/**
 	 * Constructor.
 	 */
@@ -1662,11 +1664,15 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 	}
 	
 	/**
-	 * Sends client username message to the server.
-	 * User name is taken from System property "user.name".
+	 * Modifies client username and notifies connected servers about it.
 	 */
-	public void updateUserName()
+	public void modifyUserName(String userName)
 	{
+		if (userName == null)
+			throw new NullPointerException("userName == null");
+		
+		this.userName = userName;
+		
 		Transport[] transports = getTransportRegistry().toArray();
 		for (int i = 0; i < transports.length; i++)
 		{
@@ -1678,5 +1684,10 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 				logger.log(Level.WARNING, "Failed to update username for transport: " + transport.getRemoteAddress(), th);
 			}
 		}
+	}
+	
+	public String getUserName()
+	{
+		return userName;
 	}
 }

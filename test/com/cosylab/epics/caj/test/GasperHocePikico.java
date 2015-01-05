@@ -158,8 +158,7 @@ public class GasperHocePikico {
             	
 		        String userName = unames[(i++) % 2];
 		        System.out.println("\nSetting user name to: " + userName);
-		        System.setProperty("user.name", userName);
-		        ((CAJContext)context).updateUserName();
+		        ((CAJContext)context).modifyUserName(userName);
             }
             
             System.out.println("\n------------------------------------------------");
