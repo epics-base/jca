@@ -960,7 +960,10 @@ public class CAJChannel extends Channel implements TransportClient {
 		{
 			try
 			{
-				new ReadNotifyRequest(this, l, null, t, getServerChannelID(), type.getValue(), count).submit();
+                if (count == 0 && t.getMinorRevision() < 13)
+                    count = getElementCount();
+
+                new ReadNotifyRequest(this, l, null, t, getServerChannelID(), type.getValue(), count).submit();
 			}
 			catch (IOException ioex)
 			{
