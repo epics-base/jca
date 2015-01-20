@@ -186,7 +186,7 @@ public class SearchTimer extends Thread {
 	/**
 	 * Return the next task to execute, or null if thread is interrupted.
 	 **/
-	protected synchronized TimerTask nextTask(boolean block, long dt) {
+	protected synchronized TimerTask nextTask(boolean blockAndExtract, long dt) {
 
 		// Note: This code assumes that there is only one run loop thread
 
@@ -198,7 +198,7 @@ public class SearchTimer extends Thread {
 				TimerTask task = (TimerTask) (heap.peek());
 
 				if (task == null) {
-					if (!block)
+					if (!blockAndExtract)
 						return null;
 					wait();
 				} else {
@@ -206,10 +206,13 @@ public class SearchTimer extends Thread {
 					long when = task.getTimeToRun();
 
 					if ((when - dt) > now) { // false alarm wakeup
-						if (!block)
+						if (!blockAndExtract)
 							return null;
 						wait(when - now);
 					} else {
+						if (!blockAndExtract)
+							return task;
+						
 						task = (TimerTask) (heap.extract());
 
 						if (!task.getCancelled()) { // Skip if cancelled by

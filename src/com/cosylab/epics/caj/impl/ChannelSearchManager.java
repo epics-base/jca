@@ -39,8 +39,13 @@ public class ChannelSearchManager {
 	
 	private static final int MESSAGE_COALESCENCE_TIME_MS = 3;
 	
+	private static final int MAX_NUMBER_IMMEDIATE_PACKETS = 5;
+	private static final int IMMEDIATE_PACKETS_DELAY_MS = 10;
+	
 	private final SearchTimer timer = new SearchTimer();
 	private final AtomicBoolean canceled = new AtomicBoolean();
+	
+	private final AtomicInteger immediatePacketCount = new AtomicInteger();
 	
 	private class ChannelSearchTimerTask extends SearchTimer.TimerTask
 	{
@@ -52,12 +57,15 @@ public class ChannelSearchManager {
 		}
 		
 		public long timeout() {
-			
+
 			// send search message
 			generateSearchRequestMessage(channel, true);
 			
 			if (!timer.hasNext(MESSAGE_COALESCENCE_TIME_MS))
+			{
 				flushSendBuffer();
+				immediatePacketCount.set(0);
+			}
 			
 			// reschedule
 			long dT = getDelay();
@@ -211,6 +219,16 @@ public class ChannelSearchManager {
 	 */
 	private synchronized void flushSendBuffer()
 	{
+		if (immediatePacketCount.incrementAndGet() >= MAX_NUMBER_IMMEDIATE_PACKETS)
+		{
+			try {
+				Thread.sleep(IMMEDIATE_PACKETS_DELAY_MS);
+			} catch (InterruptedException e) {
+				// noop
+			}
+			immediatePacketCount.set(0);
+		}
+		
 		context.getBroadcastTransport().send(sendBuffer);
 		initializeSendBuffer();
 	}
