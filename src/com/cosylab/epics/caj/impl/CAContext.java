@@ -78,4 +78,9 @@ public interface CAContext extends LoggerProvider {
 	 * Invalidate last (UDP) received sequence.
 	 */
 	public void invalidateLastReceivedSequence();
+	
+	/**
+	 * Get user name (used to report to the server).
+	 */
+	public String getUserName();
 }

@@ -36,7 +36,7 @@ public class UserNameRequest extends AbstractCARequest {
 		if ( transport.getMinorRevision() < 1)
 			return;
 		
-		String userName = System.getProperty("user.name", "nobody");
+		String userName = transport.getContext().getUserName();
 		int alignedMessageSize = calculateAlignedSize(8, CAConstants.CA_MESSAGE_HEADER_SIZE + userName.length() + 1);
 		requestMessage = ByteBuffer.allocate(alignedMessageSize);
 		requestMessage = insertCAHeader(transport, requestMessage,

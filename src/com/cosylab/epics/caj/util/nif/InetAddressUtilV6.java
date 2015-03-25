@@ -14,6 +14,7 @@
 
 package com.cosylab.epics.caj.util.nif;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
@@ -76,6 +77,10 @@ public class InetAddressUtilV6 {
 				// noop, skip that interface
 			}
 		}
+		
+		// fallback to loop
+		if (list.size() == 0)
+			list.add(new InetSocketAddress(InetAddress.getLoopbackAddress(), port));
 		
 		InetSocketAddress[] retVal = new InetSocketAddress[list.size()];
 		list.toArray(retVal);

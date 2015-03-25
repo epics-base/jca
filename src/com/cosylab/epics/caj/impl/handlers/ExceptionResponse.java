@@ -18,13 +18,13 @@ import gov.aps.jca.CAStatus;
 
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 
 import com.cosylab.epics.caj.CAJConstants;
 import com.cosylab.epics.caj.CAJContext;
 import com.cosylab.epics.caj.impl.CAConstants;
 import com.cosylab.epics.caj.impl.ExceptionHandler;
 import com.cosylab.epics.caj.impl.Transport;
-import java.nio.charset.Charset;
 
 /**
  * @author <a href="mailto:matej.sekoranjaATcosylab.com">Matej Sekoranja</a>
@@ -161,7 +161,7 @@ public class ExceptionResponse extends AbstractCAJResponseHandler
 		// TODO remove
 		if (debug)
 			context.getLogger().fine("Exception occured, code: " + CAStatus.forStatusCode(parameter2) + ", message: '" + errorMessage + "'.");
-		
+System.err.println("Exception occured, code: " + CAStatus.forStatusCode(parameter2) + ", message: '" + errorMessage + "'.");	
 		//delegate
 		/* exception code, channel id, error message, original header) */
 		handlerTable[commandID].handleException(parameter2, parameter1, errorMessage, originalHeaderBuffer);
@@ -173,6 +173,7 @@ public class ExceptionResponse extends AbstractCAJResponseHandler
 	 */
 	public void handleException(int errorCode, int cid,
 								String errorMessage, ByteBuffer originalHeaderBuffer) {
+		
 		// TODO log or not to log?
 		context.getLogger().fine("Exception occured, code: " + CAStatus.forStatusCode(errorCode) + ", message: '" + errorMessage + "'.");
 	}

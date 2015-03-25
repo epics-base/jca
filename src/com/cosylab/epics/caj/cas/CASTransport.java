@@ -764,6 +764,8 @@ public class CASTransport implements Transport, ReactorHandler, Runnable {
 	 * @param clientUsername	client username.
 	 */
 	public void setClientUsername(String clientUsername) {
+		// note that clientUserName can also change when some channels are already created
+		// maybe we will need some notification callback to the AS implementation
 		this.clientUsername = clientUsername;
 		context.getLogger().fine("Client " + socketAddress + " is setting username to '" + clientUsername + "'.");
 	}

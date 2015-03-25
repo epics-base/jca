@@ -20,49 +20,31 @@ import gov.aps.jca.Channel;
 import gov.aps.jca.Context;
 import gov.aps.jca.JCALibrary;
 import gov.aps.jca.Monitor;
-import gov.aps.jca.dbr.DBR;
-import gov.aps.jca.dbr.DBRType;
-import gov.aps.jca.dbr.STRING;
-import gov.aps.jca.event.GetEvent;
-import gov.aps.jca.event.GetListener;
+import gov.aps.jca.event.AccessRightsEvent;
+import gov.aps.jca.event.AccessRightsListener;
+import gov.aps.jca.event.ConnectionEvent;
+import gov.aps.jca.event.ConnectionListener;
 import gov.aps.jca.event.MonitorEvent;
 import gov.aps.jca.event.MonitorListener;
+
+import com.cosylab.epics.caj.CAJContext;
 
 /**
  * Simple basic usage test.
  * @author <a href="mailto:matej.sekoranjaATcosylab.com">Matej Sekoranja</a>
  * @version $id$
  */
-public class BasicExample {
+public class GasperHocePikico {
 
-    /**
-     * Implementation of get listener.
-     */
-	private class GetListenerImpl implements GetListener
+	private class ConnectionListenerImpl implements ConnectionListener
 	{
-	    private DBR value = null;
-	    private CAStatus status = null;
-	    
-		/**
-		 * @see gov.aps.jca.event.GetListener#getCompleted(gov.aps.jca.event#GetEvent)
-		 */
-		public synchronized void getCompleted(GetEvent ev) {
-		    status = ev.getStatus();
-		    value = ev.getDBR();
-		    
-		    // notify retrival
-		    this.notifyAll();
+		public synchronized void connectionChanged(ConnectionEvent event) {
+			System.out.println(((Channel)event.getSource()).getName() + ": isConnected = " + event.isConnected());
+			if (event.isConnected())
+				this.notifyAll();
 		}
 		
-        public CAStatus getStatus() {
-            return status;
-        }
-        
-        public DBR getValue() {
-            return value;
-        }
 	}
-
 	/**
      * Implementation of monitor listener.
      */
@@ -73,9 +55,16 @@ public class BasicExample {
          */
         public void monitorChanged(MonitorEvent event)
         {
+        	try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        	
             // immediately print info
             if (event.getStatus() == CAStatus.NORMAL)
-                event.getDBR().printInfo();
+                 System.out.print("."); //event.getDBR().printInfo();
             else
                 System.err.println("Monitor error: " + event.getStatus());
         }
@@ -132,79 +121,46 @@ public class BasicExample {
 		    initialize();
 
 			// Create the Channel to connect to the PV.
-			Channel channel = context.createChannel(channelName);
+			//context.createChannel("msekoranjaHost:aiExample1", new ConnectionListenerImpl());
+			//context.createChannel("msekoranjaHost:aiExample2", new ConnectionListenerImpl());
+		    ConnectionListenerImpl cl = new ConnectionListenerImpl();
+			Channel channel = context.createChannel(channelName, cl);
 
-			// Send the request and wait 5.0 seconds for the channel to connect to the PV.
-			context.pendIO(5.0);
-
-			// If we're here, then everything went fine.
-			// Display basic information about the channel.
-			channel.printInfo();
-
-            /********************************************************************/ 
-            /***************************** sync get *****************************/ 
-            /********************************************************************/
-
-            System.out.println("\n------------------------------------------------\n");
-            System.out.println("Sync get:");
-            
-    		// get request w/o callbacks will wait until flush/pendIO is called
-            // (channel default 'type' and 'count' is used)
-    		DBR dbr = channel.get();
-    		context.pendIO(3.0);
-    		dbr.printInfo();
-
-    		System.out.println();
-
-    		dbr = channel.get(DBRType.STRING, 1);
-    		context.pendIO(3.0);
-    		String[] value = ((STRING)dbr).getStringValue();
-    		System.out.println("Read string value: " + value[0]);
-    		
-            /********************************************************************/ 
-            /**************************** async get *****************************/ 
-            /********************************************************************/
-    		
-            System.out.println("\n------------------------------------------------\n");
-            System.out.println("Async get:");
-
-            // get request w/ callbacks are always issued immediately
-    		// not related to pendIO at all, but require pend_event (to be flushed also)
-    		GetListenerImpl listener = new GetListenerImpl();
-    		channel.get(listener);
-    		synchronized (listener)
-    		{
-    			// flush & get event back
-    			context.flushIO();
-    			// wait for response...
-    			listener.wait(3000);
-    		}
-    		
-    		if (listener.getStatus() == CAStatus.NORMAL)
-    		    listener.getValue().printInfo();
-    		else
-    		    System.err.println("Get error: " + listener.getStatus());
-
-
-            /********************************************************************/ 
-            /***************************** Monitors *****************************/ 
-            /********************************************************************/ 
-            
-            System.out.println("\n------------------------------------------------\n");
-            System.out.println("Monitors:");
+			channel.addAccessRightsListener(new AccessRightsListener() {
+				public void accessRightsChanged(AccessRightsEvent event) {
+					Channel ch = (Channel)event.getSource();
+					System.out.println("[" + ch.getName() + "] ACL: " + 
+							(event.getReadAccess() ? 'r' : '-') +
+							(event.getWriteAccess() ? 'w' : '-'));
+				}
+			});
+			
             System.out.println();
 
-            // Create a monitor
-            Monitor monitor = 
+            synchronized (cl)
+            {
+            	while (channel.getConnectionState() != Channel.CONNECTED)
+            		cl.wait();
+            	
+            	System.out.print("Creating monitor...");
                 channel.addMonitor(Monitor.VALUE, new MonitorListenerImpl());
-            context.flushIO();
-
-            // Sleep for 10 seconds (monitors will be printed out).
-            Thread.sleep(10000);
+	            context.flushIO();
+            	System.out.println(" done. ");
+            }
             
-            // Clear the monitor
-            monitor.clear();
-
+            String[] unames = new String[] { "goodUser", "badUser" };
+            int i = 0;
+            while (true)
+            {
+            	try {
+        			Thread.sleep(3000);
+            	} catch (InterruptedException ie ) { break; }
+            	
+		        String userName = unames[(i++) % 2];
+		        System.out.println("\nSetting user name to: " + userName);
+		        ((CAJContext)context).modifyUserName(userName);
+            }
+            
             System.out.println("\n------------------------------------------------");
             
             /********************************************************************/ 
@@ -239,12 +195,12 @@ public class BasicExample {
 	    // check command-line arguments
 		if (args.length != 1) {
 			System.out.println(
-				"usage: java " + BasicExample.class.getName() + " <pvname>");
+				"usage: java " + GasperHocePikico.class.getName() + " <pvname>");
 			System.exit(1);
 		}
 		
 		// execute
-		new BasicExample().execute(args[0]);
+		new GasperHocePikico().execute(args[0]);
 	}
 	
 }

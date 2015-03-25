@@ -117,7 +117,7 @@ public class Heap {
 
 	/**
 	 * Return and remove least element, or null if empty.
-	 * @return extraced least element.
+	 * @return extracted least element.
 	 **/
 	public synchronized Object extract() {
 		if (count_ < 1)
@@ -173,6 +173,11 @@ public class Heap {
 		for (int i = 0; i < count_; ++i)
 			nodes_[i] = null;
 		count_ = 0;
+	}
+	
+	public synchronized Object[] getNodes()
+	{
+		return nodes_;
 	}
 
 }

@@ -18,7 +18,6 @@ import gov.aps.jca.dbr.DBR;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
 import com.cosylab.epics.caj.CAJContext;
@@ -79,19 +78,7 @@ public class SearchResponse extends AbstractCAJResponseHandler {
 			if (parameter1 != INADDR_BROADCAST)
 				addr = InetAddressUtil.intToIPv4Address(parameter1);
 			else
-			{
 				addr = responseFrom.getAddress(); 			
-
-				// no not use loopback address
-				if (addr.isLoopbackAddress())
-				{
-					try {
-						addr = InetAddress.getLocalHost();
-					} catch (UnknownHostException e) {
-						// noop
-					}
-				}
-			}
 			
 			responseFrom = new InetSocketAddress(addr, port);
 		}

@@ -1,463 +1,173 @@
-/*
- * Copyright (c) 2004 by Cosylab
- *
- * The full license specifying the redistribution, modification, usage and other
- * rights and obligations is included with the distribution of this project in
- * the file "LICENSE-CAJ". If the license is not included visit Cosylab web site,
- * <http://www.cosylab.com>.
- *
- * THIS SOFTWARE IS PROVIDED AS-IS WITHOUT WARRANTY OF ANY KIND, NOT EVEN THE
- * IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR OF THIS SOFTWARE, ASSUMES
- * _NO_ RESPONSIBILITY FOR ANY CONSEQUENCE RESULTING FROM THE USE, MODIFICATION,
- * OR REDISTRIBUTION OF THIS SOFTWARE.
+/**
+ * 
  */
-
 package com.cosylab.epics.caj.impl;
 
 import java.nio.ByteBuffer;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.cosylab.epics.caj.CAJChannel;
 import com.cosylab.epics.caj.CAJContext;
 import com.cosylab.epics.caj.impl.requests.VersionRequest;
-import com.cosylab.epics.caj.util.ArrayFIFO;
-import com.cosylab.epics.caj.util.Timer;
+import com.cosylab.epics.caj.util.SearchTimer;
 
 /**
- * @author <a href="mailto:matej.sekoranjaATcosylab.com">Matej Sekoranja</a>
- * @version $id$
+ * @author msekoranja
+ *
  */
 public class ChannelSearchManager {
+
+	/**
+	 * Minimum time between sending packets (ms).
+	 */
+	private final long minSendInterval;
 	
 	/**
-	 * Max search tries per frame.
+	 * Maximum time between sending packets (ms).
 	 */
-	private static final int MAX_FRAMES_PER_TRY = 64;
+	private final long maxSendInterval;
 
-	private class SearchTimer implements Timer.TimerRunnable
+	/**
+	 * Search interval multiplier, i.e. multiplier for exponential back-off. 
+	 */
+	private final int intervalMultiplier;
+
+	private static final int MIN_SEND_INTERVAL_MS_DEFAULT = 100;
+	private static final int MAX_SEND_INTERVAL_MS_DEFAULT = 30000;
+	private static final int INTERVAL_MULTIPLIER_DEFAULT = 2;
+	
+	private static final int MESSAGE_COALESCENCE_TIME_MS = 3;
+	
+	private static final int MAX_NUMBER_IMMEDIATE_PACKETS = 5;
+	private static final int IMMEDIATE_PACKETS_DELAY_MS = 10;
+	
+	private final SearchTimer timer = new SearchTimer();
+	private final AtomicBoolean canceled = new AtomicBoolean();
+	
+	private final AtomicInteger immediatePacketCount = new AtomicInteger();
+	
+	private class ChannelSearchTimerTask extends SearchTimer.TimerTask
 	{
-		/**
-		 * Number of search attempts in one frame.
-		 */
-		volatile int searchAttempts = 0; 
-
-		/**
-		 * Number of search responses in one frame.
-		 */
-		volatile int searchRespones = 0; 
+		private final CAJChannel channel;
 		
-		/**
-		 * Number of frames per search try.
-		 */
-		double framesPerTry = 1;
-		
-		/**
-		 * Number of frames until congestion threshold is reached.
-		 */
-	    double framesPerTryCongestThresh = Double.MAX_VALUE;
-
-	    /**
-	     * Start sequence number (first frame number within a search try). 
-	     */
-	    volatile int startSequenceNumber = 0;
-	    
-	    /**
-	     * End sequence number (last frame number within a search try). 
-	     */
-	    volatile int endSequenceNumber = 0;
-	    
-	    /**
-	     * This timer index.
-	     */
-	    final int timerIndex;
-	    
-	    /**
-	     * Flag indicating whether boost is allowed. 
-	     */
-	    final boolean allowBoost;
-	    
-	    /**
-	     * Flag indicating whether slow-down is allowed (for last timer). 
-	     */
-	    final boolean allowSlowdown;
-
-	    /**
-		 * Ordered (as inserted) list of channels with search request pending.
-		 */
-	    final ArrayFIFO requestPendingChannels = new ArrayFIFO();
-
-		/**
-		 * Ordered (as inserted) list of channels with search request pending.
-		 */
-	    final ArrayFIFO responsePendingChannels = new ArrayFIFO();
-
-		/**
-		 * Timer ID.
-		 * (sync on requestPendingChannels)
-		 */
-		Object timerTaskID = null;
-
-		/**
-		 * Cancel this instance.
-		 */
-		volatile boolean canceled = false;
-		
-	    /**
-	     * Time of last response check.
-	     */
-	    long timeAtResponseCheck = 0;
-
-	    /**
-		 * Constructor;
-		 * @param timerIndex this timer instance index.
-		 * @param allowBoost is boost allowed flag.
-		 */
-		public SearchTimer(int timerIndex, boolean allowBoost, boolean allowSlowdown) {
-			this.timerIndex = timerIndex;
-			this.allowBoost = allowBoost;
-			this.allowSlowdown = allowSlowdown;
+		ChannelSearchTimerTask(CAJChannel channel)
+		{
+			this.channel = channel;
 		}
 		
-		/**
-		 * Shutdown this instance.
-		 */
-		public synchronized void shutdown()
-		{
-			if (canceled)
-				return;
-			canceled = true;
+		public long timeout() {
 
-			synchronized (requestPendingChannels)
+			// send search message
+			generateSearchRequestMessage(channel, true);
+			
+			if (!timer.hasNext(MESSAGE_COALESCENCE_TIME_MS))
 			{
-				if (timerTaskID != null)
-				{
-					Timer.cancel(timerTaskID);
-					timerTaskID = null;
-				}
+				flushSendBuffer();
+				immediatePacketCount.set(0);
 			}
-			
-			requestPendingChannels.clear();
-			responsePendingChannels.clear();
-		}
-		
-		/**
-		 * Install channel.
-		 * @param channel channel to be registered.
-		 */
-		public synchronized void installChannel(CAJChannel channel)
-		{
-			if (canceled)
-				return;
-
-			synchronized (requestPendingChannels)
-			{
-				boolean startImmediately = requestPendingChannels.isEmpty();
-				channel.addAndSetListOwnership(requestPendingChannels, timerIndex);
-
-				// start searching
-				if (startImmediately) {
-					if (timerTaskID != null)
-						Timer.cancel(timerTaskID);
-					if (timeAtResponseCheck == 0)
-						timeAtResponseCheck = System.currentTimeMillis();
-					// start with some initial delay (to collect all installed requests)
-					timerTaskID = context.getTimer().executeAfterDelay(10, this);
-				}
-			}
-		}
-
-		/**
-		 * Uninstall channel.
-		 * @param channel channel to be unregistered.
-		 *
-		public void uninstallChannel(CAJChannel channel)
-		{
-			unregisterChannel(channel);
-		}*/
-
-		/**
-		 * Move channels to other <code>SearchTimer</code>.
-		 * @param destination where to move channels.
-		 */
-		public void moveChannels(SearchTimer destination)
-		{
-			// do not sync this, not necessary and might cause deadlock
-			CAJChannel channel;
-			while ((channel = (CAJChannel)responsePendingChannels.pop()) != null) {
-				if (searchAttempts > 0)
-					searchAttempts--;
-				destination.installChannel(channel);
-			}
-
-			// bulk move
-			synchronized (requestPendingChannels) {
-				while (!requestPendingChannels.isEmpty())
-					destination.installChannel((CAJChannel)requestPendingChannels.pop());
-			}
-		}
-
-		/**
-		 * Called when timer expired.
-		 * @param timeoutTime expiration time.
-		 */
-		public void timeout(long timeoutTime)
-		{
-
-			if (canceled)
-				return;
-
-			synchronized (requestPendingChannels) {
-				timerTaskID = null;
-			}	
-
-			// if there was some success (no congestion)
-			// boost search period (if necessary) for channels not recently searched
-			if (allowBoost && searchRespones > 0)
-			{
-				synchronized (requestPendingChannels)
-				{
-					int sz = requestPendingChannels.size();
-					for (int i = 0; i < sz; i++)
-					{
-						CAJChannel channel = (CAJChannel)requestPendingChannels.pop();						// boost needed check
-						//final int boostIndex = searchRespones >= searchAttempts * SUCCESS_RATE ? Math.min(Math.max(0, timerIndex - 1), beaconAnomalyTimerIndex) : beaconAnomalyTimerIndex;
-						final int boostIndex = beaconAnomalyTimerIndex;
-						if (channel.getOwnerIndex() > boostIndex)
-						{
-							channel.unsetListOwnership();
-							boostSearching(channel, boostIndex);
-                        } 
-						else
-						{
-							requestPendingChannels.addLast(channel);
-						}
-					}
-				}
-			}
-
-			CAJChannel channel;
-			
-			// should we check results (installChannel trigger timer immediately)
-			long now = System.currentTimeMillis();
-			if (now - timeAtResponseCheck >= period())
-			{
-				timeAtResponseCheck = now;
-				
-				// notify about timeout (move it to other timer) 
-				while ((channel = (CAJChannel)responsePendingChannels.pop()) != null) {
-					if (allowSlowdown) {
-						channel.unsetListOwnership();
-						searchResponseTimeout(channel, timerIndex);
-					}
-					else {
-						channel.addAndSetListOwnership(requestPendingChannels, timerIndex);
-					}
-				}
-		
-				// check search results
-				if (searchAttempts > 0)
-				{
-		            // increase UDP frames per try if we have a good score
-					if (searchRespones >= searchAttempts * CAJ_SEARCH_INC_THRESHOLD)
-					{
-						// increase frames per try
-		                // a congestion avoidance threshold similar to TCP is now used
-						if (framesPerTry < MAX_FRAMES_PER_TRY)
-						{
-							if (framesPerTry < framesPerTryCongestThresh)
-								framesPerTry = Math.min(2*framesPerTry, framesPerTryCongestThresh);
-							else
-								framesPerTry += 1.0/framesPerTry;
-						}
-					}
-					else if (searchRespones < searchAttempts * CAJ_SEARCH_DEC_THRESHOLD)
-					{
-						// decrease frames per try, fallback
-						framesPerTryCongestThresh = framesPerTry / 2.0;
-						framesPerTry = 1;
-					}
-					//else { 
-						// Do nothing here - leave framesPerTry as is.
-					//}
-				
-				}
-			}
-			
-			startSequenceNumber = getSequenceNumber();
-			
-			searchAttempts = 0;
-			searchRespones = 0;
-			
-			int framesSent = 0;
-			int triesInFrame = 0;
-			
-			while ((channel = (CAJChannel)requestPendingChannels.pop()) != null) {
-				channel.unsetListOwnership();
-				
-				boolean requestSent = true;
-				boolean allowNewFrame = (framesSent+1) < framesPerTry;
-				boolean frameWasSent;
-				// guess next
-				endSequenceNumber = getSequenceNumber() + 1;
-				try
-				{
-					frameWasSent = generateSearchRequestMessage(channel, allowNewFrame);
-				} catch (Throwable th) {
-					// make sure that channel is owned
-					// and add it to response list not to cause dead-loops
-					channel.addAndSetListOwnership(responsePendingChannels, timerIndex);
-					// do not report any error
-					break;
-				}
-				if (frameWasSent) {
-					framesSent++;
-					triesInFrame = 0;
-					if (!allowNewFrame) { 
-						channel.addAndSetListOwnership(requestPendingChannels, timerIndex);
-						requestSent = false;
-					}
-					else
-						triesInFrame++;
-				}
-				else
-					triesInFrame++;
-
-				if (requestSent) {
-					channel.addAndSetListOwnership(responsePendingChannels, timerIndex);
-					if (searchAttempts < Integer.MAX_VALUE)
-						searchAttempts++;
-				}
-				
-				// limit
-				if (triesInFrame == 0 && !allowNewFrame)
-					break;
-			}
-
-		    // flush out the search request buffer
-			if (triesInFrame > 0) {
-				try
-				{
-					// guess next
-					endSequenceNumber = getSequenceNumber() + 1;
-					flushSendBuffer();
-					framesSent++;
-				} catch (Throwable th) {
-					// noop
-				}
-			}
-			
-			endSequenceNumber = getSequenceNumber();
 			
 			// reschedule
-			synchronized (requestPendingChannels)
-			{
-				if (!canceled && timerTaskID == null) {
-					boolean someWorkToDo = (!requestPendingChannels.isEmpty() || !responsePendingChannels.isEmpty());
-					if (someWorkToDo)
-						timerTaskID = context.getTimer().executeAfterDelay(period(), this);
-				}
-			}
-
-		}
-		
-		/**
-		 * Search response received notification.
-		 * @param responseSequenceNumber sequence number of search frame which contained search request.
-		 * @param isSequenceNumberValid valid flag of <code>responseSequenceNumber</code>.
-		 * @param responseTime time of search response.
-		 */
-		public void searchResponse(int responseSequenceNumber, boolean isSequenceNumberValid, long responseTime)
-		{
-			if (canceled)
-				return;
-		
-			boolean validResponse = true;
-			if (isSequenceNumberValid)
-				validResponse = startSequenceNumber <= sequenceNumber && sequenceNumber <= endSequenceNumber;
+			long dT = getDelay();
+			dT *= intervalMultiplier;
+			if (dT > maxSendInterval)
+				dT = maxSendInterval;
+			if (dT < minSendInterval)
+				dT = minSendInterval;
 			
-			// update RTTE
-			if (validResponse)
-			{
-				final long dt = responseTime - getTimeAtLastSend();
-				updateRTTE(dt);
-				
-				if (searchRespones < Integer.MAX_VALUE)
-				{
-					searchRespones++;
-					
-					// all found, send new search requests immediately if neccessary
-					if (searchRespones == searchAttempts)
-					{
-						if (requestPendingChannels.size() > 0) 
-						{
-							if (timerTaskID != null)
-								Timer.cancel(timerTaskID);
-							timerTaskID = context.getTimer().executeAfterDelay(0, this);
-						}
-					}
-				}
-			}
+			return dT;
 		}
 		
+	}
+	
+	/**
+	 * Register channel.
+	 * @param channel the channel to register.
+	 * @return true if the channel was successfully registered.
+ 	 */
+	public boolean registerChannel(CAJChannel channel)
+	{
+		if (canceled.get())
+			return false;
+
+		ChannelSearchTimerTask timerTask = new ChannelSearchTimerTask(channel);
+		channel.setTimerId(timerTask);
 		
-		/**
-		 * Calculate search time period.
-		 * @return search time period.
-		 */
-		public final long period()
+		timer.executeAfterDelay(MESSAGE_COALESCENCE_TIME_MS, timerTask);
+		
+		channelCount.incrementAndGet();
+		
+		return true;
+	}
+	
+	/**
+	 * Unregister channel.
+	 * @param channel
+	 */
+	public void unregisterChannel(CAJChannel channel)
+	{
+		if (canceled.get())
+			return;
+
+		Object timerTask = channel.getTimerId();
+		if (timerTask != null)
 		{
-			return (long) ((1 << timerIndex) * getRTTE());
+			SearchTimer.cancel(timerTask);
+			channel.setTimerId(null);
 		}
+		
+		channelCount.decrementAndGet();
+	}
 
+	private final AtomicInteger channelCount = new AtomicInteger();
+	
+	/**
+	 * Get number of registered channels.
+	 * @return number of registered channels.
+	 */
+	public int registeredChannelCount() {
+		return channelCount.get();
+	}
+	
+	/**
+	 * Beacon anomaly detected.
+	 * Boost searching of all channels.
+	 */
+	public void beaconAnomalyNotify()
+	{
+		if (canceled.get())
+			return;
+		
+		timer.rescheduleAllAfterDelay(0);
+	}
+	
+	/**
+	 * Cancel.
+	 */
+	public void cancel()
+	{
+		if (canceled.getAndSet(true))
+			return;
+		
+		timer.shutDown();
 	}
 	
 	
-
-	/**
-	 * Minimal RTT (ms).
-	 */
-	private static final long MIN_RTT = 32;
-
-	/**
-	 * Maximal RTT (ms).
-	 */
-	private static final long MAX_RTT = 2 * MIN_RTT;
-
-	/**
-	 * Search faster if the success rate is greater than this
-	 */
-	private static double CAJ_SEARCH_INC_THRESHOLD = 0.9;
 	
-	/**
-	 * Search slower if the success rate is lower than this
-	 */
-	private static double CAJ_SEARCH_DEC_THRESHOLD = 0.875;
-
-	static { 
-		// Allow clients to override the search increment and decrement thresholds.
-		// Use with caution: this is essentially a compromise between overwhelming the IOC's and connecting/reconnecting quickly.
-		String incOverrideKey = ChannelSearchManager.class.getName() + ".CAJ_SEARCH_INC_THRESHOLD";
-		if(System.getProperties().containsKey(incOverrideKey)) {
-			try {
-				double incThreshold = Double.parseDouble((String)System.getProperties().get(incOverrideKey));
-				CAJ_SEARCH_INC_THRESHOLD = incThreshold;
-			} catch(Exception ex) { 
-				ex.printStackTrace(System.err);
-			}
-		}
-
-		String decOverrideKey = ChannelSearchManager.class.getName() + ".CAJ_SEARCH_DEC_THRESHOLD";
-		if(System.getProperties().containsKey(decOverrideKey)) {
-			try {
-				double decThreshold = Double.parseDouble((String)System.getProperties().get(decOverrideKey));
-				CAJ_SEARCH_DEC_THRESHOLD = decThreshold;
-			} catch(Exception ex) { 
-				ex.printStackTrace(System.err);
-			}
-		}
-	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	/**
 	 * Context.
@@ -465,66 +175,15 @@ public class ChannelSearchManager {
 	private CAJContext context;
 
 	/**
-	 * Canceled flag.
-	 */
-	private volatile boolean canceled = false;
-
-	/**
-	 * Round-trip time (RTT) mean.
-	 */
-	private volatile double rttmean = MIN_RTT;
-
-	/**
-	 * Search timers.
-	 * Each timer with a greater index has longer (doubled) search period.
-	 */
-	private SearchTimer[] timers;
-	
-	/**
-	 * Index of a timer to be used when beacon anomaly is detected.
-	 */
-	private int beaconAnomalyTimerIndex;
-
-	/**
 	 * Search (datagram) sequence number.
 	 */
 	private volatile int sequenceNumber = 0;
-	
-	/**
-	 * Max search period (in ms).
-	 */
-	private static final long MAX_SEARCH_PERIOD = 5 * 60000;  
-	
-	/**
-	 * Max search period (in ms) - lower limit.
-	 */
-	private static final long MAX_SEARCH_PERIOD_LOWER_LIMIT = 60000;  
-
-	/**
-	 * Beacon anomaly search period (in ms).
-	 */
-	private static final long BEACON_ANOMALY_SEARCH_PERIOD = 5000;  
-	
-	/**
-	 * Max number of timers.
-	 */
-	private static final int MAX_TIMERS = 18;  
 
 	/**
 	 * Send byte buffer (frame)
 	 */
 	private ByteBuffer sendBuffer;
 	
-    /**
-     * Time of last frame send.
-     */
-    private volatile long timeAtLastSend;
-
-    /**
-     * Set of registered channels.
-     */
-    private Set channels = new HashSet();
-    
     /**
 	 * Constructor.
 	 * @param context
@@ -533,45 +192,15 @@ public class ChannelSearchManager {
 	{
 		this.context = context;
 
+		minSendInterval = MIN_SEND_INTERVAL_MS_DEFAULT;
+		maxSendInterval = MAX_SEND_INTERVAL_MS_DEFAULT;
+		intervalMultiplier = INTERVAL_MULTIPLIER_DEFAULT;
+
 		// create and initialize send buffer
 		sendBuffer = ByteBuffer.allocateDirect(CAConstants.MAX_UDP_SEND);
 		initializeSendBuffer();
-
-		// TODO should be configurable
-		long maxPeriod = MAX_SEARCH_PERIOD;
-		
-		maxPeriod = Math.min(maxPeriod, MAX_SEARCH_PERIOD_LOWER_LIMIT);
-		
-		// calculate number of timers to reach maxPeriod (each timer period is doubled)
-		double powerOfTwo = Math.log(maxPeriod / (double)MIN_RTT) / Math.log(2);
-		int numberOfTimers = (int)(powerOfTwo + 1);
-		numberOfTimers = Math.min(numberOfTimers, MAX_TIMERS);
-
-		// calculate beacon anomaly timer index
-		powerOfTwo = Math.log(BEACON_ANOMALY_SEARCH_PERIOD  / (double)MIN_RTT) / Math.log(2);
-		beaconAnomalyTimerIndex = (int)(powerOfTwo + 1);
-		beaconAnomalyTimerIndex = Math.min(beaconAnomalyTimerIndex, numberOfTimers - 1);
-		
-		// create timers
-		timers = new SearchTimer[numberOfTimers];
-		for (int i = 0; i < numberOfTimers; i++)
-			timers[i] = new SearchTimer(i, i > beaconAnomalyTimerIndex, i != (numberOfTimers-1));		
-	}
+	}	
 	
-	/**
-	 * Cancel.
-	 */
-	public synchronized void cancel()
-	{
-		if (canceled)
-			return;
-		canceled = true;
-
-		if (timers != null)
-			for (int i = 0; i < timers.length; i++)
-				timers[i].shutdown();
-	}
-
 	/**
 	 * Initialize send buffer.
 	 */
@@ -590,11 +219,20 @@ public class ChannelSearchManager {
 	 */
 	private synchronized void flushSendBuffer()
 	{
-		timeAtLastSend = System.currentTimeMillis();
+		if (immediatePacketCount.incrementAndGet() >= MAX_NUMBER_IMMEDIATE_PACKETS)
+		{
+			try {
+				Thread.sleep(IMMEDIATE_PACKETS_DELAY_MS);
+			} catch (InterruptedException e) {
+				// noop
+			}
+			immediatePacketCount.set(0);
+		}
+		
 		context.getBroadcastTransport().send(sendBuffer);
 		initializeSendBuffer();
 	}
-	
+
 	/**
 	 * Generate (put on send buffer) search request 
 	 * @param channel 
@@ -615,52 +253,6 @@ public class ChannelSearchManager {
 		
 		return false;
 	}
-
-	/**
-	 * Get number of registered channels.
-	 * @return number of registered channels.
-	 */
-	public int registeredChannelCount() {
-		synchronized (channels) {
-			return channels.size();
-		}
-	}
-
-	/**
-	 * Register channel.
-	 * @param channel
-	 */
-	public void registerChannel(CAJChannel channel)
-	{
-		if (canceled)
-			return;
-
-		synchronized (channels)
-		{
-			if (channels.contains(channel))
-				return;
-			channels.add(channel);
-
-			timers[0].installChannel(channel);
-		}
-	}
-
-
-	/**
-	 * Unregister channel.
-	 * @param channel
-	 */
-	public void unregisterChannel(CAJChannel channel)
-	{
-		synchronized (channels)
-		{
-			if (!channels.contains(channel))
-				return;
-			channels.remove(channel);
-				
-			channel.removeAndUnsetListOwnership();
-		}
-	}
 	
 	/**
 	 * Search response received notification.
@@ -671,79 +263,9 @@ public class ChannelSearchManager {
 	 */
 	public void searchResponse(CAJChannel channel, int responseSequenceNumber, boolean isSequenceNumberValid, long responseTime)
 	{
-		int timerIndex = channel.getOwnerIndex();
 		unregisterChannel(channel);
 		
-		timers[timerIndex].searchResponse(responseSequenceNumber, isSequenceNumberValid, responseTime);
-	}
-	
-	/**
-	 * Notifty about search failure (response timeout).
-	 * @param channel channel whose search failed.
-	 * @param timerIndex index of timer which tries to search.
-	 */
-	private void searchResponseTimeout(CAJChannel channel, int timerIndex)
-	{
-		int newTimerIndex = Math.min(++timerIndex, timers.length - 1);
-		timers[newTimerIndex].installChannel(channel);
+		// TODO we could destroy timer thread when there is no channel to search
 	}
 
-	/**
-	 * Beacon anomaly detected.
-	 * Boost searching of all channels.
-	 */
-	public void beaconAnomalyNotify()
-	{
-//System.out.println("[*] beaconAnomaly");
-		
-		for (int i = beaconAnomalyTimerIndex + 1; i < timers.length; i++)
-			timers[i].moveChannels(timers[beaconAnomalyTimerIndex]);
-	}
-	
-	/**
-	 * Boost searching of a channel.
-	 * @param channel channel to boost searching.
-	 * @param timerIndex to what timer-index to boost
-	 */
-	private void boostSearching(CAJChannel channel, int timerIndex)
-	{
-		timers[timerIndex].installChannel(channel);
-	}
-	
-	/**
-	 * Update (recalculate) round-trip estimate.
-	 * @param rtt new sample of round-trip value.
-	 */
-	private final void updateRTTE(long rtt)
-	{
-		final double error = rtt - rttmean;
-		rttmean += error / 4.0;
-//System.out.println("rtt:" + rtt + ", rttmean:" + rttmean);
-	}
-	
-	/**
-	 * Get round-trip estimate (in ms).
-	 * @return round-trip estimate (in ms).
-	 */
-	private final double getRTTE() {
-		return Math.min(Math.max(rttmean, MIN_RTT), MAX_RTT);
-	}
-	
-	/**
-	 * Get search (UDP) frame sequence number.
-	 * @return search (UDP) frame sequence number.
-	 */
-	private final int getSequenceNumber()
-	{
-		return sequenceNumber;
-	}
-	
-	/**
-	 * Get time at last send (when sendBuffer was flushed).
-	 * @return time at last send.
-	 */
-	private final long getTimeAtLastSend()
-	{
-		return timeAtLastSend;
-	}
 }

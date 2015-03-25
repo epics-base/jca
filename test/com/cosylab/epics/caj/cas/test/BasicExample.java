@@ -106,7 +106,7 @@ public class BasicExample {
 		server.registerProcessVaribale(enumPV);
 
 		// counter PV
-		CounterProcessVariable counter = new CounterProcessVariable("COUNTER", null, -10, 10, 1, 100, -7, 7, -9, 9);
+		CounterProcessVariable counter = new CounterProcessVariable("COUNTER", null, -10, 10, 1, 1, -7, 7, -9, 9);
 		server.registerProcessVaribale(counter);
 	}
 

@@ -14,8 +14,6 @@
 
 package com.cosylab.epics.caj.cas.handlers;
 
-import gov.aps.jca.CAStatus;
-
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 
@@ -47,14 +45,6 @@ public class UsernameResponse extends AbstractCASResponseHandler {
 
 		CASTransport casTransport = (CASTransport)transport;
 		
-		// currently this has to occur prior to 
-	    // creating channels or its not allowed
-		if (casTransport.getChannelCount() != 0)
-		{
-			sendException(transport, 0, CAStatus.UNAVAILINSERV, response[0], null);
-			return;
-		}
-
 		String userName = extractString(response[1], 0, payloadSize, false);
 		casTransport.setClientUsername(userName); 
 		

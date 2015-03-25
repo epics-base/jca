@@ -17,7 +17,7 @@ package com.cosylab.epics.caj.util;
 
 /**
  * Timer.
- * Based on <code>EDU.oswego.cs.dl.util.concurrent</code> (it was not approriate for CAJ usage).
+ * Based on <code>EDU.oswego.cs.dl.util.concurrent</code> (it was not appropriate for CAJ usage).
  * Timer tasks should complete quickly. If a timer task takes excessive time to complete,
  * it "hogs" the timer's task execution thread. This can, in turn, delay the execution of
  * subsequent tasks, which may "bunch up" and execute in rapid succession when (and if)

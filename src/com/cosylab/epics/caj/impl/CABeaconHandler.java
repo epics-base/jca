@@ -60,7 +60,7 @@ public class CABeaconHandler  {
 	/**
 	 * Transport initialization timestamp.
 	 */
-	private long initializationTimeStamp = System.currentTimeMillis();
+	private final long initializationTimeStamp = System.currentTimeMillis();
 
 	/**
 	 * Constructor.
