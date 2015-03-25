@@ -3,6 +3,7 @@
 \.chg\..*$
 \.rej$
 \.conflict\~$
+bin
 
 # Ignore generated files
 syntax: glob
