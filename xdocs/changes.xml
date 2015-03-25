@@ -6,9 +6,18 @@
   
   <body>
 
-    <release version="1.1.15" date="2014-09-01" description="Stability fixes">
+    <release version="1.1.15" date="2015-03-25" description="Reimplemented CA search.">
+      <action dev="msekoranja" type="update">
+       Reimplemented CA search algorithm.
+      </action>
       <action dev="msekoranja" type="update">
        Zero length get request handling when server is < 3.14.12.
+      </action>
+      <action dev="msekoranja" type="update">
+       Added loopback address to CA address list when no addresses found.
+      </action>
+      <action dev="msekoranja" type="update">
+       Added CAJContext.modifyUserName() method.
       </action>
     </release>
    
