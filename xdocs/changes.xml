@@ -11,7 +11,7 @@
        Reimplemented CA search algorithm.
       </action>
       <action dev="msekoranja" type="update">
-       Zero length get request handling when server is < 3.14.12.
+       Zero length get request handling when server is older than 3.14.12.
       </action>
       <action dev="msekoranja" type="update">
        Added loopback address to CA address list when no addresses found.
