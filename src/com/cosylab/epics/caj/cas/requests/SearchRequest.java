@@ -54,7 +54,7 @@ public class SearchRequest extends AbstractCARequest {
 										(short)6, (short)8, (short)transport.getContext().getServerPort(), 0,
 										serverIP, cid);
 		
-		requestMessage.putShort(CAConstants.CA_MINOR_PROTOCOL_REVISION);
+		requestMessage.putShort(CAConstants.CAS_MINOR_PROTOCOL_REVISION);
 		// clear rest of the message (security)
 		requestMessage.putShort((short)0);
 		requestMessage.putInt(0);

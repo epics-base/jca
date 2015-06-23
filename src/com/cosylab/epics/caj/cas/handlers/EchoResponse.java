@@ -82,7 +82,7 @@ public class EchoResponse extends AbstractCASResponseHandler {
 			else
 				echoRequest.submit();
 		} catch (Throwable th) {
-			context.getLogger().log(Level.WARNING, "Failed to send back echo response to: " + responseFrom, th);
+			// context.getLogger().log(Level.WARNING, "Failed to send back echo response to: " + responseFrom, th);
 		}
 	}
 

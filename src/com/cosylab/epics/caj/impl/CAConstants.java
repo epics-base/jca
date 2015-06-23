@@ -27,9 +27,14 @@ public interface CAConstants {
 	public static final short CA_MAJOR_PROTOCOL_REVISION = 4;
 	
 	/**
-	 * CA protocol minor revision (implemented by this library).
+	 * CAC (client) protocol minor revision (implemented by this library).
 	 */
 	public static final short CA_MINOR_PROTOCOL_REVISION = 13;
+
+	/**
+	 * CAS (server) protocol minor revision (implemented by this library).
+	 */
+	public static final short CAS_MINOR_PROTOCOL_REVISION = 11;
 
 	/**
 	 * Unknown CA protocol minor revision.
