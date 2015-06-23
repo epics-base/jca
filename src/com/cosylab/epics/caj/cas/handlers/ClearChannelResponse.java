@@ -68,9 +68,9 @@ public class ClearChannelResponse extends AbstractCASResponseHandler {
 		try
 		{
 			new ClearChannelRequest(transport, parameter1, parameter2).submit();
-
 		} catch (Throwable th) {
-			context.getLogger().log(Level.WARNING, "Exception caught when responding to event cancel request for channel with SID : " + parameter1, th);
+			// it often happens that the client dies (closes TCP connection) and does not wait for this message
+			//context.getLogger().log(Level.WARNING, "Exception caught when responding to event cancel request for channel with SID : " + parameter1, th);
 		}
 		
 	}
