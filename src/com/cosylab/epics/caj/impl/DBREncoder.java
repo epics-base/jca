@@ -94,7 +94,7 @@ public class DBREncoder {
 	 * @param value
 	 * @return calculated (non-aligned) payload size.
 	 */
-	// TODO size could be extracted from DBR type obejct
+	// TODO size could be extracted from DBR type object
 	// TODO converting TYPE -> short and now short -> TYPE
 	public static int calculatePayloadSize(short dataTypeValue, int dataCount, Object value)
 	{

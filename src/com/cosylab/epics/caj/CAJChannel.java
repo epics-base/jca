@@ -899,6 +899,10 @@ public class CAJChannel extends Channel implements TransportClient {
 		throws CAException, IllegalStateException {
 		connectionRequiredCheck();
 
+		// sync get requires predefined count; variable length array not possible
+		if (count <= 0)
+			throw new IllegalArgumentException("count <= 0");
+		
 		if (!getReadAccess())
 			throw new CAException("No read access rights granted."); 
 

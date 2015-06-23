@@ -6,6 +6,12 @@
   
   <body>
 
+    <release version="1.1.16" date="2015-xx-xx" description="">
+      <action dev="msekoranja" type="fix">
+       Duplicate monitor resubscription bugfix.
+      </action>
+    </release>
+
     <release version="1.1.15" date="2015-03-25" description="Reimplemented CA search.">
       <action dev="msekoranja" type="update">
        Reimplemented CA search algorithm.

@@ -135,24 +135,21 @@ public class CAJMonitor extends Monitor implements MonitorListener {
 	    cleared = true;
 		
 		Transport t = channel.getTransport();
-		if (t == null)
-		{
-		    // destroying monitor when channel is disconnected
-		    // do it manually
-		    eventAddRequest.cancel();
-		}
-		else
+		if (t != null)
 		{
 			try {
 				new EventCancelRequest(t, channel.getServerChannelID(), subsid, type.getValue(), count).submit();
 			} catch (IOException ioex) {
-				throw new CAException("Failed to clear monitor.", ioex);
+				// OK if transport/channel is closed
+				// throw new CAException("Failed to clear monitor.", ioex);
 			}
-		
-			// subscription ID is removed by EventAddRequest
 		}
 		
-		// unregister from the channel
+	    // Cancel the EventAddRequest, unregistering it.
+		// This prevents resubscriptions.
+	    eventAddRequest.cancel();
+
+	    // unregister from the channel
 		channel.unregisterMonitor(this);		
 	}
 

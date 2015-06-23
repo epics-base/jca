@@ -29,7 +29,7 @@ public interface CAConstants {
 	/**
 	 * CA protocol minor revision (implemented by this library).
 	 */
-	public static final short CA_MINOR_PROTOCOL_REVISION = 11;
+	public static final short CA_MINOR_PROTOCOL_REVISION = 13;
 
 	/**
 	 * Unknown CA protocol minor revision.
