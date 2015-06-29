@@ -60,20 +60,9 @@ public class EventAddRequest extends AbstractCARequest {
 		
 		requestMessage = ByteBuffer.allocate(alignedMessageSize);
 
-		if (!extendedHeader)
-		{
-			requestMessage = insertCAHeader(transport, requestMessage,
-											(short)1, alignedPayloadSize, dataType, dataCount,
-											status.getStatusCode(), ioid);
-		}
-		else
-		{
-			requestMessage = insertCAHeader(transport, requestMessage,
-											(short)1, 0xFFFF, dataType, 0,
-											status.getStatusCode(), ioid);
-			requestMessage.putInt(alignedPayloadSize);
-			requestMessage.putInt(dataCount);
-		}
+		requestMessage = insertCAHeader(transport, requestMessage,
+										(short)1, alignedPayloadSize, dataType, dataCount,
+										status.getStatusCode(), ioid);
 											
 		// append value and align message
 		DBREncoder.insertPayload(requestMessage, dataType, dataCount, value);

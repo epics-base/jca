@@ -38,7 +38,7 @@ public class CreateChannelRequest extends AbstractCARequest {
 		ProcessVariable pv = channel.getProcessVariable();
 		requestMessage = insertCAHeader(transport, null,
 										(short)18, (short)0, 
-										(short)pv.getType().getValue(), (short)pv.getDimensionSize(0),
+										(short)pv.getType().getValue(), pv.getDimensionSize(0),
 										channel.getCID(), channel.getSID());
 	}
 
