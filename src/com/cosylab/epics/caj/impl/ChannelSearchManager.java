@@ -3,6 +3,7 @@
  */
 package com.cosylab.epics.caj.impl;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -249,6 +250,25 @@ public class ChannelSearchManager {
 			if (allowNewFrame)
 				channel.generateSearchRequestMessage(context.getBroadcastTransport(), sendBuffer);
 			return true;
+		}
+
+		for(CAJNameClient client : context.nameClients) {
+			//TODO: race?
+			Transport trn = client.transport;
+			if(trn==null || trn.getMinorRevision()<12) {
+				continue;
+			}
+			// only one search per buffer w/ TCP
+			// CAJTransport already coalesces with its sendBuffer
+			channel.generateSearchRequestMessage(trn, client.sendBuffer);
+			try {
+				trn.submit(client);
+				trn.flush(); // TODO: delay w/ timer?
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			client.initBuffer();
 		}
 		
 		return false;

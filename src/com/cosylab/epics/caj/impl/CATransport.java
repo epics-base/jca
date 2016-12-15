@@ -352,6 +352,10 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 		return remoteTransportRevision;
 	}
 
+	public void setMinorRevision(short rev) {
+		remoteTransportRevision = rev;
+	}
+	
 	/**
 	 * Handle IO event.
 	 * @see com.cosylab.epics.caj.impl.reactor.ReactorHandler#handleEvent(java.nio.channels.SelectionKey)
