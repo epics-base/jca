@@ -240,8 +240,12 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 		synchronized (sendQueue) {
 			sendBuffer = null;
 			lastActiveSendBuffer = null;
-			while (sendQueue.size() > 0)
-			    bufferAllocator.put((ByteBuffer)sendQueue.removeFirst());
+			while (sendQueue.size() > 0) {
+				ByteBuffer buf = (ByteBuffer)sendQueue.removeFirst();
+				if(buf.capacity()==CachedByteBufferAllocator.bufferSize)
+					bufferAllocator.put(buf);
+				// else discard big buffer
+			}
 		}
 	}
 	
@@ -832,7 +836,9 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 				}
 				finally {
 				    // return back to the cache
-				    bufferAllocator.put(buf);
+					if(buf.capacity()==CachedByteBufferAllocator.bufferSize)
+						bufferAllocator.put(buf);
+					// else drop big buf
 				}
 			}
 			
@@ -904,13 +910,24 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 			    // forced flush check
 				if (message.limit()+sendBuffer.position() >= sendBuffer.capacity())
 				    flush();
-				
-				// TODO !!! check message size, it can exceed sendBuffer capacity
-                                try {
+
+				try {
 					sendBuffer.put(message);
-                                } catch(BufferOverflowException ex) {
-                                	throw new RuntimeException("Message exceeds write buffer size (com.cosylab.epics.caj.impl.CachedByteBufferAllocator.buffer_size)", ex);
-                                }
+				} catch(BufferOverflowException ex) {
+					try {
+						logger.fine("Expending sendBuffer for "+Integer.toString(message.limit()));
+						sendBuffer.flip();
+						ByteBuffer bigbuf = ByteBuffer.allocateDirect(sendBuffer.remaining()+message.limit());
+						bigbuf.put(sendBuffer);
+						bigbuf.put(message);
+						if(sendBuffer.capacity()==CachedByteBufferAllocator.bufferSize)
+							bufferAllocator.put(sendBuffer);
+						sendBuffer = bigbuf;
+					} catch(Exception ex2) {
+						System.out.println("XX "+Integer.toString(sendBuffer.remaining())+" "+Integer.toString(message.limit()));
+						throw new RuntimeException("Message exceeds write buffer size (com.cosylab.epics.caj.impl.CachedByteBufferAllocator.buffer_size)", ex2);
+					}
+				}
 			}
 		}
 	}
