@@ -129,8 +129,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.2</version>
                 <configuration>
-                    <source>1.4</source>
-                    <target>1.4</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -170,7 +170,7 @@
                 <version>2.9</version>
                 <configuration>
                     <additionalparam>${javadoc.doclint.none}</additionalparam>
-                    <source>1.4</source>
+                    <source>1.8</source>
                 </configuration>
                 <executions>
                     <execution>
