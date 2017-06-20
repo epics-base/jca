@@ -22,6 +22,7 @@ import java.nio.ByteBuffer;
 
 import com.cosylab.epics.caj.CAJContext;
 import com.cosylab.epics.caj.impl.CAConstants;
+import com.cosylab.epics.caj.impl.CATransport;
 import com.cosylab.epics.caj.impl.Transport;
 import com.cosylab.epics.caj.util.InetAddressUtil;
 
@@ -60,6 +61,9 @@ public class SearchResponse extends AbstractCAJResponseHandler {
 		{ 
 			// UDP response (all in buffer 0)
 			minorVersion = response[0].getShort();
+		} else if(transport instanceof CATransport) {
+			// for TCP transport use already provided version
+			minorVersion = transport.getMinorRevision();
 		}
 			
 		// read rest of the playload (needed for UDP)
@@ -67,6 +71,8 @@ public class SearchResponse extends AbstractCAJResponseHandler {
 		
 		// signed short conversion -> signed int 
 		int port = dataType & 0xFFFF;
+		if(port<=0)
+			port = responseFrom.getPort();
 
 		// CA v4.8 or newer
 		if (minorVersion >= 8)

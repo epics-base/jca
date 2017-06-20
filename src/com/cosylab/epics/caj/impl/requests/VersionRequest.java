@@ -16,6 +16,7 @@ package com.cosylab.epics.caj.impl.requests;
 
 import java.nio.ByteBuffer;
 
+import com.cosylab.epics.caj.impl.CAConstants;
 import com.cosylab.epics.caj.impl.Request;
 import com.cosylab.epics.caj.impl.Transport;
 
@@ -61,7 +62,7 @@ public class VersionRequest extends AbstractCARequest {
 	{
 		short isSequenceNumberValidCode = isSequenceNumberValid ? (short)1 : (short)0;
 		return insertCAHeader(transport, buffer,
-				(short)0, 0, isSequenceNumberValid ? isSequenceNumberValidCode : priority, transport.getMinorRevision(),
+				(short)0, 0, isSequenceNumberValid ? isSequenceNumberValidCode : priority, CAConstants.CA_MINOR_PROTOCOL_REVISION,
 				sequenceNumber, 0);
 	}
 

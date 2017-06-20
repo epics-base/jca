@@ -90,7 +90,7 @@ public class InetAddressUtilTest extends TestCase {
     	        };
 
         list = InetAddressUtil.getSocketAddressList("192.168.0.12 192.168.0.13:8064", 7064, appendList);
-        assertEquals(3, list.length);
+        assertEquals(4, list.length);
         assertEquals(expectedAddreses[0], list[0]);
         assertEquals(expectedAddreses[1], list[1]);
         assertEquals(appendList[0], list[2]);

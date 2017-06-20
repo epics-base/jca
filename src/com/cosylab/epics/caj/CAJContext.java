@@ -51,6 +51,7 @@ import com.cosylab.epics.caj.impl.CABeaconHandler;
 import com.cosylab.epics.caj.impl.CAConnector;
 import com.cosylab.epics.caj.impl.CAConstants;
 import com.cosylab.epics.caj.impl.CAContext;
+import com.cosylab.epics.caj.impl.CAJNameClient;
 import com.cosylab.epics.caj.impl.CAResponseHandler;
 import com.cosylab.epics.caj.impl.CATransport;
 import com.cosylab.epics.caj.impl.CATransportRegistry;
@@ -147,6 +148,8 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 	 */
 	protected boolean autoAddressList = true;
 	
+	protected String nameServersList = "";
+	
 	/**
 	 * If the context doesn't see a beacon from a server that it is connected to for
 	 * connectionTimeout seconds then a state-of-health message is sent to the server over TCP/IP.
@@ -228,6 +231,8 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 	 */
 	protected CAConnector connector = null;
 
+	public ArrayList<CAJNameClient> nameClients = new ArrayList<>();
+	
 	/**
 	 * CA transport (virtual circuit) registry.
 	 * This registry contains all active transports - connections to CA servers. 
@@ -412,6 +417,9 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 	    		autoAddressList = !tmp.equalsIgnoreCase("NO"); 
 	    	else
 	    		autoAddressList = true;
+
+	        tmp = System.getenv("EPICS_CA_NAME_SERVERS");
+	        if (tmp != null) nameServersList = tmp;
 	    	
 	    	tmp = System.getenv("EPICS_CA_CONN_TMO");
 	    	if (tmp != null) connectionTimeout = Float.parseFloat(tmp);
@@ -434,6 +442,7 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 			final String contextClassName = Context.class.getName();
 			addressList = jcaLibrary.getProperty(contextClassName + ".addr_list", addressList);
 			autoAddressList = jcaLibrary.getPropertyAsBoolean(contextClassName + ".auto_addr_list",  autoAddressList);
+			nameServersList = jcaLibrary.getProperty(contextClassName + ".name_servers", nameServersList);
 			connectionTimeout = jcaLibrary.getPropertyAsFloat(contextClassName + ".connection_timeout", connectionTimeout);
 			beaconPeriod = jcaLibrary.getPropertyAsFloat(contextClassName + ".beacon_period", beaconPeriod);
 			repeaterPort = jcaLibrary.getPropertyAsInt(contextClassName + ".repeater_port", repeaterPort);
@@ -444,6 +453,7 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 			// load CAJ specific configuration (overrides default)
 			addressList = jcaLibrary.getProperty(thisClassName + ".addr_list", addressList);
 			autoAddressList = jcaLibrary.getPropertyAsBoolean(thisClassName + ".auto_addr_list",  autoAddressList);
+			nameServersList = jcaLibrary.getProperty(thisClassName + ".name_servers", nameServersList);
 			connectionTimeout = jcaLibrary.getPropertyAsFloat(thisClassName + ".connection_timeout", connectionTimeout);
 			beaconPeriod = jcaLibrary.getPropertyAsFloat(thisClassName + ".beacon_period", beaconPeriod);
 			repeaterPort = jcaLibrary.getPropertyAsInt(thisClassName + ".repeater_port", repeaterPort);
@@ -750,11 +760,24 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 		
 		// setup UDP transport
 		initializeUDPTransport();
+		initializeNameServers();
 
 		// setup search manager
 		channelSearchManager = new ChannelSearchManager(this);
 	}
 
+	private void initializeNameServers() {
+
+		InetSocketAddress[] list = InetAddressUtil.getSocketAddressList(nameServersList, serverPort, null);
+		
+		for(InetSocketAddress ep : list) {
+			nameClients.add(new CAJNameClient(this, ep));
+		}
+		for(CAJNameClient client : nameClients) {
+			client.connect();
+		}
+	}
+	
 	/**
 	 * Initialized UDP transport (broadcast socket and repeater connection).
 	 */
@@ -861,6 +884,10 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 		// stop searching
 		if (channelSearchManager != null)
 			channelSearchManager.cancel();
+		
+		for(CAJNameClient client : nameClients) {
+			client.cancel();
+		}
 
 		// stop timer
 		if (timer != null) 
@@ -1229,6 +1256,7 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 		out.println("AUTO_ADDR_LIST : " + autoAddressList);
 		if (broadcastTransport != null)
 			out.println("AUTO_ADDR_LIST (active): " + Arrays.toString(broadcastTransport.getBroadcastAddresses()));
+		out.println("NAME_SERVERS : " + nameServersList);
 		out.println("CONNECTION_TIMEOUT : " + connectionTimeout);
 		out.println("BEACON_PERIOD : " + beaconPeriod);
 		out.println("REPEATER_PORT : " + repeaterPort);
@@ -1498,7 +1526,7 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 	 * @param priority process priority.
 	 * @return transport for given address
 	 */
-	private CATransport getTransport(TransportClient client, InetSocketAddress serverAddress, short minorRevision, short priority)
+	public CATransport getTransport(TransportClient client, InetSocketAddress serverAddress, short minorRevision, short priority)
 	{
 		try
 		{

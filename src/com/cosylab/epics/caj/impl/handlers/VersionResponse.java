@@ -18,6 +18,7 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 
 import com.cosylab.epics.caj.CAJContext;
+import com.cosylab.epics.caj.impl.CATransport;
 import com.cosylab.epics.caj.impl.Transport;
 
 /**
@@ -40,6 +41,13 @@ public class VersionResponse extends AbstractCAJResponseHandler {
 		InetSocketAddress responseFrom,
 		Transport transport,
 		ByteBuffer[] response) {
+		
+		try {
+			CATransport trn = (CATransport) transport;
+			trn.setMinorRevision((short) dataCount);
+		} catch(ClassCastException e) {
+			// assume BroadcastTransport, not CATransport
+		}
 
 		// if sequenceNumber is valid, set it
 		if (dataType != 0)
