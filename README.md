@@ -8,8 +8,9 @@ Java Channel Access client API
 
 ### Installation
 
-Clone the git repository and run maven install in the top directory.
+Clone the Git repository and run `maven install` in the top directory.
 ```
-git clone https://github.com/epics-base/caj.git
-mvn clean install
+$ git clone https://github.com/epics-base/jca.git
+$ cd jca
+$ mvn install
 ```
