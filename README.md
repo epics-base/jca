@@ -8,8 +8,9 @@ Channel Access client library for Java
 
 ### Installation
 
-Clone the git repository and run maven install in the top directory.
+Clone the Git repository and run a Maven `install` in the top directory.
 ```
-git clone https://github.com/epics-base/caj.git
-mvn clean install
+$ git clone https://github.com/epics-base/caj.git
+$ cd caj
+$ mvn install
 ```
