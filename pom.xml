@@ -57,20 +57,6 @@
             </notifier>
         </notifiers>
     </ciManagement>
-    <!-- With Java 8, there are more than 100 errors in the Javadocs, and the
-    build fails for that. Temporary solution is to disable the strict Javadoc check.
-    Use profiles to add the option only for JDK 1.8 and up.-->
-    <profiles>
-        <profile>
-            <id>java8-disable-strict-javadoc</id>
-            <activation>
-                <jdk>[1.8,)</jdk>
-            </activation>
-            <properties>
-                <javadoc.doclint.none>-Xdoclint:none</javadoc.doclint.none>
-            </properties>
-        </profile>
-    </profiles>
     <build>
         <sourceDirectory>src/core</sourceDirectory>
         <testSourceDirectory>test</testSourceDirectory>
@@ -114,8 +100,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.0.2</version>
                 <configuration>
-                    <source>1.4</source>
-                    <target>1.4</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -147,7 +133,7 @@
                 <version>2.9</version>
                 <configuration>
                     <additionalparam>${javadoc.doclint.none}</additionalparam>
-                    <source>1.4</source>
+                    <source>1.7</source>
                 </configuration>
                 <executions>
                     <execution>
