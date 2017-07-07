@@ -10,13 +10,13 @@ package gov.aps.jca.configuration;
 /**
  * This interface should be implemented by classes that need to be
  * configured with custom parameters before initialization.
- * <br />
+ * <br>
  *
  * The contract surrounding a <code>Configurable</code> is that the
  * instantiating entity must call the <code>configure</code>
  * method before it is valid.  The <code>configure</code> method
  * must be called after the constructor, and before any other method.
- * <br/>
+ * <br>
  *
  * Note that this interface is incompatible with Parameterizable.
  *
@@ -24,7 +24,7 @@ package gov.aps.jca.configuration;
  * @author <a href="mailto:pier@apache.org">Pierpaolo Fumagalli</a>
  * @author <a href="mailto:stefano@apache.org">Stefano Mazzocchi</a>
  * @author <a href="mailto:bloritsch@apache.org">Berin Loritsch</a>
- * @author <a href="mailto:peter at apache.org">Peter Donald</a>
+ * @author <a href="mailto:peter@apache.org">Peter Donald</a>
  * @version 1.0
  */
 public interface Configurable

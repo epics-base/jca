@@ -16,16 +16,18 @@ package gov.aps.jca.cas;
 
 /**
  * Asynchronous operation completion callback for process variable attach.
+ * 
  * @author Matej Sekoranja (matej.sekoranja@cosylab.com)
- * @version $Id: ProcessVariableAttachCallback.java,v 1.2 2006-03-10 13:54:25 msekoranja Exp $
+ * @version $Id: ProcessVariableAttachCallback.java,v 1.2 2006-03-10 13:54:25
+ *          msekoranja Exp $
  */
-public interface ProcessVariableAttachCallback extends CompletionCallback
-{
-	   
-	/**
-	 * Notify about process variable existance.
-	 * @param completion process variable existance status.
-	 */
-	public void processVariableAttachCompleted(ProcessVariable processVariable);
+public interface ProcessVariableAttachCallback extends CompletionCallback {
+
+    /**
+     * Notify about process variable existance.
+     * 
+     * @param processVariable completion process variable existance status.
+     */
+    public void processVariableAttachCompleted(ProcessVariable processVariable);
 
 }

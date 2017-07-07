@@ -274,35 +274,35 @@ public final class JCALibrary {
    * You can configure this type of contexts either by using <a href="#Properties">JCALibrary properties</a> or at runtime by using
    * a <a href="#Configuration">Configuration object</a>.<br><br>
    *
-   *<table width="100%" border="0" cellspacing="0" cellpadding="0">
+   *<table summary="" width="100%" border="0" cellspacing="0" cellpadding="0">
    * <tr>
    * <td bgcolor="#99CCFF"><a name="Properties"><b>Using JCALibrary Properties</b></a></td>
    * </tr>
    * </table>
    *<br>
    *
-   * <table width="100%" border="1" cellspacing="0" cellpadding="0">
+   * <table summary="" width="100%" border="1" cellspacing="0" cellpadding="0">
    * <tr>
    * <td width="36%">
-   * <div align="center"><b>Property name</b></div>
+   * <div style="text-align:center;"><b>Property name</b></div>
    * </td>
    * <td width="13%">
-   * <div align="center"><b>Range</b></div>
+   * <div style="text-align:center;"><b>Range</b></div>
    * </td>
    * <td width="8%">
-   * <div align="center"><b>Default value</b></div>
+   * <div style="text-align:center;"><b>Default value</b></div>
    * </td>
    * <td width="43%">
-   * <div align="center"><b>Description</b></div>
+   * <div style="text-align:center;"><b>Description</b></div>
    * </td>
    * </tr>
    * <tr>
    * <td width="36%">gov.aps.jca.jni.ThreadSafeContext.<b>preemptive_callback</b></td>
    * <td width="13%">
-   * <div align="center">true/false</div>
+   * <div style="text-align:center;">true/false</div>
    * </td>
    * <td width="8%">
-   * <div align="center">true</div>
+   * <div style="text-align:center;">true</div>
    * </td>
    * <td width="43%">
    * <p>Define whether the context should use independant threads to send request
@@ -314,10 +314,10 @@ public final class JCALibrary {
    * <tr>
    * <td width="36%">gov.aps.jca.jni.ThreadSafeContext.<b>addr_list</b></td>
    * <td width="13%">
-   * <div align="center">N.N.N.N N.N.N.N:P ...</div>
+   * <div style="text-align:center;">N.N.N.N N.N.N.N:P ...</div>
    * </td>
    * <td width="8%">
-   * <div align="center">empty string</div>
+   * <div style="text-align:center;">empty string</div>
    * </td>
    * <td width="43%">A space-separated list of broadcast address for process variable
    * name resolution. Each address must be of the form: ip.number:port or host.name:port</td>
@@ -325,10 +325,10 @@ public final class JCALibrary {
    * <tr>
    * <td width="36%">gov.aps.jca.jni.ThreadSafeContext.<b>auto_addr_list</b></td>
    * <td width="13%">
-   * <div align="center">true/false</div>
+   * <div style="text-align:center;">true/false</div>
    * </td>
    * <td width="8%">
-   * <div align="center">true</div>
+   * <div style="text-align:center;">true</div>
    * </td>
    * <td width="43%">Define whether or not the network interfaces should be discovered
    * at runtime. </td>
@@ -336,10 +336,10 @@ public final class JCALibrary {
    * <tr>
    * <td width="36%">gov.aps.jca.jni.ThreadSafeContext.<b>connection_timeout</b></td>
    * <td width="13%">
-   * <div align="center">&gt;0.1</div>
+   * <div style="text-align:center;">&gt;0.1</div>
    * </td>
    * <td width="8%">
-   * <div align="center">30.0</div>
+   * <div style="text-align:center;">30.0</div>
    * </td>
    * <td width="43%">If the context doesn't see a beacon from a server that it
    * is connected to for <b>connection_timeout</b> seconds then a state-of-health
@@ -350,40 +350,40 @@ public final class JCALibrary {
    * <tr>
    * <td width="36%">gov.aps.jca.jni.ThreadSafeContext.<b>beacon_period</b></td>
    * <td width="13%">
-   * <div align="center">&gt;0.1</div>
+   * <div style="text-align:center;">&gt;0.1</div>
    * </td>
    * <td width="8%">
-   * <div align="center">15.0</div>
+   * <div style="text-align:center;">15.0</div>
    * </td>
    * <td width="43%">Period in second between two beacon signals</td>
    * </tr>
    * <tr>
    * <td width="36%">gov.aps.jca.jni.ThreadSafeContext.<b>repeater_port</b></td>
    * <td width="13%">
-   * <div align="center">&gt;5000</div>
+   * <div style="text-align:center;">&gt;5000</div>
    * </td>
    * <td width="8%">
-   * <div align="center">5065</div>
+   * <div style="text-align:center;">5065</div>
    * </td>
    * <td width="43%">Port number for the repeater to listen to</td>
    * </tr>
    * <tr>
    * <td width="36%">gov.aps.jca.jni.ThreadSafeContext.<b>server_port</b></td>
    * <td width="13%">
-   * <div align="center">&gt;5000</div>
+   * <div style="text-align:center;">&gt;5000</div>
    * </td>
    * <td width="8%">
-   * <div align="center">5064</div>
+   * <div style="text-align:center;">5064</div>
    * </td>
    * <td width="43%">Port number for the server to listen to</td>
    * </tr>
    * <tr>
    * <td width="36%">gov.aps.jca.jni.ThreadSafeContext.<b>max_array_bytes</b></td>
    * <td width="13%">
-   * <div align="center">&gt;=16384</div>
+   * <div style="text-align:center;">&gt;=16384</div>
    * </td>
    * <td width="8%">
-   * <div align="center">16384</div>
+   * <div style="text-align:center;">16384</div>
    * </td>
    * <td width="43%">Length in bytes of the maximum array size that may pass through
    * Channel Access</td>
@@ -391,10 +391,10 @@ public final class JCALibrary {
    * <tr>
    * <td width="36%">gov.aps.jca.jni.ThreadSafeContext.<b>event_dispatcher_class</b></td>
    * <td width="13%">
-   * <div align="center"></div>
+   * <div style="text-align:center;"></div>
    * </td>
    * <td width="8%">
-   * <div align="center">gov.aps.jca.event.DirectEventDispatcher</div>
+   * <div style="text-align:center;">gov.aps.jca.event.DirectEventDispatcher</div>
    * </td>
    * <td width="43%">The fully qualified class name of the event dispatcher used
    * to dispatch callback event. This class must have a default constructor with
@@ -408,7 +408,7 @@ public final class JCALibrary {
    * then the property will affect both JNI_THREAD_SAFE and JNI_SINGLE_THREADED context configuration (specific configuration overrides default configurations).<br><br>
    *
    *
-   *<table width="100%" border="0" cellspacing="0" cellpadding="0">
+   *<table summary="" width="100%" border="0" cellspacing="0" cellpadding="0">
    * <tr>
    * <td bgcolor="#99CCFF"><a name="Configuration"><b>Using a Configuration object</b></a></td>
    * </tr>
@@ -420,28 +420,28 @@ public final class JCALibrary {
   /**
    * Constant string representing the fully qualified class name of a single-threaded Context implementation.
    *
-   * <table width="100%" border="1" cellspacing="0" cellpadding="0">
+   * <table summary="" width="100%" border="1" cellspacing="0" cellpadding="0">
    * <tr>
    * <td width="36%">
-   * <div align="center"><b>Property name</b></div>
+   * <div style="text-align:center;"><b>Property name</b></div>
    * </td>
    * <td width="13%">
-   * <div align="center"><b>Range</b></div>
+   * <div style="text-align:center;"><b>Range</b></div>
    * </td>
    * <td width="8%">
-   * <div align="center"><b>Default value</b></div>
+   * <div style="text-align:center;"><b>Default value</b></div>
    * </td>
    * <td width="43%">
-   * <div align="center"><b>Description</b></div>
+   * <div style="text-align:center;"><b>Description</b></div>
    * </td>
    * </tr>
    * <tr>
    * <td width="36%">gov.aps.jca.jni.SingleThreadedContext.<b>preemptive_callback</b></td>
    * <td width="13%">
-   * <div align="center">true/false</div>
+   * <div style="text-align:center;">true/false</div>
    * </td>
    * <td width="8%">
-   * <div align="center">true</div>
+   * <div style="text-align:center;">true</div>
    * </td>
    * <td width="43%">
    * <p>Define whether the context should use independant threads to send request
@@ -453,10 +453,10 @@ public final class JCALibrary {
    * <tr>
    * <td width="36%">gov.aps.jca.jni.SingleThreadedContext.<b>addr_list</b></td>
    * <td width="13%">
-   * <div align="center">N.N.N.N N.N.N.N:P ...</div>
+   * <div style="text-align:center;">N.N.N.N N.N.N.N:P ...</div>
    * </td>
    * <td width="8%">
-   * <div align="center">empty string</div>
+   * <div style="text-align:center;">empty string</div>
    * </td>
    * <td width="43%">A space-separated list of broadcast address for process variable
    * name resolution. Each address must be of the form: ip.number:port or host.name:port</td>
@@ -464,10 +464,10 @@ public final class JCALibrary {
    * <tr>
    * <td width="36%">gov.aps.jca.jni.SingleThreadedContext.<b>auto_addr_list</b></td>
    * <td width="13%">
-   * <div align="center">true/false</div>
+   * <div style="text-align:center;">true/false</div>
    * </td>
    * <td width="8%">
-   * <div align="center">true</div>
+   * <div style="text-align:center;">true</div>
    * </td>
    * <td width="43%">Define whether or not the network interfaces should be discovered
    * at runtime. </td>
@@ -475,10 +475,10 @@ public final class JCALibrary {
    * <tr>
    * <td width="36%">gov.aps.jca.jni.SingleThreadedContext.<b>connection_timeout</b></td>
    * <td width="13%">
-   * <div align="center">&gt;0.1</div>
+   * <div style="text-align:center;">&gt;0.1</div>
    * </td>
    * <td width="8%">
-   * <div align="center">30.0</div>
+   * <div style="text-align:center;">30.0</div>
    * </td>
    * <td width="43%">If the context doesn't see a beacon from a server that it
    * is connected to for <b>connection_timeout</b> seconds then a state-of-health
@@ -489,46 +489,46 @@ public final class JCALibrary {
    * <tr>
    * <td width="36%">gov.aps.jca.jni.SingleThreadedContext.<b>beacon_period</b></td>
    * <td width="13%">
-   * <div align="center">&gt;0.1</div>
+   * <div style="text-align:center;">&gt;0.1</div>
    * </td>
    * <td width="8%">
-   * <div align="center">15.0</div>
+   * <div style="text-align:center;">15.0</div>
    * </td>
    * <td width="43%">Period in second between two beacon signals</td>
    * </tr>
    * <tr>
    * <td width="36%">gov.aps.jca.jni.SingleThreadedContext.<b>repeater_port</b></td>
    * <td width="13%">
-   * <div align="center">&gt;5000</div>
+   * <div style="text-align:center;">&gt;5000</div>
    * </td>
    * <td width="8%">
-   * <div align="center">5065</div>
+   * <div style="text-align:center;">5065</div>
    * </td>
    * <td width="43%">Port number for the repeater to listen to</td>
    * </tr>
    * <tr>
    * <td width="36%">gov.aps.jca.jni.SingleThreadedContext.<b>server_port</b></td>
    * <td width="13%">
-   * <div align="center">&gt;5000</div>
+   * <div style="text-align:center;">&gt;5000</div>
    * </td>
    * <td width="8%">
-   * <div align="center">5064</div>
+   * <div style="text-align:center;">5064</div>
    * </td>
    * <td width="43%">Port number for the server to listen to</td>
    * </tr>
    * <tr>
    * <td width="36%">gov.aps.jca.jni.SingleThreadedContext.<b>max_array_bytes</b></td>
    * <td width="13%">
-   * <div align="center">&gt;=16384</div>
+   * <div style="text-align:center;">&gt;=16384</div>
    * </td>
    * <td width="8%">
-   * <div align="center">16384</div>
+   * <div style="text-align:center;">16384</div>
    * </td>
    * <td width="43%">Length in bytes of the maximum array size that may pass through
    * Channel Access</td>
    * </tr>
    * </table>
-   * <br/>
+   * <br>
    * <b>Note:</b> If you use the prefix <b>gov.aps.jca.Context</b> or <b>gov.aps.jca.jni.JNIContext</b> instead of <b>gov.aps.jca.jni.SingleThreadedContext</b>
    * then the property will affect both JNI_THREAD_SAFE and JNI_SINGLE_THREADED context configuration (specific configuration overrides default configurations).<br><br>
    */
@@ -537,28 +537,28 @@ public final class JCALibrary {
   /** Constant string representing the fully qualified class name of a 100% pure java channel access Context implementation.
   *
   *
-  * <table width="100%" border="1" cellspacing="0" cellpadding="0">
+  * <table summary="" width="100%" border="1" cellspacing="0" cellpadding="0">
   * <tr>
   * <td width="36%">
-  * <div align="center"><b>Property name</b></div>
+  * <div style="text-align:center;"><b>Property name</b></div>
   * </td>
   * <td width="13%">
-  * <div align="center"><b>Range</b></div>
+  * <div style="text-align:center;"><b>Range</b></div>
   * </td>
   * <td width="8%">
-  * <div align="center"><b>Default value</b></div>
+  * <div style="text-align:center;"><b>Default value</b></div>
   * </td>
   * <td width="43%">
-  * <div align="center"><b>Description</b></div>
+  * <div style="text-align:center;"><b>Description</b></div>
   * </td>
   * </tr>
   * <tr>
   * <td width="36%">com.cosylab.epics.caj.CAJContext.<b>addr_list</b></td>
   * <td width="13%">
-  * <div align="center">N.N.N.N N.N.N.N:P ...</div>
+  * <div style="text-align:center;">N.N.N.N N.N.N.N:P ...</div>
   * </td>
   * <td width="8%">
-  * <div align="center">empty string</div>
+  * <div style="text-align:center;">empty string</div>
   * </td>
   * <td width="43%">A space-separated list of broadcast address for process variable
   * name resolution. Each address must be of the form: ip.number:port or host.name:port</td>
@@ -566,10 +566,10 @@ public final class JCALibrary {
   * <tr>
   * <td width="36%">com.cosylab.epics.caj.CAJContext.<b>auto_addr_list</b></td>
   * <td width="13%">
-  * <div align="center">true/false</div>
+  * <div style="text-align:center;">true/false</div>
   * </td>
   * <td width="8%">
-  * <div align="center">true</div>
+  * <div style="text-align:center;">true</div>
   * </td>
   * <td width="43%">Define whether or not the network interfaces should be discovered
   * at runtime. </td>
@@ -577,10 +577,10 @@ public final class JCALibrary {
   * <tr>
   * <td width="36%">com.cosylab.epics.caj.CAJContext.<b>connection_timeout</b></td>
   * <td width="13%">
-  * <div align="center">&gt;0.1</div>
+  * <div style="text-align:center;">&gt;0.1</div>
   * </td>
   * <td width="8%">
-  * <div align="center">30.0</div>
+  * <div style="text-align:center;">30.0</div>
   * </td>
   * <td width="43%">If the context doesn't see a beacon from a server that it
   * is connected to for <b>connection_timeout</b> seconds then a state-of-health
@@ -591,40 +591,40 @@ public final class JCALibrary {
   * <tr>
   * <td width="36%">com.cosylab.epics.caj.CAJContext.<b>beacon_period</b></td>
   * <td width="13%">
-  * <div align="center">&gt;0.1</div>
+  * <div style="text-align:center;">&gt;0.1</div>
   * </td>
   * <td width="8%">
-  * <div align="center">15.0</div>
+  * <div style="text-align:center;">15.0</div>
   * </td>
   * <td width="43%">Period in second between two beacon signals</td>
   * </tr>
   * <tr>
   * <td width="36%">com.cosylab.epics.caj.CAJContext.<b>repeater_port</b></td>
   * <td width="13%">
-  * <div align="center">&gt;5000</div>
+  * <div style="text-align:center;">&gt;5000</div>
   * </td>
   * <td width="8%">
-  * <div align="center">5065</div>
+  * <div style="text-align:center;">5065</div>
   * </td>
   * <td width="43%">Port number for the repeater to listen to</td>
   * </tr>
   * <tr>
   * <td width="36%">com.cosylab.epics.caj.CAJContext.<b>server_port</b></td>
   * <td width="13%">
-  * <div align="center">&gt;5000</div>
+  * <div style="text-align:center;">&gt;5000</div>
   * </td>
   * <td width="8%">
-  * <div align="center">5064</div>
+  * <div style="text-align:center;">5064</div>
   * </td>
   * <td width="43%">Port number for the server to listen to</td>
   * </tr>
   * <tr>
   * <td width="36%">com.cosylab.epics.caj.CAJContext.<b>max_array_bytes</b></td>
   * <td width="13%">
-  * <div align="center">&gt;=16384</div>
+  * <div style="text-align:center;">&gt;=16384</div>
   * </td>
   * <td width="8%">
-  * <div align="center">16384</div>
+  * <div style="text-align:center;">16384</div>
   * </td>
   * <td width="43%">Length in bytes of the maximum array size that may pass through
   * Channel Access</td>
@@ -632,15 +632,15 @@ public final class JCALibrary {
   * <tr>
   * <td width="36%">com.cosylab.epics.caj.impl.reactor.lf.LeaderFollowersThreadPool.<b>thread_pool_size</b></td>
   * <td width="13%">
-  * <div align="center">&gt;=2</div>
+  * <div style="text-align:center;">&gt;=2</div>
   * </td>
   * <td width="8%">
-  * <div align="center">5</div>
+  * <div style="text-align:center;">5</div>
   * </td>
   * <td width="43%">Number of threads to be used to process network events</td>
   * </tr>
   * </table>
-  * <br/>
+  * <br>
    * <b>Note:</b> prefix <b>gov.aps.jca.Context</b> can be used instead of <b>com.cosylab.epics.caj.CAJContext</b> 
    * to set global context configuration (specific configuration overrides default configurations).<br><br>
   */
@@ -694,28 +694,28 @@ public final class JCALibrary {
   /** Constant string representing the fully qualified class name of a 100% pure java channel access ServerContext implementation.
   *
   * The following properties to be supported:
-  * <table width="100%" border="1" cellspacing="0" cellpadding="0">
+  * <table summary="" width="100%" border="1" cellspacing="0" cellpadding="0">
   * <tr>
   * <td width="36%">
-  * <div align="center"><b>Property name</b></div>
+  * <div style="text-align:center;"><b>Property name</b></div>
   * </td>
   * <td width="13%">
-  * <div align="center"><b>Range</b></div>
+  * <div style="text-align:center;"><b>Range</b></div>
   * </td>
   * <td width="8%">
-  * <div align="center"><b>Default value</b></div>
+  * <div style="text-align:center;"><b>Default value</b></div>
   * </td>
   * <td width="43%">
-  * <div align="center"><b>Description</b></div>
+  * <div style="text-align:center;"><b>Description</b></div>
   * </td>
   * </tr>
   * <tr>
   * <td width="36%">com.cosylab.epics.caj.cas.CAJServerContext.<b>beacon_addr_list</b></td>
   * <td width="13%">
-  * <div align="center">N.N.N.N N.N.N.N:P ...</div>
+  * <div style="text-align:center;">N.N.N.N N.N.N.N:P ...</div>
   * </td>
   * <td width="8%">
-  * <div align="center">com.cosylab.epics.caj.CAJContext.addr_list (empty string)</div>
+  * <div style="text-align:center;">com.cosylab.epics.caj.CAJContext.addr_list (empty string)</div>
   * </td>
   * <td width="43%">A space-separated list of broadcast address which to send beacons.
   * Each address must be of the form: ip.number:port or host.name:port</td>
@@ -723,10 +723,10 @@ public final class JCALibrary {
   * <tr>
   * <td width="36%">com.cosylab.epics.caj.cas.CAJServerContext.<b>auto_beacon_addr_list</b></td>
   * <td width="13%">
-  * <div align="center">true/false</div>
+  * <div style="text-align:center;">true/false</div>
   * </td>
   * <td width="8%">
-  * <div align="center">com.cosylab.epics.caj.CAJContext.auto_addr_list (true)</div>
+  * <div style="text-align:center;">com.cosylab.epics.caj.CAJContext.auto_addr_list (true)</div>
   * </td>
   * <td width="43%">Define whether or not the network interfaces should be discovered
   * at runtime. </td>
@@ -734,40 +734,40 @@ public final class JCALibrary {
   * <tr>
   * <td width="36%">com.cosylab.epics.caj.cas.CAJServerContext.<b>beacon_period</b></td>
   * <td width="13%">
-  * <div align="center">&gt;0.1</div>
+  * <div style="text-align:center;">&gt;0.1</div>
   * </td>
   * <td width="8%">
-  * <div align="center">com.cosylab.epics.caj.CAJContext.beacon_period (15.0)</div>
+  * <div style="text-align:center;">com.cosylab.epics.caj.CAJContext.beacon_period (15.0)</div>
   * </td>
   * <td width="43%">Period in second between two beacon signals</td>
   * </tr>
   * <tr>
   * <td width="36%">com.cosylab.epics.caj.cas.CAJServerContext.<b>beacon_port</b></td>
   * <td width="13%">
-  * <div align="center">&gt;5000</div>
+  * <div style="text-align:center;">&gt;5000</div>
   * </td>
   * <td width="8%">
-  * <div align="center">com.cosylab.epics.caj.CAJContext.repeater_port (5065)</div>
+  * <div style="text-align:center;">com.cosylab.epics.caj.CAJContext.repeater_port (5065)</div>
   * </td>
   * <td width="43%">Port number which to sends beacons</td>
   * </tr>
   * <tr>
   * <td width="36%">com.cosylab.epics.caj.cas.CAJServerContext.server_port</td>
   * <td width="13%">
-  * <div align="center">&gt;5000</div>
+  * <div style="text-align:center;">&gt;5000</div>
   * </td>
   * <td width="8%">
-  * <div align="center">com.cosylab.epics.caj.CAJContext.server_port (5064)</div>
+  * <div style="text-align:center;">com.cosylab.epics.caj.CAJContext.server_port (5064)</div>
   * </td>
   * <td width="43%">Port number for the server to listen to</td>
   * </tr>
   * <tr>
   * <td width="36%">com.cosylab.epics.caj.cas.CAJServerContext.<b>ignore_addr_list</b></td>
   * <td width="13%">
-  * <div align="center">N.N.N.N N.N.N.N:P ...</div>
+  * <div style="text-align:center;">N.N.N.N N.N.N.N:P ...</div>
   * </td>
   * <td width="8%">
-  * <div align="center">empty string</div>
+  * <div style="text-align:center;">empty string</div>
   * </td>
   * <td width="43%">A space-separated list of addresses which name resolution request to ignore from.
   * Each address must be of the form: ip.number:port or host.name:port</td>
@@ -775,10 +775,10 @@ public final class JCALibrary {
   * <tr>
   * <td width="36%">com.cosylab.epics.caj.cas.CAJServerContext.<b>max_array_bytes</b></td>
   * <td width="13%">
-  * <div align="center">&gt;=16384</div>
+  * <div style="text-align:center;">&gt;=16384</div>
   * </td>
   * <td width="8%">
-  * <div align="center">com.cosylab.epics.caj.CAJContext.max_array_bytes (16384)</div>
+  * <div style="text-align:center;">com.cosylab.epics.caj.CAJContext.max_array_bytes (16384)</div>
   * </td>
   * <td width="43%">Length in bytes of the maximum array size that may pass through
   * Channel Access</td>
@@ -786,15 +786,15 @@ public final class JCALibrary {
   * <tr>
   * <td width="36%">com.cosylab.epics.caj.impl.reactor.lf.LeaderFollowersThreadPool.<b>thread_pool_size</b></td>
   * <td width="13%">
-  * <div align="center">&gt;=2</div>
+  * <div style="text-align:center;">&gt;=2</div>
   * </td>
   * <td width="8%">
-  * <div align="center">5</div>
+  * <div style="text-align:center;">5</div>
   * </td>
   * <td width="43%">Number of threads to be used to process network events</td>
   * </tr>
   * </table>
-  * <br/>
+  * <br>
    * <b>Note:</b> prefix <b>gov.aps.jca.Context</b> can be used instead of <b>com.cosylab.epics.caj.CAJServerContext</b> 
    * to set global context configuration (specific configuration overrides default configurations).<br><br>
   */
@@ -805,9 +805,9 @@ public final class JCALibrary {
    * @param fqn the fully qualified class name of the context to create.
    * @param server	<code>Server</code> implementation providing <code>ProcessVariable</code> access (existance test and attach).
    * @return the new context.
-   * @exception CAException is thrown if the context could not be instanciated.
+   * @exception CAException is thrown if the context could not be instantiated.
    * @see #CHANNEL_ACCESS_SERVER_JAVA
-   * @see #createServerContext(gov.aps.jca.configuration.Configuration configuration)
+   * @see #createServerContext(gov.aps.jca.configuration.Configuration configuration, gov.aps.jca.cas.Server server)
    */
   public ServerContext createServerContext(String fqn, Server server) throws CAException {
     DefaultConfiguration conf= new DefaultConfiguration("SERVER_CONTEXT");

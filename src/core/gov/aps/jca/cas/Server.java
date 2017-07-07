@@ -26,7 +26,7 @@ import java.net.InetSocketAddress;
  *
  * @author <a href="mailto:matej.sekoranjaATcosylab.com">Matej Sekoranja</a>
  * @version $Id: Server.java,v 1.3 2006-08-22 15:11:38 msekoranja Exp $
- * @see JCALibrary
+ * @see gov.aps.jca.JCALibrary
  */
 public interface Server {
   
