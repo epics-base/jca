@@ -7,3 +7,6 @@ dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
 nbactions.xml
+/.project
+/.classpath
+/.settings/
