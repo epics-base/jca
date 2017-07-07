@@ -171,9 +171,10 @@ public abstract class NumericProcessVariable extends ProcessVariable
 	 * 
 	 * 		// for async. completion, return <code>null</code>,
 	 * 		// set value (and status) to <code>enumValue</code> and
-	 * 		// report completion using <code>asyncReadCallback<code> callback.
+	 * 		// report completion using <code>asyncReadCallback</code> callback.
 	 * 		// return null;
 	 * 	
+	 *      {@code
 	 * 		// BEGIN optional (to override defaults) 
 	 * 		
 	 * 		// set status and severity
@@ -194,6 +195,7 @@ public abstract class NumericProcessVariable extends ProcessVariable
 	 * 
 	 * 		// return read completion status
 	 * 		return CAStatus.NORMAL;
+	 *      }
 	 * 	} 
 	 * 
 	 * </pre>
@@ -219,9 +221,10 @@ public abstract class NumericProcessVariable extends ProcessVariable
 	 * 		// for async. completion, return <code>null</code>,
 	 * 		// set value (and status) from <code>enumValue</code>,
 	 * 		// notify if there is an interest and
-	 * 		// report completion using <code>asyncWriteCallback<code> callback.
+	 * 		// report completion using <code>asyncWriteCallback</code> callback.
 	 * 		// return null;
 	 * 
+	 *      {@code
 	 * 		// set value from given DBR here
 	 * 		...
 	 * 
@@ -238,6 +241,7 @@ public abstract class NumericProcessVariable extends ProcessVariable
 	 * 
 	 * 		// return read completion status
 	 * 		return CAStatus.NORMAL;
+	 *      }
 	 * }
 	 * </pre>
 	 * @see gov.aps.jca.cas.ProcessVariable#write(gov.aps.jca.dbr.DBR, gov.aps.jca.cas.ProcessVariableWriteCallback)

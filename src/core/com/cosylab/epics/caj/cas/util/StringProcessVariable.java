@@ -70,14 +70,15 @@ public abstract class StringProcessVariable extends ProcessVariable
 	 * 
 	 * 		// for async. completion, return <code>null</code>,
 	 * 		// set value (and status) to <code>enumValue</code> and
-	 * 		// report completion using <code>asyncReadCallback<code> callback.
+	 * 		// report completion using <code>asyncReadCallback</code> callback.
 	 * 		// return null;
 	 * 	
+	 *      {@code
 	 * 		// BEGIN optional (to override defaults) 
 	 * 		
 	 * 		// set status and severity
-	 * 		value.setStatus(Status.<status>);
-	 * 		value.setSeverity(Severity.<severity>);
+	 * 		value.setStatus(gov.aps.jca.dbr.Status);
+	 * 		value.setSeverity(gov.aps.jca.dbr.Severity);
 	 * 		
 	 * 		// set timestamp
 	 * 		value.setTimestamp(timestamp);
@@ -88,11 +89,12 @@ public abstract class StringProcessVariable extends ProcessVariable
 	 * 		// given DBR has already allocated an array of elements client has requested
 	 * 		// it contains maximum number of elements to fill
 	 * 		String[] arrayValue = value.getStringValue();
-	 * 		int elementCount = Math.min(<fromStringArray>.length, arrayValue.length);
-	 * 		System.arraycopy(<fromStringArray>, 0, arrayValue, 0, elementCount);
+	 * 		int elementCount = Math.min(\<fromStringArray\>.length, arrayValue.length);
+	 * 		System.arraycopy(\<fromStringArray\>, 0, arrayValue, 0, elementCount);
 	 * 
 	 * 		// return read completion status
 	 * 		return CAStatus.NORMAL;
+	 *      }
 	 * 	} 
 	 * 
 	 * </pre>
@@ -114,37 +116,40 @@ public abstract class StringProcessVariable extends ProcessVariable
 		return writeValue(stringValue, asyncWriteCallback);
 	}
 	
-	/**
-	 * Write value.
-	 * Reference implementation:
-	 * <pre>
-	 * 	{
-	 * 
-	 * 		// for async. completion, return <code>null</code>,
-	 * 		// set value (and status) from <code>enumValue</code>,
-	 * 		// notify if there is an interest and
-	 * 		// report completion using <code>asyncWriteCallback<code> callback.
-	 * 		// return null;
-	 * 
-	 * 		// set value from given DBR here (scalar example)
-	 *      this.value = ((DBR_String)value).getStringValue()[0];
-	 * 
-	 * 	    // notify, set appropirate Monitor mask (VALUE, LOG, ALARM)
-	 * 	    if (status == CAStatus.NORMAL && interest)
-	 *      {
-	 *			DBR monitorDBR = AbstractCASResponseHandler.createDBRforReading(this);
-	 *			((DBR_String)monitorDBR).getStringValue()[0] = this.value;
-	 *			fillInStatusAndTime((TIME)monitorDBR);
-	 *		
-	 * 	    	eventCallback.postEvent(Monitor.VALUE|Monitor.LOG, value);
-	 * 		}
-	 * 
-	 * 		// return read completion status
-	 * 		return CAStatus.NORMAL;
-	 * }
-	 * </pre>
-	 * @see gov.aps.jca.cas.ProcessVariable#write(gov.aps.jca.dbr.DBR, gov.aps.jca.cas.ProcessVariableWriteCallback)
-	 */
+    /**
+     * Write value. Reference implementation:
+     * 
+     * <pre>
+     * {
+     * 
+     *     // for async. completion, return <code>null</code>,
+     *     // set value (and status) from <code>enumValue</code>,
+     *     // notify if there is an interest and
+     *     // report completion using <code>asyncWriteCallback</code> callback.
+     *     // return null;
+     *     
+     *     {@code
+     *     // set value from given DBR here (scalar example)
+     *     this.value = ((DBR_String) value).getStringValue()[0];
+     * 
+     *     // notify, set appropirate Monitor mask (VALUE, LOG, ALARM)
+     *     if (status == CAStatus.NORMAL && interest) {
+     *         DBR monitorDBR = AbstractCASResponseHandler.createDBRforReading(this);
+     *         ((DBR_String) monitorDBR).getStringValue()[0] = this.value;
+     *         fillInStatusAndTime((TIME) monitorDBR);
+     * 
+     *         eventCallback.postEvent(Monitor.VALUE | Monitor.LOG, value);
+     *     }
+     * 
+     *     // return read completion status
+     *     return CAStatus.NORMAL;
+     *     }
+     * }
+     * </pre>
+     * 
+     * @see gov.aps.jca.cas.ProcessVariable#write(gov.aps.jca.dbr.DBR,
+     *      gov.aps.jca.cas.ProcessVariableWriteCallback)
+     */
 	protected abstract CAStatus writeValue(DBR_String value,
 			ProcessVariableWriteCallback asyncWriteCallback) throws CAException;
 
