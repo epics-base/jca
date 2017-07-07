@@ -80,21 +80,20 @@ public class SearchTimer extends Thread {
 			return (a < b) ? -1 : ((a == b) ? 0 : 1);
 		}
 
-		/**
-		 * Method invoked by timer at requested time.
-		 * 
-		 * @return delay (in ms) after which to reschedule,
-		 * 		   not rescheduled if <= 0.
-		 */
-		public abstract long timeout();
-	}
+        /**
+         * Method invoked by timer at requested time.
+         * 
+         * @return delay (in ms) after which to reschedule, not rescheduled if <= 0.
+         */
+        public abstract long timeout();
+    }
 
 	/**
 	 * Execute the given command after waiting for the given delay.
 	 * 
 	 * @param millisecondsToDelay
 	 *            -- the number of milliseconds from now to run the command.
-	 * @param command
+	 * @param task
 	 *            -- the command to run after the delay.
 	 **/
 	public synchronized void executeAfterDelay(

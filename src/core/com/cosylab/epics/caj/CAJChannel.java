@@ -210,13 +210,13 @@ public class CAJChannel extends Channel implements TransportClient {
 
 	/**
 	 * Create a channel, i.e. submit create channel request to the server.
-	 * This method is called after seatch is complete.
+	 * This method is called after search is complete.
 	 * <code>sid</code>, <code>typeCode</code>, <code>elementCount</code> might not be
 	 * valid, this depends on protocol revision.
-	 * @param transport
-	 * @param sid
-	 * @param typeCode
-	 * @param elementCount
+	 * @param transport 
+	 * @param sid 
+	 * @param typeCode 
+	 * @param elementCount 
 	 * @return <code>true</code> if real create channel request needs to be sent to the server.
 	 */
 	public synchronized boolean createChannel(CATransport transport, int sid, short typeCode, int elementCount) 

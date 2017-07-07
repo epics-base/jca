@@ -39,6 +39,7 @@ public abstract class ServerContext {
   /**
    * Set <code>Server</code> implemenation and initialzie server. This method is called immediately after instance construction (call of constructor).
    * @param server	<code>Server</code> implementation providing <code>ProcessVariable</code> access (existance test and attach).
+   * @throws CAException IllegalStateException
    */
   public abstract void initialize(Server server) throws CAException, IllegalStateException;
  
@@ -47,7 +48,7 @@ public abstract class ServerContext {
    * @param	seconds	time in seconds the server will process events (method will block), if <code>0</code>
    * 				the method would block until <code>destory()</code> is called.
    * @throws IllegalStateException	if server is already destroyed.
-   * @throws CAException
+   * @throws CAException 
    */
   public abstract void run(int seconds) throws CAException, IllegalStateException;
   
