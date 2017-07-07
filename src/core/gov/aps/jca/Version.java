@@ -82,10 +82,10 @@ public class Version {
     }
     
     /**
-     * Get the long version string. Version String formatted like <BR/><CODE>
+     * Get the long version string. Version String formatted like <BR><CODE>
      * "<B>ProductName </B> \[<B>ImplementationLanguage</B>\] 'v'v.r[.dd|<B>D</B>nn]"
-     * </CODE> <BR/>e.g. <BR/><CODE>"<B>CAJ </B> [<B>Java</B>] v1.0.1"</CODE>
-     * <BR/>
+     * </CODE> <BR>e.g. <BR><CODE>"<B>CAJ </B> [<B>Java</B>] v1.0.1"</CODE>
+     * <BR>
      * 
      * @return String denoting current version
      */
@@ -104,10 +104,10 @@ public class Version {
     }
 
     /**
-     * Get the basic version string. Version String formatted like <BR/><CODE>
+     * Get the basic version string. Version String formatted like <BR><CODE>
      * "<B>ProductName </B> 'v'v.r[.dd|<B>D</B>nn]"
-     * </CODE> <BR/>e.g. <BR/><CODE>"<B>CAJ </B> v1.0.1"</CODE>
-     * <BR/>
+     * </CODE> <BR>e.g. <BR><CODE>"<B>CAJ </B> v1.0.1"</CODE>
+     * <BR>
      * 
      * @return String denoting current version
      */

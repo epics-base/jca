@@ -22,7 +22,7 @@ import org.xml.sax.helpers.NamespaceSupport;
  * including namespace information.
  *
  * @author <a href="mailto:fede@apache.org">Federico Barbieri</a>
- * @author <a href="mailto:peter at apache.org">Peter Donald</a>
+ * @author <a href="mailto:peter@apache.org">Peter Donald</a>
  * @version 1.0
  */
 public class NamespacedSAXConfigurationHandler

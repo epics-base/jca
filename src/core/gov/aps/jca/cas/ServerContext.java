@@ -27,7 +27,7 @@ import java.io.*;
  *
  * @author <a href="mailto:matej.sekoranjaATcosylab.com">Matej Sekoranja</a>
  * @version $Id: ServerContext.java,v 1.5 2006-03-16 11:58:49 msekoranja Exp $
- * @see JCALibrary
+ * @see gov.aps.jca.JCALibrary
  */
 public abstract class ServerContext {
   
