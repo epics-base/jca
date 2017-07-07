@@ -2,11 +2,11 @@
 
 Channel Access client library for Java
 
-### Build-Time Requirements
+### Run-Time Requirements
 
 - A Java 8 or later JRE
 
-### Run-Time Requirements
+### Build-Time Requirements
 
 - A Java 8 or later JDK (e.g., [Oracle Java SE](http://www.oracle.com/technetwork/java/javase/index.html))
 - [Maven 2.x](https://maven.apache.org/)
