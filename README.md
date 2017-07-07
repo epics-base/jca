@@ -2,9 +2,14 @@
 
 Channel Access client library for Java
 
-### Requirements
- - [JDK8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
- - [maven 2.x](https://maven.apache.org/)
+### Run-Time Requirements
+
+- A Java 8 or later JRE
+
+### Build-Time Requirements
+
+- A Java 8 or later JDK (e.g., [Oracle Java SE](http://www.oracle.com/technetwork/java/javase/index.html))
+- [Maven 2.x](https://maven.apache.org/)
 
 ### Installation
 
