@@ -40,13 +40,13 @@ public class WriteRequest extends AbstractCARequest {
 	protected CAJChannel channel;
 
 	/**
-	 * @param channel 
-	 * @param transport
-	 * @param sid
-	 * @param cid
-	 * @param dataType
-	 * @param dataCount
-	 * @param value
+	 * @param channel CAJChannel
+	 * @param transport transport to be used when sending
+	 * @param sid sid
+	 * @param cid cid
+	 * @param dataType data type
+	 * @param dataCount data count 
+	 * @param value value
 	 */
 	public WriteRequest(CAJChannel channel,
 							 Transport transport, int sid, int cid, int dataType, int dataCount,

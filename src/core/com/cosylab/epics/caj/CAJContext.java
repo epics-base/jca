@@ -665,8 +665,8 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 
 	/**
 	 * Check context state and tries to establish necessary state.
-	 * @throws CAException
-	 * @throws IllegalStateException
+	 * @throws CAException JCA Exception
+	 * @throws IllegalStateException IllegalStateException
 	 */
 	protected void checkState() throws CAException, IllegalStateException {
 		if (state == DESTROYED)
@@ -1014,10 +1014,10 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 	
 	/**
 	 * Destroy channel.
-	 * @param channel
-	 * @param force
-	 * @throws CAException
-	 * @throws IllegalStateException
+	 * @param channel CAJChannel
+	 * @param force force destruction regardless of reference count
+	 * @throws CAException force destruction regardless of reference count
+	 * @throws IllegalStateException Signals that a method has been invoked at an illegal or inappropriate time
 	 */
 	public void destroyChannel(CAJChannel channel, boolean force)
 		throws CAException, IllegalStateException {
@@ -1047,7 +1047,7 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 
 	/**
 	 * Register channel.
-	 * @param channel
+	 * @param channel CAJChannel
 	 */
 	void registerChannel(CAJChannel channel)
 	{
@@ -1061,7 +1061,7 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 
 	/**
 	 * Unregister channel.
-	 * @param channel
+	 * @param channel CAJChannel
 	 */
 	void unregisterChannel(CAJChannel channel)
 	{
@@ -1522,7 +1522,9 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 
 	/**
 	 * Get, or create if necessary, transport of given server address.
-	 * @param serverAddress	required transport address
+	 * @param client requesting connection (transport).
+	 * @param serverAddress required transport address
+	 * @param minorRevision transport revision to be used
 	 * @param priority process priority.
 	 * @return transport for given address
 	 */
@@ -1586,7 +1588,7 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 
 	/**
 	 * Unregister response request.
-	 * @param request
+	 * @param request ResponseRequest
 	 * @return removed object, can be <code>null</code>
 	 */
 	public ResponseRequest unregisterResponseRequest(ResponseRequest request)
@@ -1658,7 +1660,8 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 	
 	/**
 	 * Set last UDP recived sequence number.
-	 * @param seqNo	last UDP recived sequence number.
+	 * @param seqNo last UDP recived sequence number.
+	 * @return last received sequence number
 	 */
 	public final int getLastReceivedSequenceNumber(int seqNo)
 	{
@@ -1693,6 +1696,7 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 	
 	/**
 	 * Modifies client username and notifies connected servers about it.
+	 * @param userName username
 	 */
 	public void modifyUserName(String userName)
 	{

@@ -419,7 +419,7 @@ public class CAJServerContext extends ServerContext implements CAContext, Config
 	/**
 	 * @see gov.aps.jca.Context#getContextMessageListeners()
 	 * @return array of context message listeners.
-	 * @throws IllegalStateException
+	 * @throws IllegalStateException illegal or inappropriate invocation of error
 	 */
 	public ContextMessageListener[] getContextMessageListeners()
 		throws IllegalStateException {
@@ -432,8 +432,9 @@ public class CAJServerContext extends ServerContext implements CAContext, Config
 
 	/**
 	 * @see gov.aps.jca.Context#addContextMessageListener(gov.aps.jca.event.ContextMessageListener)
-	 * @throws CAException
-	 * @throws IllegalStateException
+	 * @param ContextMessageListener The listener interface for receiving ContextMessageEvents
+	 * @throws CAException JCA Exception
+	 * @throws IllegalStateException null listener
 	 */
 	public void addContextMessageListener(ContextMessageListener l)
 		throws CAException, IllegalStateException {
@@ -512,8 +513,8 @@ public class CAJServerContext extends ServerContext implements CAContext, Config
 
 	/**
 	 * Check context state and tries to establish necessary state.
-	 * @throws CAException
-	 * @throws IllegalStateException
+	 * @throws CAException JCA Exception
+	 * @throws IllegalStateException illegal or inappropriate invocation of error
 	 */
 	protected void checkState() throws CAException, IllegalStateException {
 		if (state == DESTROYED)
@@ -542,7 +543,7 @@ public class CAJServerContext extends ServerContext implements CAContext, Config
 	}
 
 	/**
-	 * @throws CAException
+	 * @throws CAException JCA Exception
 	 */
 	private void internalInitialize() throws CAException {
 
@@ -678,8 +679,8 @@ public class CAJServerContext extends ServerContext implements CAContext, Config
 	 * Run server (process events).
 	 * @param	seconds	time in seconds the server will process events (method will block), if <code>0</code>
 	 * 				the method would block until <code>destory()</code> is called.
-	 * @throws IllegalStateException	if server is already destroyed.
-	 * @throws CAException
+	 * @throws IllegalStateException if server is already destroyed.
+	 * @throws CAException JCA Exception
 	 */
 	public void run(int seconds) throws CAException, IllegalStateException
 	{
@@ -759,7 +760,7 @@ public class CAJServerContext extends ServerContext implements CAContext, Config
 	}
 
 	/**
-	 * @throws CAException
+	 * @throws CAException JCA Exception
 	 */
 	private void internalDestroy() throws CAException {
 

@@ -41,11 +41,16 @@ public class CASServerMonitor extends ServerMonitor implements
 	protected short dataType;
 	protected int dataCount;
 
-
-	/**
-	 * @param channel
-	 * @param ioid
-	 */
+    /**
+     * 
+     * @param channel ServerChannel
+     * @param ioid event Id
+     * @param mask monitor mask
+     * @param handler EventAddResponse
+     * @param transport CASTransport
+     * @param dataType data type
+     * @param dataCount data count
+     */
 	public CASServerMonitor(ServerChannel channel, int ioid,
 							short mask, EventAddResponse handler, CASTransport transport, short dataType, int dataCount) {
 		super(channel, ioid);

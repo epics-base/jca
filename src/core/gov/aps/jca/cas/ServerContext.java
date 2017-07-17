@@ -48,7 +48,7 @@ public abstract class ServerContext {
    * @param	seconds	time in seconds the server will process events (method will block), if <code>0</code>
    * 				the method would block until <code>destory()</code> is called.
    * @throws IllegalStateException	if server is already destroyed.
-   * @throws CAException 
+   * @throws CAException CA Exception
    */
   public abstract void run(int seconds) throws CAException, IllegalStateException;
   
@@ -62,6 +62,7 @@ public abstract class ServerContext {
    * Add a ContextMessageListener to this context.
    * @param l the listener to add
    * @throws java.lang.IllegalStateException if the context has been destroyed.
+   * @throws CAException CA Exception
    */
   abstract public void addContextMessageListener(ContextMessageListener l) throws CAException, IllegalStateException;
 
@@ -69,6 +70,7 @@ public abstract class ServerContext {
    * Removes a ContextMessageListener from this context.
    * @param l the listener to remove
    * @throws java.lang.IllegalStateException if the context has been destroyed.
+   * @throws CAException CA Exception
    */
   abstract public void removeContextMessageListener(ContextMessageListener l) throws CAException, IllegalStateException;
 
@@ -84,6 +86,7 @@ public abstract class ServerContext {
    * Add a ContextExceptionListener to this context.
    * @param l the listener to add
    * @throws java.lang.IllegalStateException if the context has been destroyed.
+   * @throws CAException CA Exception
    */
   abstract public void addContextExceptionListener(ContextExceptionListener l) throws CAException, IllegalStateException;
 
@@ -91,6 +94,7 @@ public abstract class ServerContext {
    * Removes a ContextExceptionListener from this context.
    * @param l the listener to remove
    * @throws java.lang.IllegalStateException if the context has been destroyed.
+   * @throws CAException CA Exception
    */
   abstract public void removeContextExceptionListener(ContextExceptionListener l) throws CAException, IllegalStateException;
 
@@ -100,12 +104,14 @@ public abstract class ServerContext {
    * After shutdown Context cannot be rerun again, destory() has to be called
    * to clear all used resources.
    * @throws java.lang.IllegalStateException if the context has been destroyed.
+   * @throws CAException CA Exception
    */
   abstract public void shutdown() throws CAException, IllegalStateException;
 
   /**
    * Clear all resources attached to this Context
    * @throws java.lang.IllegalStateException if the context has been destroyed.
+   * @throws CAException CA Exception
    */
   abstract public void destroy() throws CAException, IllegalStateException;
 

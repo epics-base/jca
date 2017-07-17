@@ -67,7 +67,7 @@ public class HostNameRequest extends AbstractCARequest {
 	}
 	
 	/**
-	 * @param transport
+	 * @param transport transport to be used when sending.
 	 */
 	public HostNameRequest(Transport transport) {
 		super(transport);

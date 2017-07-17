@@ -26,9 +26,9 @@ import com.cosylab.epics.caj.impl.requests.AbstractCARequest;
 public class ClearChannelRequest extends AbstractCARequest {
 
 	/**
-	 * @param transport
-	 * @param sid
-	 * @param cid
+	 * @param transport to be used when sending.
+	 * @param sid sid
+	 * @param cid channel id
 	 */
 	public ClearChannelRequest(Transport transport, int sid, int cid)
 	{

@@ -26,7 +26,8 @@ import com.cosylab.epics.caj.impl.requests.AbstractCARequest;
 public class CreateChannelFailedRequest extends AbstractCARequest {
 
 	/**
-	 * @param transport
+	 * @param transport to be used when sending
+	 * @param cid cid
 	 */
 	public CreateChannelFailedRequest(Transport transport, int cid) {
 		super(transport);

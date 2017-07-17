@@ -29,7 +29,8 @@ import com.cosylab.epics.caj.impl.requests.AbstractCARequest;
 public class AccessRightsRequest extends AbstractCARequest {
 
 	/**
-	 * @param transport
+	 * @param transport transport to be used when sending.
+	 * @param channel Server channel (client connection to process variable)
 	 */
 	public AccessRightsRequest(Transport transport, ServerChannel channel) {
 		super(transport);

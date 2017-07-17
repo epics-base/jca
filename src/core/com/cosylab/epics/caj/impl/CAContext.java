@@ -81,6 +81,7 @@ public interface CAContext extends LoggerProvider {
 	
 	/**
 	 * Get user name (used to report to the server).
+	 * @return String username
 	 */
 	public String getUserName();
 }
