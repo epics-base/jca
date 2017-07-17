@@ -28,11 +28,11 @@ import com.cosylab.epics.caj.impl.requests.AbstractCARequest;
 public class WriteNotifyRequest extends AbstractCARequest {
 
 	/**
-	 * @param transport
+	 * @param transport transport to be used when sending.
 	 * @param dataType
-	 * @param dataCount
-	 * @param status
-	 * @param ioid
+	 * @param dataCount 
+	 * @param status CAStatus
+	 * @param ioid ioid
 	 */
 	public WriteNotifyRequest(Transport transport, short dataType, int dataCount, CAStatus status, int ioid) {
 		super(transport);

@@ -32,12 +32,12 @@ import com.cosylab.epics.caj.impl.requests.AbstractCARequest;
 public class ReadNotifyRequest extends AbstractCARequest {
 
 	/**
-	 * @param transport
-	 * @param sid
-	 * @param ioid
-	 * @param dataType
-	 * @param dataCount
-	 * @param value
+	 * @param transport transport to be used when sending.
+	 * @param sid sid 
+	 * @param ioid ioid
+	 * @param dataType data type
+	 * @param dataCount data count
+	 * @param value DBR value
 	 */
 	public ReadNotifyRequest(Transport transport, int sid, int ioid, int dataType, int dataCount, DBR value)
 	{

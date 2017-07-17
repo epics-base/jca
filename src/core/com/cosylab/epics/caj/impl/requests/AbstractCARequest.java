@@ -88,13 +88,16 @@ public abstract class AbstractCARequest implements Request {
 		transport.submit(this);
 	}
 
-	/**
-	 * Inserts CA header to the buffer.
-	 * @param transport	transport to be used when sending.
-	 * @param buffer	buffer to be filled, can be <code>null</code>.
-	 * @return	filled buffer, if given buffer size is less that header size,
-	 * 			then new buffer is allocated and returned.
-	 */
+    /**
+     * Inserts CA header to the buffer.
+     * 
+     * @param transport
+     *            transport to be used when sending.
+     * @param buffer
+     *            buffer to be filled, can be <code>null</code>.
+     * @return filled buffer, if given buffer size is less that header size,
+     *         then new buffer is allocated and returned.
+     */
 	public static ByteBuffer insertCAHeader(Transport transport, ByteBuffer buffer,
 											short command, int payloadSize,
 											short dataType, int dataCount,

@@ -36,10 +36,10 @@ public class SearchRequest extends AbstractCARequest {
 
 	/**
 	 * Generate search request message.
-	 * @param transport
-	 * @param requestMessage
-	 * @param name
-	 * @param cid
+	 * @param transport transport to be used when sending.
+	 * @param requestMessage buffer to be filled
+	 * @param name channel name
+	 * @param cid channel id
 	 * @return <code>null</code> if failed to put message on existing <code>requestMessage</code>.
 	 */
 	public static final ByteBuffer generateSearchRequestMessage(Transport transport, ByteBuffer requestMessage,

@@ -178,10 +178,12 @@ public class CAJChannel extends Channel implements TransportClient {
 	 
 	/**
 	 * Constructor.
-	 * @param context
-	 * @param name
-	 * @param listener
-	 * @throws CAException
+	 * @param context CAJContext
+	 * @param channelID Client channel ID
+	 * @param name Channel name
+	 * @param listener ConnectionListener
+	 * @param priority Process priority
+	 * @throws CAException JCA Exception
 	 */
 	protected CAJChannel(CAJContext context, int channelID, String name,
 			ConnectionListener listener, short priority) throws CAException
@@ -213,10 +215,10 @@ public class CAJChannel extends Channel implements TransportClient {
 	 * This method is called after search is complete.
 	 * <code>sid</code>, <code>typeCode</code>, <code>elementCount</code> might not be
 	 * valid, this depends on protocol revision.
-	 * @param transport 
-	 * @param sid 
-	 * @param typeCode 
-	 * @param elementCount 
+	 * @param transport CA transport implementation.
+	 * @param sid sid
+	 * @param typeCode type code 
+	 * @param elementCount element count
 	 * @return <code>true</code> if real create channel request needs to be sent to the server.
 	 */
 	public synchronized boolean createChannel(CATransport transport, int sid, short typeCode, int elementCount) 
@@ -312,12 +314,12 @@ public class CAJChannel extends Channel implements TransportClient {
 	}
 
 	/**
-	 * Called when channel crated succeeded on the server.
+	 * Called when channel created succeeded on the server.
 	 * <code>sid</code> might not be valid, this depends on protocol revision.
-	 * @param sid
-	 * @param typeCode
-	 * @param elementCount
-	 * @throws IllegalStateException
+	 * @param sid sid
+	 * @param typeCode type code
+	 * @param elementCount element count
+	 * @throws IllegalStateException IllegalStateException
 	 */
 	public synchronized void connectionCompleted(int sid, short typeCode, int elementCount) 
 		throws IllegalStateException
@@ -367,8 +369,11 @@ public class CAJChannel extends Channel implements TransportClient {
 	}
 
 	/**
+     * @param force force destruction regardless of reference count
+     * @see gov.aps.jca.Channel#destroy()
 	 * @param force force destruction regardless of reference count
-	 * @see gov.aps.jca.Channel#destroy()
+	 * @throws CAException JCA Exception
+	 * @throws IllegalStateException  illegal state exception
 	 */
 	public synchronized void destroy(boolean force) throws CAException, IllegalStateException {
 		
@@ -390,9 +395,9 @@ public class CAJChannel extends Channel implements TransportClient {
 	/**
 	 * Actual destory method, to be called <code>CAJContext</code>.
 	 * @param force force destruction regardless of reference count
-	 * @throws CAException
-	 * @throws IllegalStateException
-	 * @throws IOException
+	 * @throws CAException JCA Exception
+	 * @throws IllegalStateException method has been invoked at an illegal or inappropriate time
+	 * @throws IOException I/O exception 
 	 */
 	public synchronized void destroyChannel(boolean force) throws CAException, IllegalStateException, IOException {
 
@@ -494,8 +499,10 @@ public class CAJChannel extends Channel implements TransportClient {
 	}
 
 	/**
-	 * Send search message.
-	 * @return success status.  
+     * Send search message.
+	 * @param transport transport to be used when sending
+	 * @param buffer  buffer to be filled
+     * @return success status.
 	 */
 	public synchronized boolean generateSearchRequestMessage(Transport transport, ByteBuffer buffer)
 	{
@@ -593,7 +600,12 @@ public class CAJChannel extends Channel implements TransportClient {
 	}
 
 	/**
-	 * @see gov.aps.jca.Channel#addConnectionListener(gov.aps.jca.event.ConnectionListener)
+	 * 
+     * @see gov.aps.jca.Channel#addConnectionListener(gov.aps.jca.event.ConnectionListener)
+     * 
+	 * @param l ConnectionListener
+	 * @throws CAException JCA Exception
+	 * @throws IllegalStateException if ConnectionListener is null or the channel is in no state to perform this operation (ie destroyed, etc...)
 	 */
 	public synchronized void addConnectionListenerAndFireIfConnected(ConnectionListener l)
 		throws CAException, IllegalStateException {
@@ -625,8 +637,8 @@ public class CAJChannel extends Channel implements TransportClient {
 	}
 
 	/**
-	 * Set connection state and if changed, notifies listeners.
-	 * @param newState	state to set.
+     * Set connection state and if changed, notifies listeners.
+	 * @param connectionState state to set.
 	 */
 	private synchronized void setConnectionState(ConnectionState connectionState)
 	{
@@ -980,11 +992,11 @@ public class CAJChannel extends Channel implements TransportClient {
 
 	/**
 	 * Put value.
-	 * @param type
-	 * @param count
-	 * @param value
-	 * @throws CAException
-	 * @throws IllegalStateException
+	 * @param type DBRType
+	 * @param count count
+	 * @param value value to be put
+	 * @throws CAException JCA Exception
+	 * @throws IllegalStateException No channel transport available, channel disconnected.
 	 */
 	public void put(DBRType type, int count, Object value)
 		throws CAException, IllegalStateException {
@@ -1011,12 +1023,12 @@ public class CAJChannel extends Channel implements TransportClient {
 
 	/**
 	 * Put value.
-	 * @param type
-	 * @param count
-	 * @param value
-	 * @param l
-	 * @throws CAException
-	 * @throws IllegalStateException
+	 * @param type DBRType
+	 * @param count data count 
+	 * @param value value to put
+	 * @param l PutListener
+	 * @throws CAException JCA Exception
+	 * @throws IllegalStateException No channel transport available, channel disconnected.
 	 */
 	public void put(DBRType type, int count, Object value, PutListener l)
 		throws CAException, IllegalStateException {

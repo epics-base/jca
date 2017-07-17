@@ -31,9 +31,14 @@ import com.cosylab.epics.caj.impl.requests.AbstractCARequest;
  */
 public class ExceptionRequest extends AbstractCARequest {
 
-	/**
-	 * @param transport
-	 */
+    /**
+     * 
+     * @param transport to be used when sending.
+     * @param cid channel id 
+     * @param errorCode CAStatus
+     * @param previousHeader previous header
+     * @param errorMessage error message
+     */
 	public ExceptionRequest(Transport transport, int cid, CAStatus errorCode,
 							ByteBuffer previousHeader, String errorMessage) {
 		super(transport);

@@ -42,7 +42,7 @@ import com.cosylab.epics.caj.impl.Transport;
 public class EventAddResponse extends AbstractCASResponseHandler {
 
 	/**
-	 * @param context
+	 * @param context CAJServerContext
 	 */
 	public EventAddResponse(CAJServerContext context) {
 		super(context, "Event add request");
@@ -143,12 +143,13 @@ public class EventAddResponse extends AbstractCASResponseHandler {
 	}
 
 	/**
-	 * @param transport
-	 * @param dataType
-	 * @param dataCount
-	 * @param sid
-	 * @param ioid
-	 * @param value
+	 * @param processVariable process variable
+	 * @param transport  transport to be used when sending
+	 * @param dataType data type
+	 * @param dataCount data count
+	 * @param sid sid
+	 * @param ioid ioid
+	 * @param value DBR value
 	 */
 	public void eventResponse(ProcessVariable processVariable, Transport transport, short dataType, int dataCount, int sid, int ioid, DBR value) {
 

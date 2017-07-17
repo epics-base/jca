@@ -26,11 +26,11 @@ import com.cosylab.epics.caj.impl.requests.AbstractCARequest;
 public class EventCancelRequest extends AbstractCARequest {
 
 	/**
-	 * @param transport
-	 * @param ioid
-	 * @param dataType
-	 * @param dataCount
-	 * @param sid
+	 * @param transport transport to be used when sending
+	 * @param ioid ioid
+	 * @param dataType data type
+	 * @param dataCount data count
+	 * @param sid sid
 	 */
 	public EventCancelRequest(Transport transport, int sid, int ioid, short dataType, int dataCount)
 	{

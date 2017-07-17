@@ -37,7 +37,7 @@ public class VersionRequest extends AbstractCARequest {
 
 	/**
 	 * Used for determining UDP roundtrip times.
-	 * @param transport
+	 * @param transport transport to be used when sending.
 	 * @param priority
 	 * @param sequenceNumber
 	 * @param isSequenceNumberValid
@@ -49,7 +49,7 @@ public class VersionRequest extends AbstractCARequest {
 
 	/**
 	 * Generate version request message.
-	 * @param transport
+	 * @param transport transport to be used when sending.
 	 * @param buffer
 	 * @param priority
 	 * @param sequenceNumber

@@ -533,17 +533,19 @@ public class CARepeater implements Runnable
 	/**
 	 * Constructs an unbound datagram socket.
 	 * @return default unbound datagram socket.
+	 * @throws SocketException - if the socket could not be opened, or the socket could not bind to the specified local port.
 	 */
 	protected static DatagramSocket createDatagramSocket()
-		throws SocketException
+		throws SocketException 
 	{
 		return new DatagramSocket(null);
 	}
 
 	/**
 	 * Constructs a atagram socket bound to the wildcard address on defined port.
-	 * @param port
-	 * @param reuseAddress
+	 * @param port InetSocketAddress
+	 * @param reuseAddress Enable/disable the SO_REUSEADDR socket option
+	 * @throws SocketException - if the socket could not be opened, or the socket could not bind to the specified local port.
 	 * @return default bounded datagram socket.
 	 */
 	protected static DatagramSocket createDatagramSocket(int port, boolean reuseAddress)
@@ -588,8 +590,8 @@ public class CARepeater implements Runnable
 	 * Start repeater as detached process.
 	 * First checks if repeater is already running, if not
 	 * other JVM process is run.
-	 * @param repeaterPort	repeater port.
-	 * @throws Throwable
+	 * @param repeaterPort repeater port.
+	 * @throws Throwable throwable
 	 */
 	public static void startRepeater(final int repeaterPort) throws Throwable
 	{

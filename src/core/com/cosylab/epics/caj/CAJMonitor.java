@@ -83,13 +83,13 @@ public class CAJMonitor extends Monitor implements MonitorListener {
 	
 	/**
 	 * Constructor.
-	 * @param context
-	 * @param type
-	 * @param count
-	 * @param channel
-	 * @param listener
-	 * @param mask
-	 * @throws CAException
+	 * @param context CAJContext
+	 * @param type DBRType
+	 * @param count count
+	 * @param channel CAJChannel
+	 * @param listener MonitorListener
+	 * @param mask mask
+	 * @throws CAException JCA Exception
 	 */
 	public CAJMonitor(CAJContext context, DBRType type, int count,
 					  CAJChannel channel, MonitorListener listener, int mask) throws CAException

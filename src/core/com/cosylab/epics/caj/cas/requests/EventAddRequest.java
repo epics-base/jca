@@ -33,12 +33,12 @@ import com.cosylab.epics.caj.impl.requests.AbstractCARequest;
 public class EventAddRequest extends AbstractCARequest {
 
 	/**
-	 * @param transport
-	 * @param ioid
-	 * @param dataType
-	 * @param dataCount
-	 * @param status
-	 * @param value
+	 * @param transport transport to be used when sending
+	 * @param ioid ioid
+	 * @param dataType data type
+	 * @param dataCount data count
+	 * @param status CAStatus
+	 * @param value DBR value
 	 */
 	public EventAddRequest(Transport transport, int ioid, short dataType, int dataCount, CAStatus status, DBR value)
 	{

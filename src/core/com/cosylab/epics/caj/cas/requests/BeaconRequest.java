@@ -30,7 +30,7 @@ import com.cosylab.epics.caj.util.InetAddressUtil;
 public class BeaconRequest extends AbstractCARequest {
 
 	/**
-	 * @param transport
+	 * @param transport to be used when sending.
 	 */
 	public BeaconRequest(Transport transport, int beaconSequenceID) {
 		super(transport);
