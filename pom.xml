@@ -57,6 +57,23 @@
             </notifier>
         </notifiers>
     </ciManagement>
+    <!-- With Java 8, there are more than 100 errors in the Javadocs, and the
+    build fails for that. Temporary solution is to disable the strict Javadoc check.
+    Use profiles to add the option only for JDK 1.8 and up.-->
+    <profiles>
+        <profile>
+            <id>java8-disable-strict-javadoc</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <properties>
+                <javadoc.doclint.none>-Xdoclint:none</javadoc.doclint.none>
+            </properties>
+        </profile>
+    </profiles>
+    <properties>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
     <build>
         <sourceDirectory>src/core</sourceDirectory>
         <testSourceDirectory>test</testSourceDirectory>
