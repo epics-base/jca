@@ -32,14 +32,12 @@ public class AllTests {
 
 		TestSuite suite = new TestSuite();
 
-		suite.addTestSuite(JCASwitchToJNISingleThreadedTest.class);
 		suite.addTestSuite(JCAChannelTest.class);
 		suite.addTestSuite(JCAMonitorTest.class);
 		suite.addTestSuite(JCAContextPendPoolFlushTest.class);
 		suite.addTestSuite(JCAChannelGetTest.class);
 		suite.addTestSuite(JCAChannelPutTest.class);
 		
-		suite.addTestSuite(JCASwitchToJNIThreadSafeTest.class);
 		suite.addTestSuite(JCAChannelTest.class);
 		suite.addTestSuite(JCAMonitorTest.class);
 		suite.addTestSuite(JCAContextPendPoolFlushTest.class);
