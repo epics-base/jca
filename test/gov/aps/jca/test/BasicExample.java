@@ -96,7 +96,7 @@ public class BasicExample {
 		JCALibrary jca = JCALibrary.getInstance();
 
 		// Create a context with default configuration values.
-		context = jca.createContext(JCALibrary.JNI_THREAD_SAFE);
+		context = jca.createContext(JCALibrary.CHANNEL_ACCESS_JAVA);
 
 		// Display basic information about the context.
         System.out.println(context.getVersion().getVersionString());
