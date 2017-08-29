@@ -4,7 +4,7 @@ import gov.aps.jca.JCALibrary;
 
 public class JCATestHelper {
 	
-	public static volatile String implementation = JCALibrary.JNI_THREAD_SAFE;
+	public static volatile String implementation = JCALibrary.CHANNEL_ACCESS_JAVA;
 	
 	public static void setJNIImplementation(String impl)
 	{

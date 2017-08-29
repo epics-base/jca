@@ -26,7 +26,7 @@ import java.net.InetSocketAddress;
  *
  * @author <a href="mailto:matej.sekoranjaATcosylab.com">Matej Sekoranja</a>
  * @version $Id: Server.java,v 1.3 2006-08-22 15:11:38 msekoranja Exp $
- * @see JCALibrary
+ * @see gov.aps.jca.JCALibrary
  */
 public interface Server {
   
@@ -38,7 +38,7 @@ public interface Server {
    * 
    * The server tool is encouraged to accept multiple PV name aliases for the same PV here.
    *
-   * NOTE: return <code>ProcessVariableExistanceCompletion.DOES_NOT_EXIST_HERE<code> if too many simultaneous
+   * NOTE: return <code>ProcessVariableExistanceCompletion.DOES_NOT_EXIST_HERE</code> if too many simultaneous
    * asynchronous operations are pending against the server.
    * The client library will retry the request at some time in the future.
    * 
@@ -83,7 +83,7 @@ public interface Server {
    * attaching to additional client private process variables.
    *
    * @param aliasName the process variable alias name.
-   * @param eventCallback the process variable event callback (where PV reports value changes if <code>interest<code> is <code>true<code>).
+   * @param eventCallback the process variable event callback (where PV reports value changes if <code>interest</code> is <code>true</code>).
    * @param	asyncCompletionCallback if asynchronous completion is required method should return 
    * 								<code>null</code> and call
    * 								<code>ProcessVariableExistanceCompletionCallback.processVariableAttachCompleted()</code> method.
