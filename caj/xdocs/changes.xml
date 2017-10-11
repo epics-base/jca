@@ -1,0 +1,284 @@
+<document>
+  <properties>
+    <title>CAJ Changes page</title>
+    <author email="matej.sekoranja_AT_cosylab.com">Matej Sekoranja</author>
+  </properties>
+  
+  <body>
+
+    <release version="1.1.16" date="2015-xx-xx" description="">
+      <action dev="msekoranja" type="fix">
+       Duplicate monitor resubscription bugfix.
+      </action>
+    </release>
+
+    <release version="1.1.15" date="2015-03-25" description="Reimplemented CA search.">
+      <action dev="msekoranja" type="update">
+       Reimplemented CA search algorithm.
+      </action>
+      <action dev="msekoranja" type="update">
+       Zero length get request handling when server is older than 3.14.12.
+      </action>
+      <action dev="msekoranja" type="update">
+       Added loopback address to CA address list when no addresses found.
+      </action>
+      <action dev="msekoranja" type="update">
+       Added CAJContext.modifyUserName() method.
+      </action>
+    </release>
+   
+    <release version="1.1.14" date="2014-03-27" description="Stability fixes">
+      <action dev="msekoranja" type="update">
+        More robust handling of UDP broadcast detection and sending (latest Win + JDK bugs).
+      </action>
+      <action dev="msekoranja" type="update">
+        More robust handling when server stops reading from TCP socket (send buffer get full).
+      </action>
+      <action dev="msekoranja" type="update">
+        Tunable SearchChannelManager. Thanks to Murali Shankar.
+      </action>
+      <action dev="msekoranja" type="fix">
+        Subscription clear ack. message properly ignored.
+      </action>
+      <action dev="msekoranja" type="fix">
+        CAJ possible deadlock resolved when IOC is shutdown while CAJ is creating channels on it.
+      </action>
+      <action dev="msekoranja" type="fix">
+        CAJ search live-lock.
+      </action>
+      <action dev="msekoranja" type="update">
+        CAJ_DEBUG support for direct allocated byte buffers.
+      </action>
+      <!--action dev="msekoranja" type="update">
+        No need to flush Monitor.clear() anymore - same behavior as native implementation.
+      </action-->
+    </release>
+
+    <release version="1.1.13" date="2013-08-05" description="CAJ channel sharing disable support">
+      <action dev="msekoranja" type="update">
+        CAJ channel sharing disable support.
+      </action>
+    </release>
+
+    <release version="1.1.12" date="2013-05-30" description="JDK7 support">
+      <action dev="msekoranja" type="update">
+        JDK7 support.
+      </action>
+    </release>
+
+    <release version="1.1.11" date="2013-02-21" description="String decoding fix">
+      <action dev="msekoranja" type="fix">
+        Decoding of strings of length 40 fixed (in some special cases).
+      </action>
+    </release>
+
+    <release version="1.1.10" date="2012-06-14" description="DBE_PROPERTY support">
+      <action dev="msekoranja" type="update">
+        DBE_PROPERTY support.
+      </action>
+     <action dev="msekoranja" type="update">
+        More efficient decoding of big arrays. Work done by Gabriele Carcassi.
+      </action>
+     <action dev="carcassi" type="update">
+        Variable sized array support (elementCount=0).
+      </action>
+     <action dev="msekoranja" type="update">
+        Monitor payload check at creation time.
+      </action>
+     <action dev="msekoranja" type="update">
+        Optimized receive buffer size handling (starts with small initial receive buffer, resizes up to MAX_ARRAY_BYTES on demand.)
+      </action>
+
+    </release>
+
+    <release version="1.1.9" date="2011-10-26" description="Extended header fixed.">
+      <action dev="msekoranja" type="fix">
+      	Extended header fixed (requesting more that 64k elements).
+      </action>              
+    </release>
+
+    <release version="1.1.8" date="2011-09-14" description="Stability improved.">
+      <action dev="msekoranja" type="fix">
+      	Extended header handling.
+      </action>              
+      <action dev="msekoranja" type="fix">
+      	Robustness of Reactor improved (in case of CancelledKeyException).
+      </action>              
+      <action dev="msekoranja" type="fix">
+      	Disabling flow control.
+      </action>              
+      <action dev="msekoranja" type="fix">
+    	More robust behavior in case JVM fails to get hostname.
+      </action>              
+    </release>
+
+    <release version="1.1.7" date="2010-10-01" description="Stability improved.">
+      <action dev="msekoranja" type="update">
+    	Annoying stdout println removed of UDP transport (makes users happier, but there is less diagnostic).           
+      </action>              
+      <action dev="msekoranja" type="fix">
+    	Possible deadlock fixed under heavy request and disconnect actions.
+      </action>              
+    </release>
+
+    <release version="1.1.6" date="2009-10-08" description="Searching improved.">
+      <action dev="msekoranja" type="update">
+    	CA UDP search improved.
+      </action>              
+      <action dev="msekoranja" type="update">
+    	Added support for -Djca.use_env=true - reads EPICS system env. variables.
+      </action>              
+      <action dev="msekoranja" type="update">
+    	If Java 6 or newer is being use, CAJ introspects network interfaces for their broadcast addresses.
+      </action>              
+      <action dev="msekoranja" type="fix">
+    	Invalid UDP message caused CAJ to fall into a deadloop.
+      </action>              
+    </release>
+
+    <release version="1.1.5b" date="2009-03-27" description="CAS public release.">
+    </release>
+    
+    <release version="1.1.5" date="2008-10-27" description="Reconnection fixed.">
+      <action dev="msekoranja" type="fix">
+      	Improved connection mechanism.
+      </action>              
+      <action dev="msekoranja" type="fix">
+      	In ceratin case CAJ might reconnect channel more then once.
+      </action>              
+      <action dev="msekoranja" type="update">
+        CAJ is now distributed with CAS (Channel Access Server) implementation.
+      </action>              
+    </release>
+
+    <release version="1.1.4" date="2007-06-11" description="PUT_ACKT/ACKS support added, synchronization fixes.">
+      <action dev="msekoranja" type="fix">
+      	ChannelSearchManager queue synchronization fixed.
+      </action>              
+      <action dev="msekoranja" type="fix">
+      	Channel connection/access rights listeners dispatching synchronization added.
+      </action>              
+      <action dev="msekoranja" type="fix">
+      	Leader/follower thread pool queue fixed.
+      </action>              
+      <action dev="msekoranja" type="update">
+      	PUT_ACKT/ACKS support added.
+      </action>              
+    </release>
+  
+    <release version="1.1.3" date="2006-12-20" description="Improvements.">
+      <action dev="msekoranja" type="update">
+		Monitor can be created even if channel is not connected.
+      </action>              
+      <action dev="msekoranja" type="update">
+		Channel instance reference counting. Connection event is artificially fired on listener 
+		added at channel creation of already created (cached) channel.
+      </action>              
+      <action dev="msekoranja" type="fix">
+		Behaviour of &lt;code&gt;auto_addr_list&lt;/code&gt; fixed (now it adds auto list to &lt;code&gt;addr_list&lt;/code&gt; and does not override it as before).
+      </action>              
+      <action dev="msekoranja" type="fix">
+		Massive connection fixed (UDP sent buffer was too big).
+      </action>              
+    </release>
+
+    <release version="1.1.2" date="2006-11-15" description="CAJ search algorithm reimplemented.">
+      <action dev="msekoranja" type="fix">
+		CAJ search algorithm reimplemented.
+      </action>              
+    </release>
+
+    <release version="1.1.1" date="2006-10-26" description="CAJ priority support added.">
+      <action dev="msekoranja" type="fix">
+      	Channel search improved.
+      </action>              
+      <action dev="msekoranja" type="update">
+      	CAJ priority support added.
+      </action>              
+    </release>
+
+    <release version="1.1.0" date="2006-09-09" description="JCAS implementation, CA repeater, CAJ fixes.">
+      <action dev="msekoranja" type="fix">
+      	&lt;code&gt;CAStatus&lt;/code&gt; fixes (readNotify, writeNotify, eventAdd).
+      </action>              
+      <action dev="msekoranja" type="fix">
+      	Added support to workaround (strip) FQDN hostname returned from getHostname(), only hostname expected.
+      </action>              
+      <action dev="msekoranja" type="update">
+      	Flow control added.
+      </action>              
+      <action dev="msekoranja" type="update">
+      	Pure Java CA Repeater implemented, &lt;code&gt;com.cosylab.epics.caj.CARepeater&lt;/code&gt;.
+      </action>              
+      <action dev="msekoranja" type="update">
+      	Pure Java CA Server (JCAS) implemented, &lt;code&gt;com.cosylab.epics.caj.cas.CAJServerContext&lt;/code&gt; context.
+      </action>              
+    </release>
+
+    <release version="1.0.5" date="2006-05-26" description="Channel.put(value) and context exception notification fixes.">
+      <action dev="msekoranja" type="fix">
+      	Synchronous (non-callback) version of &lt;code&gt;Channel.put()&lt;/code&gt; fixed to use CA_WRITE request instead of CA_WRITE_NOTIFY.
+      </action>              
+      <action dev="msekoranja" type="update">
+      	Added dispatching of &lt;code&gt;ContextExceptionListener.contextVirtualCircuitException()&lt;/code&gt;.
+      </action>              
+      <action dev="msekoranja" type="update">
+      	I/O event listeners (write, read, monitors) no loger get error state events (disconnect, destroyed),
+		&lt;code&gt;ContextExceptionListener.contextException()&lt;/code&gt; is used instead.
+      </action>              
+    </release>
+
+    <release version="1.0.4" date="2005-09-07" description="Timed-out pendIO() fixed.">
+      <action dev="msekoranja" type="fix">
+      	Timed-out pendIO() fixed.
+      </action>              
+      <action dev="msekoranja" type="update">
+      	&lt;code&gt;JNIRepeater&lt;/code&gt; support for MacOS.
+      </action>              
+    </release>
+
+    <release version="1.0.3" date="2005-07-06" description="Connection lost and large arrays fix.">
+      <action dev="msekoranja" type="update">
+      	Minor performance/memory improvements.
+      </action>              
+      <action dev="msekoranja" type="fix">
+      	On Linux (and possibly others platforms) it can happen that when connection is lost, CPU goes 100%. Fixed.
+		Also reconnection was fixed. 
+      </action>              
+      <action dev="msekoranja" type="fix">
+      	Large arrays of data send/write fix/improvements.
+      </action>              
+    </release>
+
+    <release version="1.0.2" date="2005-02-01" description="String array and high port numbers fix.">
+      <action dev="msekoranja" type="fix">
+      	Port numbers above &lt;code&gt;0x7000&lt;/code&gt; fixed.
+      </action>              
+      <action dev="msekoranja" type="fix">
+      	String array fix.
+      </action>              
+    </release>
+
+    <release version="1.0.1" date="2004-11-06" description="JCA 2.1.5 compatibility and access rights fix.">
+      <action dev="msekoranja" type="add">
+        Added support for &lt;code&gt;gov.aps.jca.Context.getVersion()&lt;/code&gt; method.
+        Now users can retrieve context name and version information (at runtime).
+      </action>              
+      <action dev="msekoranja" type="add">
+		Added global context configuration defined in &lt;code&gt;JCALibrary.property&lt;/code&gt;.
+		Prefix &lt;code&gt;gov.aps.jca.Context&lt;/code&gt; can be used instead of specific
+		prefixes to set global context configuration. Of course, specific configuration overrides default configuration(s).
+      </action>              
+      <action dev="msekoranja" type="fix">
+      	Fixed access rights bug.
+      </action>              
+    </release>
+    
+    <release version="1.0" date="2004-10-27" description="First release of CAJ.">
+      <action dev="msekoranja" type="update">
+		First release of CAJ.
+      </action>              
+    </release>
+
+  </body>
+</document>

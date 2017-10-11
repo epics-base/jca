@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+  <document>
+  
+    <properties>
+      <title>Users manual</title>
+    </properties>
+
+    <body>
+      <section name="Users manual">
+      <p>
+      Channel Access for Java (CAJ) is a 100% pure Java implementation of the EPICS Channel Access server and client library. <br/>
+      It is implemented as JCA pluggable implementation, therefore migration from JNI CA implementation can be achieved simply by changing one line of code.
+      </p>
+      </section>
+      
+      <section name="Dependencies">
+	  <ul>
+		  <li>
+		  <b>Java 1.4.2_05 (or newer)</b> needed, due to <code>java.nio</code> bugs in Win32 implementation.<br/>
+		  </li>
+		  <li>
+		  <b>JCA 2.3.0 or newer</b> (since CAJ, JCAS are pluggable to JCA)<br/>
+		  Can be obtained from <a href="http://jca.cosylab.com/">http://jca.cosylab.com/</a>
+		  </li>
+		  <li>
+		  <b>Backport of Java Concurrent library 2.2 or newer (required only for Java 1.4 or older)</b><br/>
+		  Java library containing efficient versions of utility classes commonly encountered in concurrent Java programming (intergrated in Java 5).<br/>
+		  See: <a href="http://dcl.mathcs.emory.edu/util/backport-util-concurrent/">http://dcl.mathcs.emory.edu/util/backport-util-concurrent/</a><br/>
+		  </li>
+	  </ul>
+	  
+	  <p>
+	  See also CAJ project <a href="dependencies.html">dependencies</a>.
+	  </p>
+	  </section>
+
+      <section name="Notes on implementation">
+	  <ul>
+		  <li>since CAJ is pure Java, it follows Java programming design (i.e. no silly C/C++ constructs)</li>
+		  <ul>
+			  <li><code>preemptive_callbacks</code> are on by default</li>
+			  <li><code>pendEvent()</code> does nothing but sleep</li>
+		  </ul>
+	  </ul>
+	  </section>
+
+      <section name="Running">
+      <p>
+		Simple command line to run a CAJ application:
+	  </p>
+	  <source><![CDATA[java -cp caj-1.1.2.jar:jca-2.3.0.jar:example.jar com.cosylab.epics.caj.test.BasicExample <pv name>]]></source>	  
+      <p>
+      (Sources are available in the source distribution of CAJ, and here to download <a href="http://users.cosylab.com/~msekoranja/tmp/example.jar"><code>example.jar</code></a>.)
+	  </p>
+	  </section>
+
+      <section name="Migration from JNI CA to CAJ">
+      <p>
+	  Change (by example):
+	  </p>
+	  <source><![CDATA[jca.createContext(JCALibrary.JNI_SINGLE_THREADED);
+	  
+    or
+	  
+jca.createContext(JCALibrary.JNI_THREAD_SAFE);]]></source>	  
+      <p>
+      to
+      </p>
+	  <source><![CDATA[jca.createContext(JCALibrary.CHANNEL_ACCESS_JAVA);]]></source>	  
+      <p>
+	  Configuration file can be found in distribution JARs.<br/>
+	  See JCA tutorial on configuration: <a href="http://www.aps.anl.gov/bcda/jca/jca/2.1.2/tutorial.html">http://www.aps.anl.gov/bcda/jca/jca/2.1.2/tutorial.html</a>.<br/>
+	  CAJ configuration properties: <a href="http://www.cosylab.com/jca/apidocs/gov/aps/jca/JCALibrary.html#CHANNEL_ACCESS_JAVA">http://www.cosylab.com/jca/apidocs/gov/aps/jca/JCALibrary.html#CHANNEL_ACCESS_JAVA</a>.<br/>
+	  </p>
+	  <p>
+	  ... and you will experience much better stability and performance.
+	  </p>
+	  </section>
+
+    </body>
+   
+  </document>
+  
