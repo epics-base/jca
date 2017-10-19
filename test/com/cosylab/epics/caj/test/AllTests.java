@@ -14,53 +14,176 @@
 
 package com.cosylab.epics.caj.test;
 
-import org.junit.runner.JUnitCore;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import com.cosylab.epics.caj.cas.util.DefaultServerImpl;
+import com.cosylab.epics.caj.cas.util.MemoryProcessVariable;
+import com.cosylab.epics.caj.cas.util.examples.CounterProcessVariable;
+
+import gov.aps.jca.CAException;
+import gov.aps.jca.JCALibrary;
+import gov.aps.jca.cas.ServerContext;
+import gov.aps.jca.dbr.DBR_Double;
+import gov.aps.jca.dbr.DBR_Enum;
 
 /**
  * All CAJ tests.
+ * 
  * @author <a href="mailto:matej.sekoranjaATcosylab.com">Matej Sekoranja</a>
  * @version $id$
  */
+
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    CAJContextRepeaterTest.class,
+    CAJContextStateTest.class,
+    CAJContextConfigurationTest.class,
+    CAJContextListenersTest.class,
+    CAJContextChannelIT.class,
+    CAJChannelIT.class,
+    CAJMonitorTest.class,
+    CAJContextPendPoolFlushIT.class,
+    CAJChannelGetIT.class,
+    CAJChannelPutIT.class,
+    PerformanceIT.class
+    })
 public class AllTests {
 
-	/**
-	 * Assembles and returns a test suite containing all known tests.
-	 * @return A non-null test suite.
-	 */
-	public static Test suite() {
+    // /**
+    // * Assembles and returns a test suite containing all known tests.
+    // * @return A non-null test suite.
+    // */
+    // public static Test suite() {
+    //
+    // TestSuite suite = new TestSuite();
+    //
+    // // repeater should not be running...
+    // suite.addTestSuite(CAJContextRepeaterTest.class);
+    //
+    // suite.addTestSuite(CAJContextStateTest.class);
+    // suite.addTestSuite(CAJContextConfigurationTest.class);
+    // suite.addTestSuite(CAJContextListenersTest.class);
+    // suite.addTestSuite(CAJContextChannelTest.class);
+    // suite.addTestSuite(CAJChannelTest.class);
+    // suite.addTestSuite(CAJMonitorTest.class);
+    // suite.addTestSuite(CAJContextPendPoolFlushTest.class);
+    // //suite.addTestSuite(CAJChannelGetTest.class);
+    // suite.addTestSuite(CAJChannelPutTest.class);
+    //
+    // suite.addTestSuite(CAJContextDebugTest.class);
+    //
+    // return suite;
+    // }
+    /**
+    *
+    */
+    @BeforeClass
+    public static void setup() {
+        try {
+            initialize();
+        } catch (CAException e) {
+            e.printStackTrace();
+        }
+    }
 
-		TestSuite suite = new TestSuite();
+    /**
+     * Cleanup
+     */
+    @AfterClass
+    public static void cleanup() {
+        destroy();
+    }
 
-		// repeater should not be running...
-		suite.addTestSuite(CAJContextRepeaterTest.class);
+    /**
+     * JCA server context.
+     */
+    private static ServerContext context = null;
 
-		suite.addTestSuite(CAJContextStateTest.class);
-		suite.addTestSuite(CAJContextConfigurationTest.class);
-		suite.addTestSuite(CAJContextListenersTest.class);
-		suite.addTestSuite(CAJContextChannelTest.class);
-		suite.addTestSuite(CAJChannelTest.class);
-		suite.addTestSuite(CAJMonitorTest.class);
-		suite.addTestSuite(CAJContextPendPoolFlushTest.class);
-		//suite.addTestSuite(CAJChannelGetTest.class);
-		suite.addTestSuite(CAJChannelPutTest.class);
-		
-		suite.addTestSuite(CAJContextDebugTest.class);
+    /**
+     * Initialize JCA context.
+     * 
+     * @throws CAException
+     *             throws on any failure.
+     */
+    private static void initialize() throws CAException {
 
-		return suite;
-	}
+        // Get the JCALibrary instance.
+        JCALibrary jca = JCALibrary.getInstance();
 
-	/**
-	 * Runs the test suite.
-	 */
-	public static void main(String args[]) {
-	    JUnitCore.runClasses(AllTests.class);
-	}
+        // Create server implmentation
+        DefaultServerImpl server = new DefaultServerImpl();
+
+        // Create a context with default configuration values.
+        context = jca.createServerContext(JCALibrary.CHANNEL_ACCESS_SERVER_JAVA, server);
+
+        // Display basic information about the context.
+        System.out.println(context.getVersion().getVersionString());
+        context.printInfo();
+        System.out.println();
+
+        // register process variables
+        registerProcessVariables(server);
+    }
+
+    /**
+     * Register process variables.
+     * 
+     * @param server
+     */
+    private static void registerProcessVariables(DefaultServerImpl server) {
+
+        // PV supporting all GR/CTRL info
+        MemoryProcessVariable record1 = new MemoryProcessVariable("record1", null, DBR_Double.TYPE,
+                new double[] { 1.23 });
+
+        record1.setUpperWarningLimit(new Double(3));
+        record1.setLowerWarningLimit(new Double(-3));
+
+        record1.setUpperAlarmLimit(new Double(5));
+        record1.setLowerAlarmLimit(new Double(-5));
+
+        record1.setUpperCtrlLimit(new Double(100));
+        record1.setLowerCtrlLimit(new Double(-100));
+
+        record1.setUnits("units");
+        record1.setPrecision((short) 2);
+
+        server.registerProcessVaribale(record1);
+
+        CounterProcessVariable record2 = new CounterProcessVariable("record2", null, 0, 100, 1, 1000, 0, 100, 0, 100);
+
+        server.registerProcessVaribale(record2);
+
+        // enum in-memory PV
+        MemoryProcessVariable enumPV = new MemoryProcessVariable("enum", null, DBR_Enum.TYPE, new short[] { 0 }) {
+            private final String[] labels = { "zero", "one", "two", "three", "four", "five", "six", "seven" };
+
+            public String[] getEnumLabels() {
+                return labels;
+            }
+
+        };
+        server.registerProcessVaribale(enumPV);
+
+    }
+
+    /**
+     * Destroy JCA server context.
+     */
+    private static void destroy() {
+
+        try {
+
+            // Destroy the context, check if never initialized.
+            if (context != null)
+                context.destroy();
+
+        } catch (Throwable th) {
+            th.printStackTrace();
+        }
+    }
+
 }
-
-
-
-
-

@@ -85,7 +85,7 @@ import gov.aps.jca.event.GetListener;
  * @author <a href="mailto:matej.sekoranjaATcosylab.com">Matej Sekoranja</a>
  * @version $id$
  */
-public class CAJChannelGetTest {
+public class CAJChannelGetIT {
 
     private class GetListenerImpl implements GetListener {
         public DBR value = null;
