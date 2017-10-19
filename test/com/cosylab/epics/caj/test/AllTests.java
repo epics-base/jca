@@ -52,31 +52,6 @@ import gov.aps.jca.dbr.DBR_Enum;
     })
 public class AllTests {
 
-    // /**
-    // * Assembles and returns a test suite containing all known tests.
-    // * @return A non-null test suite.
-    // */
-    // public static Test suite() {
-    //
-    // TestSuite suite = new TestSuite();
-    //
-    // // repeater should not be running...
-    // suite.addTestSuite(CAJContextRepeaterTest.class);
-    //
-    // suite.addTestSuite(CAJContextStateTest.class);
-    // suite.addTestSuite(CAJContextConfigurationTest.class);
-    // suite.addTestSuite(CAJContextListenersTest.class);
-    // suite.addTestSuite(CAJContextChannelTest.class);
-    // suite.addTestSuite(CAJChannelTest.class);
-    // suite.addTestSuite(CAJMonitorTest.class);
-    // suite.addTestSuite(CAJContextPendPoolFlushTest.class);
-    // //suite.addTestSuite(CAJChannelGetTest.class);
-    // suite.addTestSuite(CAJChannelPutTest.class);
-    //
-    // suite.addTestSuite(CAJContextDebugTest.class);
-    //
-    // return suite;
-    // }
     /**
     *
     */

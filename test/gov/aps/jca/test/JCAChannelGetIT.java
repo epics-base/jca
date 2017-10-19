@@ -14,8 +14,15 @@
 
 package gov.aps.jca.test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.lang.reflect.Array;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import gov.aps.jca.CAException;
 import gov.aps.jca.CAStatus;
@@ -70,15 +77,13 @@ import gov.aps.jca.dbr.TimeStamp;
 import gov.aps.jca.event.GetEvent;
 import gov.aps.jca.event.GetListener;
 
-import junit.framework.TestCase;
-
 /**
  * Get tests, mainly tests DBRs and DBRDecoder.
  * 
  * @author <a href="mailto:matej.sekoranjaATcosylab.com">Matej Sekoranja</a>
  * @version $id$
  */
-public class JCAChannelGetTest extends TestCase {
+public class JCAChannelGetIT {
 
     private class GetListenerImpl implements GetListener {
         public DBR value = null;
@@ -105,17 +110,9 @@ public class JCAChannelGetTest extends TestCase {
     private Channel channel;
 
     /**
-     * Constructor for CAJChannelGetTest.
-     * 
-     * @param methodName
-     */
-    public JCAChannelGetTest(String methodName) {
-        super(methodName);
-    }
-
-    /**
      * Simple get tests.
      */
+    @Test
     public void testGet() throws CAException, TimeoutException, InterruptedException {
         DBR dbr = channel.get();
         context.pendIO(3.0);
@@ -143,6 +140,7 @@ public class JCAChannelGetTest extends TestCase {
     /**
      * Simple get w/ count tests.
      */
+    @Test
     public void testGetCount() throws CAException, TimeoutException, InterruptedException {
         // JCA refuses to return more than > 1
         // final int COUNT = 3;
@@ -279,6 +277,7 @@ public class JCAChannelGetTest extends TestCase {
     /**
      * Helper method.
      */
+//    @Test
     public void testGets() throws CAException, TimeoutException, InterruptedException, IOException {
 
         internalGetTest(DBR_Byte.TYPE, 1);
@@ -368,6 +367,7 @@ public class JCAChannelGetTest extends TestCase {
     /**
      * Helper method.
      */
+    @Test
     public void testEnum() throws CAException, TimeoutException, InterruptedException {
 
         channel.destroy();
@@ -377,9 +377,16 @@ public class JCAChannelGetTest extends TestCase {
 
         final DBRType type = DBR_LABELS_Enum.TYPE;
         final int count = 1;
-        final String[] expectedResult = new String[] { "zeroString", "oneString", "twoString", "threeString",
-                "fourString", "fiveString", "sixString", "sevenString", "8s", "9s", "10s", "11s", "12s", "13s", "14s",
-                "15s" };
+        final String[] expectedResult = new String[] { 
+                "zeroString",
+                "oneString",
+                "twoString",
+                "threeString",
+                "fourString",
+                "fiveString",
+                "sixString",
+                "sevenString",
+                "8s", "9s", "10s", "11s", "12s", "13s", "14s", "15s" };
 
         DBR dbr = channel.get(type, count);
         context.pendIO(3.0);
@@ -408,7 +415,8 @@ public class JCAChannelGetTest extends TestCase {
     /*
      * @see TestCase#setUp()
      */
-    protected void setUp() throws Exception {
+    @Before
+    public  void setUp() throws Exception {
         context = JCALibrary.getInstance().createContext(JCALibrary.CHANNEL_ACCESS_JAVA);
         channel = context.createChannel("record1");
         context.pendIO(5.0);
@@ -420,19 +428,10 @@ public class JCAChannelGetTest extends TestCase {
     /*
      * @see TestCase#tearDown()
      */
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         context.dispose();
         context = null;
-    }
-
-    /**
-     * Java main entry point.
-     * 
-     * @param args
-     *            arguments.
-     */
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(JCAChannelGetTest.class);
     }
 
 }
