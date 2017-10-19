@@ -25,6 +25,8 @@ import gov.aps.jca.dbr.STS;
 import gov.aps.jca.dbr.Severity;
 import gov.aps.jca.dbr.Status;
 
+import org.junit.runner.JUnitCore;
+
 import com.cosylab.epics.caj.CAJContext;
 import com.cosylab.epics.caj.cas.CAJServerContext;
 import com.cosylab.epics.caj.cas.util.DefaultServerImpl;
@@ -38,7 +40,7 @@ import junit.framework.TestCase;
  * @author <a href="mailto:matej.sekoranjaATcosylab.com">Matej Sekoranja</a>
  * @version $id$
  */
-public class CAJTestOnCAS extends TestCase {
+public class CAJTestOnCASIT {
 
 	/**
 	 * Context to be tested.
@@ -59,8 +61,7 @@ public class CAJTestOnCAS extends TestCase {
 	 * Constructor for CAJContextStateTest.
 	 * @param methodName
 	 */
-	public CAJTestOnCAS(String methodName) {
-		super(methodName);
+	public CAJTestOnCASIT(String methodName) {
 	}
 
 	public void test()
@@ -170,6 +171,6 @@ public class CAJTestOnCAS extends TestCase {
 	 * @param args	arguments.
 	 */
 	public static void main(String[] args) {
-		junit.textui.TestRunner.run(CAJTestOnCAS.class);
+	    JUnitCore.runClasses(CAJTestOnCASIT.class);
 	}
 }
