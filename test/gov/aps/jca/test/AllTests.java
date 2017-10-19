@@ -14,6 +14,8 @@
 
 package gov.aps.jca.test;
 
+import org.junit.runner.JUnitCore;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -51,7 +53,7 @@ public class AllTests {
 	 * Runs the test suite.
 	 */
 	public static void main(String args[]) {
-		junit.textui.TestRunner.run(AllTests.class);
+	    JUnitCore.runClasses(AllTests.class);
 	}
 }
 

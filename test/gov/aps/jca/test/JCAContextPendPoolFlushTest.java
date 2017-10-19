@@ -234,7 +234,7 @@ public class JCAContextPendPoolFlushTest extends TestCase {
 	 * @see TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
-		context = JCALibrary.getInstance().createContext(JCATestHelper.getJNIImplementation());
+		context = JCALibrary.getInstance().createContext(JCALibrary.CHANNEL_ACCESS_JAVA);
 	}
 
 	/*

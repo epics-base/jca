@@ -14,42 +14,22 @@
 
 package com.cosylab.epics.caj.cas.test;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * All CAJ tests.
  * @author <a href="mailto:matej.sekoranjaATcosylab.com">Matej Sekoranja</a>
  * @version $id$
  */
+
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ 
+    CAJServerContextStateTest.class,
+    CAJServerContextConfigurationTest.class,
+    ServerImplTest.class,
+    GetAndPutTest.class,
+    EventsTest.class})
 public class AllTests {
 
-	/**
-	 * Assembles and returns a test suite containing all known tests.
-	 * @return A non-null test suite.
-	 */
-	public static Test suite() {
-
-		TestSuite suite = new TestSuite();
-
-		suite.addTestSuite(CAJServerContextStateTest.class);
-		suite.addTestSuite(CAJServerContextConfigurationTest.class);
-		suite.addTestSuite(ServerImplTest.class);
-		suite.addTestSuite(GetAndPutTest.class);
-		suite.addTestSuite(EventsTest.class);
-
-		return suite;
-	}
-
-	/**
-	 * Runs the test suite.
-	 */
-	public static void main(String args[]) {
-		junit.textui.TestRunner.run(AllTests.class);
-	}
 }
-
-
-
-
-

@@ -14,6 +14,8 @@
 
 package com.cosylab.epics.caj.test;
 
+import org.junit.runner.JUnitCore;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -42,7 +44,7 @@ public class AllTests {
 		suite.addTestSuite(CAJChannelTest.class);
 		suite.addTestSuite(CAJMonitorTest.class);
 		suite.addTestSuite(CAJContextPendPoolFlushTest.class);
-		suite.addTestSuite(CAJChannelGetTest.class);
+		//suite.addTestSuite(CAJChannelGetTest.class);
 		suite.addTestSuite(CAJChannelPutTest.class);
 		
 		suite.addTestSuite(CAJContextDebugTest.class);
@@ -54,7 +56,7 @@ public class AllTests {
 	 * Runs the test suite.
 	 */
 	public static void main(String args[]) {
-		junit.textui.TestRunner.run(AllTests.class);
+	    JUnitCore.runClasses(AllTests.class);
 	}
 }
 

@@ -32,7 +32,7 @@ import gov.aps.jca.event.PutListener;
  * @author <a href="mailto:matej.sekoranjaATcosylab.com">Matej Sekoranja</a>
  * @version $id$
  */
-public class TestExample {
+public class Example {
 
 	private class PutListenerImpl implements PutListener
 	{
@@ -65,7 +65,7 @@ public class TestExample {
 
 	public static void main(String[] args) throws Throwable {
 		
-		TestExample cct = new TestExample();
+		Example cct = new Example();
 		
 		try {
 			// Get the JCALibrary instance.
