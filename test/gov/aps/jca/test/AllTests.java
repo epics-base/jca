@@ -39,10 +39,10 @@ import gov.aps.jca.dbr.DBR_Enum;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ 
     JCAChannelIT.class, 
-    JCAMonitorTest.class,
-    JCAContextPendPoolFlushTest.class,
+    JCAMonitorIT.class,
+    JCAContextPendPoolFlushIT.class,
     JCAChannelGetIT.class,
-    JCAChannelPutTest.class})
+    JCAChannelPutIT.class})
 public class AllTests {
 
     /**
