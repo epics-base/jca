@@ -17,7 +17,7 @@ import java.util.HashMap;
  * @author <a href="mailto:fede@apache.org">Federico Barbieri</a>
  * @author <a href="mailto:stefano@apache.org">Stefano Mazzocchi</a>
  * @author <a href="mailto:fumagalli@exoffice.com">Pierpaolo Fumagalli</a>
- * @author <a href="mailto:peter at apache.org">Peter Donald</a>
+ * @author <a href="mailto:peter@apache.org">Peter Donald</a>
  * @version 1.0
  */
 public class DefaultConfiguration
@@ -187,7 +187,7 @@ public class DefaultConfiguration
     }
 
     /**
-     * Return an <code>Iterator</code> of <code>Configuration<code>
+     * Return an <code>Iterator</code> of <code>Configuration</code>
      * elements containing all node children.
      *
      * @return The child nodes with name

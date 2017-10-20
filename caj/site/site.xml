@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="CAJ">
+    <body>
+        <links>
+            <item name="EPICS JCA Page" href="http://www.aps.anl.gov/bcda/jca/jca"/>
+            <item name="Cosylab" href="http://www.cosylab.com"/>
+        </links>
+
+        <menu name="Quick Links">
+            <item name="About" href="index.html"/>
+            <item name="Changes" href="changes-report.html"/>
+            <item name="Download" href="http://search.maven.org/#browse|-1437972145"/>
+            <item name="Sourceforge" href="http://sourceforge.net/projects/epics-jca/"/>
+        </menu>
+
+        <menu ref="reports"/>
+    </body>
+    <poweredBy>
+        <logo name="Cloudbees" href="https://openepics.ci.cloudbees.com/"
+          img="http://web-static-cloudfront.s3.amazonaws.com/images/badges/BuiltOnDEV.png"/>
+        <logo name="Maven" href="http://maven.apache.org/"
+          img="http://maven.apache.org/images/logos/maven-feather.png"/>
+    </poweredBy>    
+</project>

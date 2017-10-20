@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="CAJ">
+
+  <title>Channel Access in Java</title>
+
+  <body>
+    <links>
+      <item name="Cosylab JCA Page" href="http://jca.cosylab.com"/>
+      <item name="EPICS JCA Page" href="http://www.aps.anl.gov/bcda/jca/jca"/>
+      <item name="Cosylab" href="http://www.cosylab.com"/>
+    </links>
+    
+	<menu name="Quick Links">
+	    <item name="About" href="index.html"/>
+		<item name="Changes" href="changes-report.html"/>
+		<item name="Download" href="downloads.html"/>
+		<item name="Users manual" href="manual.html"/>
+        <item name="EPICS JCA Page" href="http://www.aps.anl.gov/bcda/jca/jca"/>
+	    <item name="Cosylab JCA Page" href="http://jca.cosylab.com"/>
+    </menu>
+    
+  </body>
+</project>

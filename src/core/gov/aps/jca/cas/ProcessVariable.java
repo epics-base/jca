@@ -227,9 +227,9 @@ public abstract class ProcessVariable {
 	 * then <code>value</code> is instance of requested type.
 	 * </p>
 	 * <p>
-	 * Special cases: <br/>
+	 * Special cases: <br>
 	 * <code>DBR_TIME_Enum</code> type is "upgraded" to an "artificial" <code>TIME</code> type <code>DBR_TIME_LABELS_Enum</code>.
-	 * This enables PV to set labels and time. <br/>
+	 * This enables PV to set labels and time. <br>
 	 * 
 	 * <code>DBR_TIME_Double</code> and <code>DBR_TIME_Float</code> are "upgraded" to an "artificial" <code>TIME</code>
 	 * type which also implements <code>PRECISION</code> interface, <code>DBR_PRECISION_Double</code> and <code>DBR_PRECISION_Float</code>. 
@@ -304,9 +304,9 @@ public abstract class ProcessVariable {
 	/**
 	 * Destory process variable.
 	 * 
-	 * This method is called: <br/>
+	 * This method is called: <br>
 	 * - each time that a PV transitions from a situation where clients
-	 * are attached to a situation where no clients are attached.<br/>
+	 * are attached to a situation where no clients are attached.<br>
 	 * - once for all PVs that exist when the server is deleted
 	 */ 
 	// TODO multiple calls of destroy

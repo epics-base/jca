@@ -2,41 +2,43 @@
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>9</version>
+        <groupId>org.epics</groupId>
+        <artifactId>epics-parent</artifactId>
+        <version>4.7.0-SNAPSHOT</version>
     </parent>
-    <groupId>org.epics</groupId>
+
     <artifactId>jca</artifactId>
     <version>2.3.7-SNAPSHOT</version>
+    
     <name>Java Channel Access</name>
     <description>JCA is an EPICS Channel Access library for Java. For more information concerning EPICS or Channel Access please refer to the &lt;a href="http://www.aps.anl.gov/epics">EPICS Web pages&lt;/a> or read the &lt;a href="http://www.aps.anl.gov/epics/base/R3-14/8-docs/CAref.html">Channel Access manual (3.14)&lt;/a>.
 	&lt;p>This page does not provide any native JNI libraries used by JNI implemenation of JCA, they can be obtained from &lt;a href="http://www.aps.anl.gov/bcda/jca/jca/">EPICS JCA page&lt;/a> or built from source distribution.&lt;/p>
-	&lt;p>In June 2004 CosyLab agreed to become the "official" maintainer of JCA.&lt;/p>
+	&lt;
     </description>
-    <url>http://epics-jca.sourceforge.net/jca</url>
+    <url>https://github.com/epics-base/jca</url>
     <inceptionYear>2004</inceptionYear>
+
+    <!-- Explicitly declare snapshot repository -->
+    <repositories>
+        <repository>
+            <id>sonatype-nexus-snapshots</id>
+            <name>OSS Snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+    </repositories>
+
     <organization>
-        <name>Cosylab</name>
-        <url>http://www.cosylab.com</url>
+      <name>EPICS</name>
+      <url>http://www.aps.anl.gov/epics/</url>
     </organization>
-    <licenses>
-        <license>
-            <name>EPICS Open License</name>
-            <url>LICENSE.txt</url>
-        </license>
-    </licenses>
-    <scm>
-        <connection>scm:hg:http://epics-jca.hg.sourceforge.net:8000/hgroot/epics-jca/jca</connection>
-        <developerConnection>scm:hg:ssh://epics-jenkins@epics-jca.hg.sourceforge.net/hgroot/epics-jca/jca</developerConnection>
-        <url>http://epics-jca.hg.sourceforge.net/hgweb/epics-jca/jca/</url>
-    </scm>
+
     <developers>
         <developer>
             <id>msekoranja</id>
             <name>Matej Sekoranja</name>
-            <email>matej.sekoranja_AT_cosylab.com</email>
+            <email>matej.sekoranja@cosylab.com</email>
             <url>http://users.cosylab.com/~msekoranja</url>
             <organization>Cosylab</organization>
             <roles>
@@ -44,19 +46,18 @@
             </roles>
             <timezone>+1</timezone>
         </developer>
+        <developer>
+            <id>shroffk</id>
+            <name>Kunal Shroff</name>
+            <email>kunalshroff9@gmail.com</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
     </developers>
     <issueManagement>
-        <url>mailto:bug_AT_jca.cosylab.com</url>
+        <url>https://github.com/epics-base/jca/issues</url>
     </issueManagement>
-    <ciManagement>
-        <notifiers>
-            <notifier>
-                <configuration>
-                    <address>matej.sekoranja@cosylab.com</address>
-                </configuration>
-            </notifier>
-        </notifiers>
-    </ciManagement>
     <!-- With Java 8, there are more than 100 errors in the Javadocs, and the
     build fails for that. Temporary solution is to disable the strict Javadoc check.
     Use profiles to add the option only for JDK 1.8 and up.-->
@@ -71,6 +72,9 @@
             </properties>
         </profile>
     </profiles>
+    <properties>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
     <build>
         <sourceDirectory>src/core</sourceDirectory>
         <testSourceDirectory>test</testSourceDirectory>
@@ -114,8 +118,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.0.2</version>
                 <configuration>
-                    <source>1.4</source>
-                    <target>1.4</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -123,7 +127,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.12.4</version>
                 <configuration>
-                    <skip>true</skip>
                 </configuration>
             </plugin>
             <!-- Required add sources to deployment -->
@@ -147,7 +150,7 @@
                 <version>2.9</version>
                 <configuration>
                     <additionalparam>${javadoc.doclint.none}</additionalparam>
-                    <source>1.4</source>
+                    <source>1.8</source>
                 </configuration>
                 <executions>
                     <execution>
@@ -164,7 +167,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>3.8.2</version>
+            <version>4.12</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

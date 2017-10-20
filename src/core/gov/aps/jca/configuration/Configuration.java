@@ -60,7 +60,7 @@ package gov.aps.jca.configuration;
  * Assuming the <code>Configuration</code> object is named <code>conf</code>,
  * here is how the data could be retrieved:
  * </p>
- * <table border="1">
+ * <table summary="" border="1">
  * <tr align="center"><th>Code</th><th>No namespaces</th><th>With namespaces</th></tr>
  * <tr align="center"><td align="left">
  * <code>conf.{@link #getName getName}()</code></td><td colspan="2">my-system</td></tr>
@@ -99,7 +99,6 @@ package gov.aps.jca.configuration;
  * <code>conf.{@link #getChild getChild}("desc").{@link #getNamespace getNamespace}()</code>
  * </td><td>&nbsp;</td><td>http://myco.com/documentation"</td></tr>
  * </table>
- * </p>
  * <p>
  * Type-safe utility methods are provided for retrieving attribute and element
  * values as <code>String</code>, <code>int</code>, <code>long</code>,
@@ -127,7 +126,7 @@ package gov.aps.jca.configuration;
  * @author <a href="mailto:pier@apache.org">Pierpaolo Fumagalli</a>
  * @author <a href="mailto:stefano@apache.org">Stefano Mazzocchi</a>
  * @author <a href="mailto:bloritsch@apache.org">Berin Loritsch</a>
- * @author <a href="mailto:peter at apache.org">Peter Donald</a>
+ * @author <a href="mailto:peter@apache.org">Peter Donald</a>
  * @author <a href="mailto:jefft@apache.org">Jeff Turner</a>
  * @version 1.0
  */
