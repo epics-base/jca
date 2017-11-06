@@ -19,7 +19,11 @@
     </description>
     <url>https://github.com/epics-base/jca</url>
     <inceptionYear>2004</inceptionYear>
-
+    <scm>
+      <connection>scm:git:https://github.com/epics-base/jca.git</connection>
+      <developerConnection>scm:git:https://github.com/epics-base/jca.git</developerConnection>
+      <url>https://github.com/epics-base/jca</url>
+    </scm>
     <!-- Explicitly declare snapshot repository -->
     <repositories>
         <repository>
