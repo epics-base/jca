@@ -13,8 +13,7 @@
     
     <name>Java Channel Access</name>
     <description>JCA is an EPICS Channel Access library for Java. For more information concerning EPICS or Channel Access please refer to the &lt;a href="http://www.aps.anl.gov/epics"&gt;EPICS Web pages&lt;/a&gt; or read the &lt;a href="http://www.aps.anl.gov/epics/base/R3-14/8-docs/CAref.html"&gt;Channel Access manual (3.14)&lt;/a&gt;.
-	&lt;p&gt;This page does not provide any native JNI libraries used by JNI implemenation of JCA, they can be obtained from &lt;a href="http://www.aps.anl.gov/bcda/jca/jca/"&gt;EPICS JCA page&lt;/a&gt; or built from source distribution.&lt;/p&gt;
-	&lt;
+  &lt;p&gt;This module also includes CAJ, A 100% pure Java implementation of the EPICS Channel Access library.&lt;/p&gt;
     </description>
     <url>https://github.com/epics-base/jca</url>
     <inceptionYear>2004</inceptionYear>
