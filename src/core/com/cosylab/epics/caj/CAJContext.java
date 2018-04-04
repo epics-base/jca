@@ -179,6 +179,16 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 	protected int maxArrayBytes = 16384;
 
 	/**
+	 * Minimum interval between CA search broadcasts.
+	 */
+	protected int minSearchIntervalMs = 100;
+
+	/**
+	 * Maximum interval between CA search broadcasts.
+	 */
+	protected int maxSearchIntervalMs = 30000;
+
+	/**
 	 * List of context message listeners.
 	 */
 	// TODO consider using weak references
@@ -435,6 +445,12 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 
 	    	tmp = System.getenv("EPICS_CA_MAX_ARRAY_BYTES");
 	    	if (tmp != null) maxArrayBytes = Integer.parseInt(tmp);
+
+			tmp = System.getenv("EPICS_CA_MIN_SEARCH_PERIOD");
+			if (tmp != null) minSearchIntervalMs = Integer.parseInt(tmp);
+
+			tmp = System.getenv("EPICS_CA_MAX_SEARCH_PERIOD");
+			if (tmp != null) maxSearchIntervalMs = Integer.parseInt(tmp);
 	    }
 	    else
 	    {
@@ -448,6 +464,8 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 			repeaterPort = jcaLibrary.getPropertyAsInt(contextClassName + ".repeater_port", repeaterPort);
 			serverPort = jcaLibrary.getPropertyAsInt(contextClassName + ".server_port", serverPort);
 			maxArrayBytes = jcaLibrary.getPropertyAsInt(contextClassName + ".max_array_bytes", maxArrayBytes);
+			minSearchIntervalMs = jcaLibrary.getPropertyAsInt(contextClassName + ".min_search_interval_ms", minSearchIntervalMs);
+			maxSearchIntervalMs = jcaLibrary.getPropertyAsInt(contextClassName + ".max_search_interval_ms", maxSearchIntervalMs);
 			eventDispatcherClassName = jcaLibrary.getProperty(contextClassName + ".event_dispatcher");
 	
 			// load CAJ specific configuration (overrides default)
@@ -459,6 +477,8 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 			repeaterPort = jcaLibrary.getPropertyAsInt(thisClassName + ".repeater_port", repeaterPort);
 			serverPort = jcaLibrary.getPropertyAsInt(thisClassName + ".server_port", serverPort);
 			maxArrayBytes = jcaLibrary.getPropertyAsInt(thisClassName + ".max_array_bytes", maxArrayBytes);
+			minSearchIntervalMs = jcaLibrary.getPropertyAsInt(thisClassName + ".min_search_interval_ms", minSearchIntervalMs);
+			maxSearchIntervalMs = jcaLibrary.getPropertyAsInt(thisClassName + ".max_search_interval_ms", maxSearchIntervalMs);
 	    }
 			
 		eventDispatcherClassName = jcaLibrary.getProperty(thisClassName + ".event_dispatcher", eventDispatcherClassName);
@@ -528,6 +548,19 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 				maxArrayBytes = configuration.getChild("max_array_bytes", false).getValueAsInteger();
 			} catch(Exception ex) {
 				maxArrayBytes = configuration.getAttributeAsInteger("max_array_bytes", maxArrayBytes);
+			}
+
+			// min. search interval
+			try {
+				minSearchIntervalMs = configuration.getChild("min_search_interval_ms", false).getValueAsInteger();
+			} catch(Exception ex) {
+				minSearchIntervalMs = configuration.getAttributeAsInteger("min_search_interval_ms", minSearchIntervalMs);
+			}
+			// max. search interval
+			try {
+				maxSearchIntervalMs = configuration.getChild("max_search_interval_ms", false).getValueAsInteger();
+			} catch(Exception ex) {
+				maxSearchIntervalMs = configuration.getAttributeAsInteger("max_search_interval_ms", maxSearchIntervalMs);
 			}
 
 			// event dispathcer
@@ -1262,6 +1295,8 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 		out.println("REPEATER_PORT : " + repeaterPort);
 		out.println("SERVER_PORT : " + serverPort);
 		out.println("MAX_ARRAY_BYTES : " + maxArrayBytes);
+		out.println("MIN_SEARCH_INTERVAL_MS : " + minSearchIntervalMs);
+		out.println("MAX_SEARCH_INTERVAL_MS : " + maxSearchIntervalMs);
 		out.println("EVENT_DISPATCHER: " + eventDispatcher);
 		out.print("STATE : ");
 		switch (state)
@@ -1367,6 +1402,18 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 	public int getBroadcastPort() {
 		return getServerPort();
 	}
+
+	/**
+	 * Get min. search interval
+	 * @return min. search interval
+	 */
+	public int getMinSearchIntervalMs() { return minSearchIntervalMs; }
+
+	/**
+	 * Get max. search interval
+	 * @return max. search interval
+	 */
+	public int getMaxSearchIntervalMs() { return maxSearchIntervalMs; }
 
 	/**
 	 * Get event dispatcher.
