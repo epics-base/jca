@@ -368,8 +368,11 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 		String loggerName = jcaLibrary.getProperty(thisClassName + ".logger", thisClassName);
 		logger = Logger.getLogger(loggerName);
 		
+		System.getProperties().list(System.out);
 		if (System.getProperties().containsKey(CAJ_DEBUG))
 		{
+			System.out.println("-------------------------------------");
+			System.out.println("Turning on ALL logging from debugging");
 			logger.setLevel(Level.ALL);
 			logger.addHandler(new ConsoleLogHandler());
 		}
