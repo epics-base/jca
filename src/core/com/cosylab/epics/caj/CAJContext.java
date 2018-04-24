@@ -179,9 +179,9 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 	protected int maxArrayBytes = 16384;
 
 	/**
-	 * Maximum interval between CA search broadcasts.
+	 * Maximum interval between CA search broadcasts. Default is 5 minutes.
 	 */
-	protected int maxSearchIntervalMs = 30000;
+	protected int maxSearchIntervalMs = 1000 * 60 * 5;
 
 	/**
 	 * List of context message listeners.
