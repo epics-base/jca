@@ -314,6 +314,7 @@ public class CASTransport implements Transport, ReactorHandler, Runnable {
 		{ 
 			while (true)
 			{
+				if (closed) return;
 				final ByteBuffer headerBuffer  = receiveBuffer[0];
 				ByteBuffer payloadBuffer = receiveBuffer[1];
 				
