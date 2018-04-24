@@ -15,6 +15,7 @@
 package com.cosylab.epics.caj.test;
 
 import java.util.logging.Handler;
+import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 import gov.aps.jca.CAException;
@@ -86,12 +87,13 @@ public class CAJContextDebugTest extends TestCase {
 	 * Tests CAJ_DEBUG property to turn ebug mode on.
 	 */
 	public void testDebug() throws CAException {
-	    boolean exists = System.getProperties().containsKey(CAJConstants.CAJ_DEBUG);
-	    try
-	    {
-		    if (!exists)
-		        System.setProperty(CAJConstants.CAJ_DEBUG, "true");
-		    
+		boolean exists = System.getProperties().containsKey(CAJConstants.CAJ_DEBUG);
+		Level previousLevel = new CAJContext().getLogger().getLevel();
+		try
+		{
+			if (!exists)
+				System.setProperty(CAJConstants.CAJ_DEBUG, "true");
+
 			CAJContext context = new CAJContext();
 	
 			TestHandler testHandler = new TestHandler();
@@ -99,18 +101,19 @@ public class CAJContextDebugTest extends TestCase {
 			
 			context.initialize();
 			assertTrue(context.isInitialized());
-	
+
 			// some logs are expected
 			assertTrue(testHandler.getLogs() > 0);
 			
 			context.destroy();
 			assertTrue(context.isDestroyed());
-	    }
-	    finally
-	    {
-	        if (!exists)
-	            System.getProperties().remove(CAJConstants.CAJ_DEBUG);
-	    }
+		}
+		finally
+		{
+			if (!exists)
+				System.getProperties().remove(CAJConstants.CAJ_DEBUG);
+			new CAJContext().getLogger().setLevel(previousLevel);
+		}
 	}
 	
 	/**
