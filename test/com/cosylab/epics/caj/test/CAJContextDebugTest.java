@@ -87,10 +87,15 @@ public class CAJContextDebugTest extends TestCase {
 	 */
 	public void testDebug() throws CAException {
 	    boolean exists = System.getProperties().containsKey(CAJConstants.CAJ_DEBUG);
+	    System.out.println("------------------------------------");
+	    System.out.println("CAJ_DEBUG setting exists: " + exists);
 	    try
 	    {
-		    if (!exists)
+		    if (!exists) {
+			    System.out.println("------------------------------------");
+			    System.out.println("set property CAJ_DEBUG ");
 		        System.setProperty(CAJConstants.CAJ_DEBUG, "true");
+		    }
 		    
 			CAJContext context = new CAJContext();
 	
@@ -108,8 +113,14 @@ public class CAJContextDebugTest extends TestCase {
 	    }
 	    finally
 	    {
-	        if (!exists)
+	        if (!exists) {
+	    	    System.out.println("------------------------------------");
+	    	    System.out.println("remove property CAJ_DEBUG ");
 	            System.getProperties().remove(CAJConstants.CAJ_DEBUG);
+	        }
+
+    	    System.out.println("----------------Verify clean up-------------------");
+	        System.getProperties().list(System.out);
 	    }
 	}
 	

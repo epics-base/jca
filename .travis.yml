@@ -1,8 +1,11 @@
 sudo: required
-
+language: java
 jdk:
   - oraclejdk8
   
+before_script:
+ - cat /usr/local/maven-3.5.2/conf/logging/simplelogger.properties
+
 script:
   - mvn -q clean verify
 
