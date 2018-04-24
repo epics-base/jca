@@ -409,43 +409,43 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 
 		String eventDispatcherClassName = null;
 		final String thisClassName = this.getClass().getName();
-	    if (Boolean.getBoolean("jca.use_env"))
-	    {
-	    	// Context default configuration
-	    	eventDispatcherClassName = jcaLibrary.getProperty( gov.aps.jca.Context.class.getName()+".event_dispatcher", eventDispatcherClassName );
+		if (Boolean.getBoolean("jca.use_env"))
+		{
+			// Context default configuration
+			eventDispatcherClassName = jcaLibrary.getProperty( gov.aps.jca.Context.class.getName()+".event_dispatcher", eventDispatcherClassName );
 
-	        String tmp = System.getenv("EPICS_CA_ADDR_LIST");
-	        if (tmp != null) addressList = tmp;
-	        
-	    	tmp = System.getenv("EPICS_CA_AUTO_ADDR_LIST");
-	    	if (tmp != null)
-	    		autoAddressList = !tmp.equalsIgnoreCase("NO"); 
-	    	else
-	    		autoAddressList = true;
+			String tmp = System.getenv("EPICS_CA_ADDR_LIST");
+			if (tmp != null) addressList = tmp;
 
-	        tmp = System.getenv("EPICS_CA_NAME_SERVERS");
-	        if (tmp != null) nameServersList = tmp;
-	    	
-	    	tmp = System.getenv("EPICS_CA_CONN_TMO");
-	    	if (tmp != null) connectionTimeout = Float.parseFloat(tmp);
-	    	
-	    	tmp = System.getenv("EPICS_CA_BEACON_PERIOD");
-	       	if (tmp != null) beaconPeriod = Float.parseFloat(tmp);
-	           	
-	    	tmp = System.getenv("EPICS_CA_REPEATER_PORT");
-	    	if (tmp != null) repeaterPort = Integer.parseInt(tmp);
-	    	
-	    	tmp = System.getenv("EPICS_CA_SERVER_PORT");
-	    	if (tmp != null) serverPort = Integer.parseInt(tmp);
+			tmp = System.getenv("EPICS_CA_AUTO_ADDR_LIST");
+			if (tmp != null)
+				autoAddressList = !tmp.equalsIgnoreCase("NO");
+			else
+				autoAddressList = true;
 
-	    	tmp = System.getenv("EPICS_CA_MAX_ARRAY_BYTES");
-	    	if (tmp != null) maxArrayBytes = Integer.parseInt(tmp);
+			tmp = System.getenv("EPICS_CA_NAME_SERVERS");
+			if (tmp != null) nameServersList = tmp;
+
+			tmp = System.getenv("EPICS_CA_CONN_TMO");
+			if (tmp != null) connectionTimeout = Float.parseFloat(tmp);
+
+			tmp = System.getenv("EPICS_CA_BEACON_PERIOD");
+			if (tmp != null) beaconPeriod = Float.parseFloat(tmp);
+
+			tmp = System.getenv("EPICS_CA_REPEATER_PORT");
+			if (tmp != null) repeaterPort = Integer.parseInt(tmp);
+
+			tmp = System.getenv("EPICS_CA_SERVER_PORT");
+			if (tmp != null) serverPort = Integer.parseInt(tmp);
+
+			tmp = System.getenv("EPICS_CA_MAX_ARRAY_BYTES");
+			if (tmp != null) maxArrayBytes = Integer.parseInt(tmp);
 
 			tmp = System.getenv("EPICS_CA_MAX_SEARCH_PERIOD");
 			if (tmp != null) maxSearchIntervalMs = Integer.parseInt(tmp);
-	    }
-	    else
-	    {
+		}
+		else
+		{
 			// load default Context configuration
 			final String contextClassName = Context.class.getName();
 			addressList = jcaLibrary.getProperty(contextClassName + ".addr_list", addressList);
