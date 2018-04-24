@@ -34,6 +34,7 @@ public class ChannelSearchManager {
 	 */
 	private final int intervalMultiplier;
 
+	private static final int MIN_SEND_INTERVAL_MS_DEFAULT = 100;
 	private static final int INTERVAL_MULTIPLIER_DEFAULT = 2;
 	
 	private static final int MESSAGE_COALESCENCE_TIME_MS = 3;
@@ -191,7 +192,7 @@ public class ChannelSearchManager {
 	{
 		this.context = context;
 
-		minSendInterval = context.getMinSearchIntervalMs();
+		minSendInterval = MIN_SEND_INTERVAL_MS_DEFAULT;
 		maxSendInterval = context.getMaxSearchIntervalMs();
 		intervalMultiplier = INTERVAL_MULTIPLIER_DEFAULT;
 
