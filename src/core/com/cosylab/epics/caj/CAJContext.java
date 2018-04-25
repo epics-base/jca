@@ -179,9 +179,9 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 	protected int maxArrayBytes = 16384;
 
 	/**
-	 * Maximum interval between CA search broadcasts. Default is 5 minutes.
+	 * Maximum interval in seconds between CA search broadcasts. Default is 5 minutes.
 	 */
-	protected int maxSearchIntervalMs = 1000 * 60 * 5;
+	protected float maxSearchInterval = (float) 60.0 * 5;
 
 	/**
 	 * List of context message listeners.
@@ -442,7 +442,7 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 			if (tmp != null) maxArrayBytes = Integer.parseInt(tmp);
 
 			tmp = System.getenv("EPICS_CA_MAX_SEARCH_PERIOD");
-			if (tmp != null) maxSearchIntervalMs = Integer.parseInt(tmp);
+			if (tmp != null) maxSearchInterval = Float.parseFloat(tmp);
 		}
 		else
 		{
@@ -456,7 +456,7 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 			repeaterPort = jcaLibrary.getPropertyAsInt(contextClassName + ".repeater_port", repeaterPort);
 			serverPort = jcaLibrary.getPropertyAsInt(contextClassName + ".server_port", serverPort);
 			maxArrayBytes = jcaLibrary.getPropertyAsInt(contextClassName + ".max_array_bytes", maxArrayBytes);
-			maxSearchIntervalMs = jcaLibrary.getPropertyAsInt(contextClassName + ".max_search_interval_ms", maxSearchIntervalMs);
+			maxSearchInterval = jcaLibrary.getPropertyAsFloat(contextClassName + ".max_search_interval", maxSearchInterval);
 			eventDispatcherClassName = jcaLibrary.getProperty(contextClassName + ".event_dispatcher");
 	
 			// load CAJ specific configuration (overrides default)
@@ -468,7 +468,7 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 			repeaterPort = jcaLibrary.getPropertyAsInt(thisClassName + ".repeater_port", repeaterPort);
 			serverPort = jcaLibrary.getPropertyAsInt(thisClassName + ".server_port", serverPort);
 			maxArrayBytes = jcaLibrary.getPropertyAsInt(thisClassName + ".max_array_bytes", maxArrayBytes);
-			maxSearchIntervalMs = jcaLibrary.getPropertyAsInt(thisClassName + ".max_search_interval_ms", maxSearchIntervalMs);
+			maxSearchInterval = jcaLibrary.getPropertyAsFloat(thisClassName + ".max_search_interval", maxSearchInterval);
 	    }
 			
 		eventDispatcherClassName = jcaLibrary.getProperty(thisClassName + ".event_dispatcher", eventDispatcherClassName);
@@ -542,9 +542,9 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 
 			// max. search interval
 			try {
-				maxSearchIntervalMs = configuration.getChild("max_search_interval_ms", false).getValueAsInteger();
+				maxSearchInterval = configuration.getChild("max_search_interval", false).getValueAsFloat();
 			} catch(Exception ex) {
-				maxSearchIntervalMs = configuration.getAttributeAsInteger("max_search_interval_ms", maxSearchIntervalMs);
+				maxSearchInterval = configuration.getAttributeAsFloat("max_search_interval", maxSearchInterval);
 			}
 
 			// event dispathcer
@@ -1279,7 +1279,7 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 		out.println("REPEATER_PORT : " + repeaterPort);
 		out.println("SERVER_PORT : " + serverPort);
 		out.println("MAX_ARRAY_BYTES : " + maxArrayBytes);
-		out.println("MAX_SEARCH_INTERVAL_MS : " + maxSearchIntervalMs);
+		out.println("MAX_SEARCH_INTERVAL : " + maxSearchInterval);
 		out.println("EVENT_DISPATCHER: " + eventDispatcher);
 		out.print("STATE : ");
 		switch (state)
@@ -1390,7 +1390,7 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 	 * Get max. search interval
 	 * @return max. search interval
 	 */
-	public int getMaxSearchIntervalMs() { return maxSearchIntervalMs; }
+	public float getMaxSearchInterval() { return maxSearchInterval; }
 
 	/**
 	 * Get event dispatcher.

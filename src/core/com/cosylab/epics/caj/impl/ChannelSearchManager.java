@@ -193,7 +193,8 @@ public class ChannelSearchManager {
 		this.context = context;
 
 		minSendInterval = MIN_SEND_INTERVAL_MS_DEFAULT;
-		maxSendInterval = context.getMaxSearchIntervalMs();
+		// Convert from seconds to milliseconds.
+		maxSendInterval = (long) (context.getMaxSearchInterval() * 1000);
 		intervalMultiplier = INTERVAL_MULTIPLIER_DEFAULT;
 
 		// create and initialize send buffer
