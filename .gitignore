@@ -8,3 +8,7 @@ buildNumber.properties
 .mvn/timing.properties
 nbactions.xml
 /bin/
+.classpath
+*.log
+/.settings
+.project
