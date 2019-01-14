@@ -364,7 +364,7 @@ public class CAJChannel extends Channel implements TransportClient {
 	/**
 	 * @see gov.aps.jca.Channel#destroy()
 	 */
-	public synchronized void destroy() throws CAException, IllegalStateException {
+	public void destroy() throws CAException, IllegalStateException {
 		destroy(false);
 	}
 
@@ -375,7 +375,7 @@ public class CAJChannel extends Channel implements TransportClient {
 	 * @throws CAException JCA Exception
 	 * @throws IllegalStateException  illegal state exception
 	 */
-	public synchronized void destroy(boolean force) throws CAException, IllegalStateException {
+	public void destroy(boolean force) throws CAException, IllegalStateException {
 		
 		if (connectionState == ConnectionState.CLOSED)
 			throw new IllegalStateException("Channel already destroyed.");
