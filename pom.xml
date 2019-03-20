@@ -140,7 +140,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries> 
-                            <Bundle-Name>${name} Source</Bundle-Name>
+                            <Bundle-Name>${project.name} Source</Bundle-Name>
                             <Bundle-SymbolicName>${project.groupId}.${project.artifactId}.source</Bundle-SymbolicName>
                             <Bundle-Version>${project.version}</Bundle-Version>
                             <Eclipse-SourceBundle>${project.groupId}.${project.artifactId};version="${project.version}"</Eclipse-SourceBundle>
