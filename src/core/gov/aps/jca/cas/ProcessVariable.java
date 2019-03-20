@@ -43,7 +43,7 @@ public abstract class ProcessVariable {
 	/**
 	 * Interess flag.
 	 * 
-	 * @see interestRegister()
+	 * @see #interestRegister()
 	 */
 	protected volatile boolean interest = false;
 

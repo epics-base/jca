@@ -134,7 +134,6 @@ public abstract class Context {
    *
    * @param name the process variable to connect to.
    * @param l the ConnectionListener.
-   * @param priority channel process priority
    * @return the new Channel.
    * @throws CAException is thrown if a Channel Access error occured while creating the channel.
    * @throws java.lang.IllegalStateException if the context has been destroyed.
@@ -149,6 +148,7 @@ public abstract class Context {
    *
    * @param name the process variable to connect to.
    * @param l the ConnectionListener.
+   * @param priority channel process priority
    * @return the new Channel.
    * @throws CAException is thrown if a Channel Access error occured while creating the channel.
    * @throws java.lang.IllegalStateException if the context has been destroyed.
