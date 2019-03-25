@@ -228,8 +228,8 @@ public class SearchTimer extends Thread {
 
 	/**
 	 * Check whether there is a task scheduled in next "dT" ms.
-	 * @param dT
-	 * @return
+	 * @param dT period in ms to check
+	 * @return true if a task is scheduled within dT ms
 	 */
 	public boolean hasNext(long dT)
 	{

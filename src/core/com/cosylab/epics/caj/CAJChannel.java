@@ -369,7 +369,6 @@ public class CAJChannel extends Channel implements TransportClient {
 	}
 
 	/**
-     * @param force force destruction regardless of reference count
      * @see gov.aps.jca.Channel#destroy()
 	 * @param force force destruction regardless of reference count
 	 * @throws CAException JCA Exception

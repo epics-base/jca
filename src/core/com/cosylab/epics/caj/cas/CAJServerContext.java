@@ -432,7 +432,7 @@ public class CAJServerContext extends ServerContext implements CAContext, Config
 
 	/**
 	 * @see gov.aps.jca.Context#addContextMessageListener(gov.aps.jca.event.ContextMessageListener)
-	 * @param ContextMessageListener The listener interface for receiving ContextMessageEvents
+	 * @param l The listener interface for receiving ContextMessageEvents
 	 * @throws CAException JCA Exception
 	 * @throws IllegalStateException null listener
 	 */

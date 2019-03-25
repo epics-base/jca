@@ -195,22 +195,26 @@ public class Reactor {
 	/**
 	 * List of pending registration request(s).
 	 */
-	private LinkedList registrationRequests = new LinkedList(); 
+	private LinkedList<RegistrationRequest> registrationRequests = new LinkedList<>();
 	
 	/**
 	 * List of pending registration request(s).
 	 */
-	private LinkedList deregistrationRequests = new LinkedList(); 
+	private LinkedList<DeregistrationRequest> deregistrationRequests = new LinkedList<>();
 
 	/**
 	 * List of pending registration request(s).
 	 */
-	private LinkedList interestOpsChangeRequests = new LinkedList(); 
+	private LinkedList<InterestOpsChangeRequest> interestOpsChangeRequests = new LinkedList<>();
 
 	/**
-	 * Map of disabled keys, pairs (SelectionKey key, Integer interestOps). 
+	 * Map of disabled keys, pairs (SelectionKey key, Integer interestOps).
+	 *
+	 * interestOps is which operations the key was interested in before it
+	 * was disabled; it is disabled by setting interestOps to zero and
+	 * retains the old value in the map for restoring when re-enabled.
 	 */
-	private HashMap disabledKeys = new HashMap(); 
+	private HashMap<SelectionKey, Integer> disabledKeys = new HashMap<>();
 
 	/**
 	 * Selector status.
@@ -248,9 +252,9 @@ public class Reactor {
 	/**
 	 * Processes internal request list.
 	 * Also takes care of sync.
-	 * @param list	list of interal requests to be processed.
+	 * @param list	list of internal requests to be processed.
 	 */
-	private static void processInternalRequest(LinkedList list)
+	private static void processInternalRequest(LinkedList<? extends InternalRequest> list)
 	{
 		if (!list.isEmpty())
 		{
@@ -260,7 +264,7 @@ public class Reactor {
 				{
 					try
 					{
-						((InternalRequest)list.removeFirst()).process();
+						list.removeFirst().process();
 					}
 					catch (Throwable th)
 					{

@@ -46,13 +46,13 @@ public class NamedLockPattern {
 	/**
 	 * Map of (named) locks.
 	 */
-	private Map namedLocks;
+	final private Map<Object, ReferenceCountingLock> namedLocks;
 
 	/**
 	 * Default constructor. 
 	 */
 	public NamedLockPattern() {
-		namedLocks = new HashMap();
+		namedLocks = new HashMap<>();
 	}
 
 	/**
@@ -69,7 +69,7 @@ public class NamedLockPattern {
 		synchronized (namedLocks)
 		{
 			// get synchronization object
-			lock = (ReferenceCountingLock)namedLocks.get(name);
+			lock = namedLocks.get(name);
 		
 			// none is found, create and return new one
 			// increment references
@@ -110,7 +110,7 @@ public class NamedLockPattern {
 		synchronized (namedLocks)
 		{
 			// get synchronization object
-			ReferenceCountingLock lock = (ReferenceCountingLock)namedLocks.get(name);
+			ReferenceCountingLock lock = namedLocks.get(name);
 		
 			// release lock
 			if (lock != null)
