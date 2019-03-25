@@ -2,13 +2,9 @@
 
 Java Channel Access client and server API and a pure java implementation for both.
 
-### Run-Time Requirements
+### Java Requirements
 
-- A J2SE 1.4 or later JRE
-
-### Build-Time Requirements
-
-- A Java 7 or later JDK (e.g., [Oracle Java SE](http://www.oracle.com/technetwork/java/javase/index.html))
+- Java 8 or later JDK (e.g., [Oracle Java SE](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html))
 - [Maven 2.x](https://maven.apache.org/)
 
 ### Installation
