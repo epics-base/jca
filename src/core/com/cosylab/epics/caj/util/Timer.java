@@ -15,6 +15,8 @@
 package com.cosylab.epics.caj.util;
 
 
+import java.util.concurrent.PriorityBlockingQueue;
+
 /**
  * Timer.
  * Based on <code>EDU.oswego.cs.dl.util.concurrent</code> (it was not appropriate for CAJ usage).
@@ -37,7 +39,7 @@ public class Timer extends Thread  {
   /**
    * Tasks are maintained in a standard priority queue.
    **/
-  protected final Heap heap_ = new Heap(64);
+  protected final PriorityBlockingQueue<TaskNode> heap_ = new PriorityBlockingQueue<>(64);
 
   /**
    * Timer runnable interface.
@@ -109,7 +111,7 @@ public class Timer extends Thread  {
   public Object executeAfterDelay(long millisecondsToDelay, TimerRunnable command) {
 	long runtime = System.currentTimeMillis() + millisecondsToDelay;
 	TaskNode task = new TaskNode(runtime, command);
-	heap_.insert(task);
+	heap_.offer(task);
 	restart();
 	return task;
   }
@@ -138,7 +140,7 @@ public class Timer extends Thread  {
 		firstTime = System.currentTimeMillis();
 
 	TaskNode task = new TaskNode(firstTime, command, period); 
-	heap_.insert(task);
+	heap_.offer(task);
 	restart();
 	return task;
   }
@@ -237,7 +239,7 @@ public class Timer extends Thread  {
 			wait(when - now);
 		  }
 		  else {
-			task = (TaskNode)(heap_.extract());
+			task = (TaskNode)(heap_.poll());
 
 			if (!task.getCancelled()) { // Skip if cancelled by
 
@@ -245,7 +247,7 @@ public class Timer extends Thread  {
 			  	// msekoran: using fixed rate scheduling 
 				task.setTimeToRun(when + task.period);
 				//task.setTimeToRun(now + task.period);
-				heap_.insert(task);
+				heap_.offer(task);
 			  }
               
 			  return task;

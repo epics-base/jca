@@ -14,6 +14,9 @@
 
 package com.cosylab.epics.caj.util;
 
+import java.util.Iterator;
+import java.util.concurrent.PriorityBlockingQueue;
+
 /**
  * Timer. Based on <code>EDU.oswego.cs.dl.util.concurrent</code>. Timer tasks
  * should complete quickly. If a timer task takes excessive time to complete, it
@@ -29,7 +32,7 @@ public class SearchTimer extends Thread {
 	/**
 	 * Tasks are maintained in a standard priority queue.
 	 **/
-	protected final Heap heap = new Heap(64);
+	protected final PriorityBlockingQueue<TimerTask> heap = new PriorityBlockingQueue<>(64);
 
 	protected final RunLoop runLoop = new RunLoop();
 
@@ -101,7 +104,7 @@ public class SearchTimer extends Thread {
 			TimerTask task) {
 		long runtime = System.currentTimeMillis() + millisecondsToDelay;
 		task.setTimeToRun(millisecondsToDelay, runtime);
-		heap.insert(task);
+		heap.offer(task);
 		restart();
 	}
 
@@ -109,10 +112,11 @@ public class SearchTimer extends Thread {
 		long timeToRun = System.currentTimeMillis() + millisecondsToDelay;
 
 		synchronized (heap) {
-			Object[] nodes = heap.getNodes();
-			int count = heap.size();
-			for (int i = 0; i < count; i++)
-				((TimerTask) nodes[i]).setTimeToRun(millisecondsToDelay, timeToRun);
+			Iterator<TimerTask> nodes = heap.iterator();
+			while (nodes.hasNext()) {
+				TimerTask t = nodes.next();
+				t.setTimeToRun(millisecondsToDelay, timeToRun);
+			}
 		}
 
 		restart();
@@ -212,7 +216,7 @@ public class SearchTimer extends Thread {
 						if (!blockAndExtract)
 							return task;
 						
-						task = (TimerTask) (heap.extract());
+						task = (TimerTask) (heap.poll());
 
 						if (!task.getCancelled()) { // Skip if cancelled by
 							return task;
@@ -253,7 +257,7 @@ public class SearchTimer extends Thread {
 							long runtime = System.currentTimeMillis()
 									+ millisecondsToDelay;
 							task.setTimeToRun(millisecondsToDelay, runtime);
-							heap.insert(task);
+							heap.offer(task);
 						}
 					} else
 						break;
