@@ -9,12 +9,12 @@ Java Channel Access client and server API and a pure java implementation for bot
 
 ### Download jca
 
-**Jar:**
+**Jar:**  
+jca jars along with their sources and javadocs can be downloaded from    
+[jca-2.4.2 jars](https://repo1.maven.org/maven2/org/epics/jca/2.4.2/)
 
-[Download jca-2.4.2 jars](https://repo1.maven.org/maven2/org/epics/jca/2.4.2/)
-
-**Maven:**
-
+**Maven:**  
+Add jca as a maven dependency  
 ```
 <dependency>
   <groupId>org.epics</groupId>
