@@ -117,6 +117,10 @@ public class DBREncoder {
 	 */
 	private static int calculateValuePayloadSize(int dataCount, Object value, DBRType dataType) 
 	{
+		// Even if the count is zero, the payload must contain at least one element.
+		if (dataCount <= 0) {
+			dataCount = 1;
+		}
 		if (dataType.isDOUBLE())
 		{
 			return dataCount * 8;
@@ -127,16 +131,7 @@ public class DBREncoder {
 		}
 		else if (dataType.isSTRING())
 		{
-			if (dataCount == 1)
-			{
-				String str = ((String[])value)[0];
-				if (str != null)
-					return str.length() + 1;
-				else
-					return 1;
-			}
-			else
-			    return dataCount * CAConstants.MAX_STRING_SIZE;
+			return dataCount * CAConstants.MAX_STRING_SIZE;
 		}
 		else if (dataType.isSHORT())
 		{
@@ -179,61 +174,89 @@ public class DBREncoder {
 		
 		if (dataType.isDOUBLE())
 		{
+			if (count <= 0)
+			{
+				// Even if the array is empty, there has to be at least one element in the payload.
+				payloadBuffer.putDouble(0.0);
+			}
 			double[] array = (double[])value;
 			for (int i = 0; i < count; i++)
 				payloadBuffer.putDouble(array[i]);
 		}
 		else if (dataType.isINT())
 		{
+			if (count <= 0)
+			{
+				// Even if the array is empty, there has to be at least one element in the payload.
+				payloadBuffer.putInt(0);
+			}
 			int[] array = (int[])value;
 			for (int i = 0; i < count; i++)
 				payloadBuffer.putInt(array[i]);
 		}
 		else if (dataType.isSTRING())
 		{
-			String[] array = (String[])value;
-			
-			if (count == 1) {
-				if (array.length > 0 && array[0] != null)
-					payloadBuffer.put(array[0].getBytes());
-			    payloadBuffer.put((byte)0);
-			}
-			else 
+			if (count <= 0)
 			{
-				for (int i = 0; i < count; i++)
-				{
-				    // limit string size, leave one byte for termination
-				    int pos = payloadBuffer.position();
-				    if (array[i] != null)
-				    {
+				// Even if the array is empty, there has to be at least one element in the payload.
+			    int pos = payloadBuffer.position();
+			    payloadBuffer.put((byte)0);
+				payloadBuffer.position(pos + CAConstants.MAX_STRING_SIZE);
+			}
+			String[] array = (String[])value;
+			for (int i = 0; i < count; i++)
+			{
+			    // limit string size, leave one byte for termination
+			    int pos = payloadBuffer.position();
+			    if (array[i] != null)
+			    {
 				    	int bytesToWrite = Math.min(array[i].length(), CAConstants.MAX_STRING_SIZE - 1); 
 				    	payloadBuffer.put(array[i].getBytes(), 0, bytesToWrite);
-				    }
-				    payloadBuffer.put((byte)0);
-					payloadBuffer.position(pos + CAConstants.MAX_STRING_SIZE);
-				}
+			    }
+			    payloadBuffer.put((byte)0);
+				payloadBuffer.position(pos + CAConstants.MAX_STRING_SIZE);
 			}
 		}
 		else if (dataType.isSHORT())
 		{
+			if (count <= 0)
+			{
+				// Even if the array is empty, there has to be at least one element in the payload.
+				payloadBuffer.putShort((short)0);
+			}
 			short[] array = (short[])value;
 			for (int i = 0; i < count; i++)
 				payloadBuffer.putShort(array[i]);
 		}
 		else if (dataType.isFLOAT())
 		{
+			if (count <= 0)
+			{
+				// Even if the array is empty, there has to be at least one element in the payload.
+				payloadBuffer.putFloat(0.0f);
+			}
 			float[] array = (float[])value;
 			for (int i = 0; i < count; i++)
 				payloadBuffer.putFloat(array[i]);
 		}
 		else if (dataType.isENUM())
 		{
+			if (count <= 0)
+			{
+				// Even if the array is empty, there has to be at least one element in the payload.
+				payloadBuffer.putShort((short)0);
+			}
 			short[] array = (short[])value;
 			for (int i = 0; i < count; i++)
 				payloadBuffer.putShort(array[i]);
 		}
 		else if (dataType.isBYTE())
 		{
+			if (count <= 0)
+			{
+				// Even if the array is empty, there has to be at least one element in the payload.
+				payloadBuffer.put((byte)0);
+			}
 			byte[] array = (byte[])value;
 			for (int i = 0; i < count; i++)
 				payloadBuffer.put(array[i]);
@@ -241,6 +264,11 @@ public class DBREncoder {
 		else if (dataType == DBRType.PUT_ACKT ||
 				 dataType == DBRType.PUT_ACKS)
 		{
+			if (count <= 0)
+			{
+				// Even if the array is empty, there has to be at least one element in the payload.
+				payloadBuffer.putShort((short)0);
+			}
 			short[] array = (short[])value;
 			for (int i = 0; i < count; i++)
 				payloadBuffer.putShort(array[i]);
