@@ -56,3 +56,6 @@ $ git clone https://github.com/epics-base/jca.git
 $ cd jca
 $ mvn install
 ```
+### Getting Started
+
+The [BasicExamples](https://github.com/epics-base/jca/blob/master/test/gov/aps/jca/test/BasicExample.java) shows a simple example on how to connect, read, write, and monitor a pv.
