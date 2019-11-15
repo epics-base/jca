@@ -16,7 +16,7 @@ The jca artifacts are hosted on maven centeral and can be downloaded from https:
 You can also directly download the jca jars along with their sources and javadocs from    
 [jca-2.4.3 jars](https://repo1.maven.org/maven2/org/epics/jca/2.4.3/)
 
-The javadocs are also avaiable online:  
+The javadocs are also available online:  
 [jca-2.4.3-javadocs](https://www.javadoc.io/doc/org.epics/jca/latest/index.html)
 
 **Development Release**  
