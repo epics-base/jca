@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.epics</groupId>
         <artifactId>epics-parent</artifactId>
-        <version>7.0.5-SNAPSHOT</version>
+        <version>7.0.5</version>
     </parent>
 
     <artifactId>jca</artifactId>
