@@ -22,6 +22,7 @@ import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -363,5 +364,9 @@ public class BroadcastTransport implements Transport, ReactorHandler {
 	 */
 	public DatagramChannel getChannel() {
 		return channel;
+	}
+
+	public String toString() {
+		return "BroadcastTransport" + Arrays.toString(broadcastAddresses);
 	}
 }

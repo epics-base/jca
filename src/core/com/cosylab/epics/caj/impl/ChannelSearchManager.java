@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
 
 import com.cosylab.epics.caj.CAJChannel;
 import com.cosylab.epics.caj.CAJContext;
@@ -242,6 +243,7 @@ public class ChannelSearchManager {
 	 */
 	private synchronized boolean generateSearchRequestMessage(CAJChannel channel, boolean allowNewFrame)
 	{
+		context.getLogger().log(Level.WARNING, "ChannelSearchManager searches " + channel.getName() + " via " + context.getBroadcastTransport());
 		boolean success = channel.generateSearchRequestMessage(context.getBroadcastTransport(), sendBuffer);
 		// buffer full, flush
 		if (!success)
@@ -262,6 +264,7 @@ public class ChannelSearchManager {
 			// CAJTransport already coalesces with its sendBuffer
 			channel.generateSearchRequestMessage(trn, client.sendBuffer);
 			try {
+				context.getLogger().log(Level.WARNING, "ChannelSearchManager searches " + channel.getName() + " via " + client);
 				trn.submit(client);
 				trn.flush(); // TODO: delay w/ timer?
 			} catch (IOException e) {

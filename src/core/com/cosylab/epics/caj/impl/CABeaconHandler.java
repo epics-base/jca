@@ -15,6 +15,7 @@
 package com.cosylab.epics.caj.impl;
 
 import java.net.InetSocketAddress;
+import java.util.logging.Level;
 
 import com.cosylab.epics.caj.CAJContext;
 
@@ -81,6 +82,7 @@ public class CABeaconHandler  {
 	 */
 	public void beaconNotify(short remoteTransportRevision, long timestamp, long sequentalID)
 	{
+		context.getLogger().log(Level.WARNING, "Beacon " + timestamp + " [" + sequentalID + "] from " + responseFrom + " ...");
 		boolean networkChanged = updateBeaconPeriod(remoteTransportRevision, timestamp, sequentalID);
 		if (networkChanged)
 			changedTransport();
@@ -99,6 +101,7 @@ public class CABeaconHandler  {
 		if (lastBeaconTimeStamp == Long.MIN_VALUE)
 		{
 			// new server up...
+			context.getLogger().log(Level.WARNING, "New server beacon " + responseFrom);
 			context.beaconAnomalyNotify();
 			
 			if (remoteTransportRevision >= 10)
@@ -153,6 +156,7 @@ public class CABeaconHandler  {
 			{
 				if (currentPeriod >= (averagePeriod * 3.25))
 				{
+					context.getLogger().log(Level.WARNING, "Restored network segment beacon " + responseFrom);
 					context.beaconAnomalyNotify();
 
 					// trigger network change on any 3 contiguous missing beacons 
@@ -167,6 +171,7 @@ public class CABeaconHandler  {
 				else
 				{
 					// something might be wrong...
+					context.getLogger().log(Level.WARNING, "Delayed beacon " + responseFrom);
 					context.beaconAnomalyNotify();
 				}
 			}
@@ -175,6 +180,7 @@ public class CABeaconHandler  {
 			else if (currentPeriod <= (averagePeriod * 0.8))
 			{
 				// server restarted...
+                                context.getLogger().log(Level.WARNING, "Fast 'reboot' beacon " + responseFrom);
 				context.beaconAnomalyNotify();
 				
 				networkChange = true;
