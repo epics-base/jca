@@ -136,7 +136,11 @@ public class CABeaconHandler  {
 			// (this situation is probably caused by a duplicate route 
 			//  or a beacon due to input queue overun)
 			if (beaconSeqAdvance > 1 && beaconSeqAdvance < 4)
+                        {
+				// Ignore this beacon, but measure period of next beacon from this one
+				lastBeaconTimeStamp = timestamp;
 				return false;
+                        }
 		}
 
 		boolean networkChange = false;
@@ -152,11 +156,11 @@ public class CABeaconHandler  {
 		else
 		{
 			// is this a server seen because of a restored network segment?
-			if (currentPeriod >= (averagePeriod * 1.25))
+			if (currentPeriod >= (averagePeriod * 1.5)) // TODO Slowdown factor
 			{
 				if (currentPeriod >= (averagePeriod * 3.25))
 				{
-					context.getLogger().log(Level.WARNING, "Restored network segment beacon " + responseFrom);
+					context.getLogger().log(Level.WARNING, "Restored network segment beacon " + responseFrom + ", period was " + averagePeriod + ", now " + currentPeriod);
 					context.beaconAnomalyNotify();
 
 					// trigger network change on any 3 contiguous missing beacons 
@@ -171,21 +175,21 @@ public class CABeaconHandler  {
 				else
 				{
 					// something might be wrong...
-					context.getLogger().log(Level.WARNING, "Delayed beacon " + responseFrom);
+					context.getLogger().log(Level.WARNING, "Delayed beacon " + responseFrom + ", period was " + averagePeriod + ", now " + currentPeriod);
 					context.beaconAnomalyNotify();
 				}
 			}
 			// is this a server seen because of reboot
 			// (beacons come at a higher rate just after the)
-			else if (currentPeriod <= (averagePeriod * 0.8))
+			else if (periodStabilized  &&  currentPeriod <= (averagePeriod * 0.6)) // TODO Speedup factor
 			{
 				// server restarted...
-                                context.getLogger().log(Level.WARNING, "Fast 'reboot' beacon " + responseFrom);
+				context.getLogger().log(Level.WARNING, "Fast 'reboot' beacon " + responseFrom + ", period was " + averagePeriod + ", now " + currentPeriod);
 				context.beaconAnomalyNotify();
 				
 				networkChange = true;
 			}
-			// all OK
+			// all OK, or still stabilizing
 			else
 			{
 				periodStabilized = true;
@@ -204,6 +208,8 @@ public class CABeaconHandler  {
 		}
 
 		lastBeaconTimeStamp = timestamp;
+
+		context.getLogger().log(Level.WARNING, "beacon " + responseFrom + " period: " + averagePeriod + (periodStabilized ? " (stable)" : " (not stable)"));
 		
 		return networkChange;
 	}
