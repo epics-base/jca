@@ -162,6 +162,20 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 	 * Period in second between two beacon signals.
 	 */
 	protected float beaconPeriod = 15.0f;
+
+	/**
+	 * Factor by which beacon period needs to shrink
+	 * to consider it a 'fast' beacon which suggests
+	 * a CA server restart/reboot.
+	 */
+	protected float beaconSpeedup = 0.8f;
+
+	/**
+	 * Factor by which beacon period needs to grow
+	 * to consider it a slow, delayed beacon which
+	 * suggests a restored network segment.
+	 */
+	protected float beaconSlowdown = 1.25f;
 	
 	/**
 	 * Port number for the repeater to listen to.
@@ -465,6 +479,8 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 			nameServersList = jcaLibrary.getProperty(thisClassName + ".name_servers", nameServersList);
 			connectionTimeout = jcaLibrary.getPropertyAsFloat(thisClassName + ".connection_timeout", connectionTimeout);
 			beaconPeriod = jcaLibrary.getPropertyAsFloat(thisClassName + ".beacon_period", beaconPeriod);
+			beaconSpeedup = jcaLibrary.getPropertyAsFloat(thisClassName + ".beacon_speedup", beaconSpeedup);
+			beaconSlowdown = jcaLibrary.getPropertyAsFloat(thisClassName + ".beacon_slowdown", beaconSlowdown);
 			repeaterPort = jcaLibrary.getPropertyAsInt(thisClassName + ".repeater_port", repeaterPort);
 			serverPort = jcaLibrary.getPropertyAsInt(thisClassName + ".server_port", serverPort);
 			maxArrayBytes = jcaLibrary.getPropertyAsInt(thisClassName + ".max_array_bytes", maxArrayBytes);
@@ -1336,6 +1352,30 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 	 */
 	public float getBeaconPeriod() {
 		return beaconPeriod;
+	}
+
+	/**
+	 * Get beacon speedup.
+	 *
+	 * Factor by which beacon period needs to shrink
+	 * to consider it a 'fast' beacon which suggests
+	 * a CA server restart/reboot.
+	 * @return beacon speedup factor
+	 */
+	public float getBeaconSpeedup() {
+		return beaconSpeedup;
+	}
+
+	/**
+	 * Get beacon slowdown.
+	 *
+	 * Factor by which beacon period needs to grow
+	 * to consider it a slow, delayed beacon which
+	 * suggests a restored network segment.
+	 * @return beacon speedup factor
+	 */
+	public float getBeaconSlowdown() {
+		return beaconSlowdown;
 	}
 
 	/**

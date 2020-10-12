@@ -72,6 +72,8 @@ public class CABeaconHandler  {
 	{
 		this.context = context;
 		this.responseFrom = responseFrom;
+
+		context.getLogger().log(Level.WARNING, "CABeaconHandler for " + responseFrom + ": Speedup " + context.getBeaconSpeedup() + ", slowdown " + context.getBeaconSlowdown());
 	}
 	
 	/**
@@ -156,7 +158,7 @@ public class CABeaconHandler  {
 		else
 		{
 			// is this a server seen because of a restored network segment?
-			if (currentPeriod >= (averagePeriod * 1.5)) // TODO Slowdown factor
+			if (currentPeriod >= (averagePeriod * context.getBeaconSlowdown()))
 			{
 				if (currentPeriod >= (averagePeriod * 3.25))
 				{
@@ -181,7 +183,7 @@ public class CABeaconHandler  {
 			}
 			// is this a server seen because of reboot
 			// (beacons come at a higher rate just after the)
-			else if (periodStabilized  &&  currentPeriod <= (averagePeriod * 0.6)) // TODO Speedup factor
+			else if (periodStabilized  &&  currentPeriod <= (averagePeriod * context.getBeaconSpeedup()))
 			{
 				// server restarted...
 				context.getLogger().log(Level.WARNING, "Fast 'reboot' beacon " + responseFrom + ", period was " + averagePeriod + ", now " + currentPeriod);
