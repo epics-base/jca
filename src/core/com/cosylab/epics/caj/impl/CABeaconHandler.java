@@ -73,7 +73,7 @@ public class CABeaconHandler  {
 		this.context = context;
 		this.responseFrom = responseFrom;
 
-		context.getLogger().log(Level.WARNING, "CABeaconHandler for " + responseFrom + ": Speedup " + context.getBeaconSpeedup() + ", slowdown " + context.getBeaconSlowdown());
+		context.getLogger().log(Level.FINE, "CABeaconHandler for " + responseFrom + ": Speedup " + context.getBeaconSpeedup() + ", slowdown " + context.getBeaconSlowdown());
 	}
 	
 	/**
@@ -103,7 +103,7 @@ public class CABeaconHandler  {
 		if (lastBeaconTimeStamp == Long.MIN_VALUE)
 		{
 			// new server up...
-			context.getLogger().log(Level.WARNING, "New server beacon " + responseFrom);
+			context.getLogger().log(Level.INFO, "New server beacon " + responseFrom);
 			context.beaconAnomalyNotify();
 			
 			if (remoteTransportRevision >= 10)
@@ -162,7 +162,7 @@ public class CABeaconHandler  {
 			{
 				if (currentPeriod >= (averagePeriod * 3.25))
 				{
-					context.getLogger().log(Level.WARNING, "Restored network segment beacon " + responseFrom + ", period was " + averagePeriod + ", now " + currentPeriod);
+					context.getLogger().log(Level.INFO, "Restored network segment beacon " + responseFrom + ", period was " + averagePeriod + ", now " + currentPeriod);
 					context.beaconAnomalyNotify();
 
 					// trigger network change on any 3 contiguous missing beacons 
@@ -177,7 +177,7 @@ public class CABeaconHandler  {
 				else
 				{
 					// something might be wrong...
-					context.getLogger().log(Level.WARNING, "Delayed beacon " + responseFrom + ", period was " + averagePeriod + ", now " + currentPeriod);
+					context.getLogger().log(Level.INFO, "Delayed beacon " + responseFrom + ", period was " + averagePeriod + ", now " + currentPeriod);
 					context.beaconAnomalyNotify();
 				}
 			}
@@ -186,7 +186,7 @@ public class CABeaconHandler  {
 			else if (periodStabilized  &&  currentPeriod <= (averagePeriod * context.getBeaconSpeedup()))
 			{
 				// server restarted...
-				context.getLogger().log(Level.WARNING, "Fast 'reboot' beacon " + responseFrom + ", period was " + averagePeriod + ", now " + currentPeriod);
+				context.getLogger().log(Level.INFO, "Fast 'reboot' beacon " + responseFrom + ", period was " + averagePeriod + ", now " + currentPeriod);
 				context.beaconAnomalyNotify();
 				
 				networkChange = true;
