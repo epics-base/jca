@@ -243,7 +243,7 @@ public class ChannelSearchManager {
 	 */
 	private synchronized boolean generateSearchRequestMessage(CAJChannel channel, boolean allowNewFrame)
 	{
-		context.getLogger().log(Level.INFO, "ChannelSearchManager searches " + channel.getName() + " via " + context.getBroadcastTransport());
+		context.getLogger().log(Level.INFO, () -> "ChannelSearchManager searches " + channel.getName() + " via " + context.getBroadcastTransport());
 		boolean success = channel.generateSearchRequestMessage(context.getBroadcastTransport(), sendBuffer);
 		// buffer full, flush
 		if (!success)
@@ -264,7 +264,7 @@ public class ChannelSearchManager {
 			// CAJTransport already coalesces with its sendBuffer
 			channel.generateSearchRequestMessage(trn, client.sendBuffer);
 			try {
-				context.getLogger().log(Level.INFO, "ChannelSearchManager searches " + channel.getName() + " via " + client);
+				context.getLogger().log(Level.INFO, () -> "ChannelSearchManager searches " + channel.getName() + " via " + client);
 				trn.submit(client);
 				trn.flush(); // TODO: delay w/ timer?
 			} catch (IOException e) {
