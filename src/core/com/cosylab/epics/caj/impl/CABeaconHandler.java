@@ -84,7 +84,7 @@ public class CABeaconHandler  {
 	 */
 	public void beaconNotify(short remoteTransportRevision, long timestamp, long sequentalID)
 	{
-		context.getLogger().log(Level.WARNING, "Beacon " + timestamp + " [" + sequentalID + "] from " + responseFrom + " ...");
+		context.getLogger().log(Level.FINE, () -> "Beacon " + timestamp + " [" + sequentalID + "] from " + responseFrom + " ...");
 		boolean networkChanged = updateBeaconPeriod(remoteTransportRevision, timestamp, sequentalID);
 		if (networkChanged)
 			changedTransport();
@@ -211,7 +211,7 @@ public class CABeaconHandler  {
 
 		lastBeaconTimeStamp = timestamp;
 
-		context.getLogger().log(Level.WARNING, "beacon " + responseFrom + " period: " + averagePeriod + (periodStabilized ? " (stable)" : " (not stable)"));
+		context.getLogger().log(Level.FINE, () -> "beacon " + responseFrom + " period: " + averagePeriod + (periodStabilized ? " (stable)" : " (not stable)"));
 		
 		return networkChange;
 	}
