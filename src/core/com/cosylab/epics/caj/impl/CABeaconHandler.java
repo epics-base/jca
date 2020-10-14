@@ -15,6 +15,7 @@
 package com.cosylab.epics.caj.impl;
 
 import java.net.InetSocketAddress;
+import java.util.logging.Level;
 
 import com.cosylab.epics.caj.CAJContext;
 
@@ -71,6 +72,8 @@ public class CABeaconHandler  {
 	{
 		this.context = context;
 		this.responseFrom = responseFrom;
+
+		context.getLogger().log(Level.FINE, () -> "CABeaconHandler for " + responseFrom + ": Speedup " + context.getBeaconSpeedup() + ", slowdown " + context.getBeaconSlowdown());
 	}
 	
 	/**
@@ -81,6 +84,7 @@ public class CABeaconHandler  {
 	 */
 	public void beaconNotify(short remoteTransportRevision, long timestamp, long sequentalID)
 	{
+		context.getLogger().log(Level.FINE, () -> "Beacon " + timestamp + " [" + sequentalID + "] from " + responseFrom + " ...");
 		boolean networkChanged = updateBeaconPeriod(remoteTransportRevision, timestamp, sequentalID);
 		if (networkChanged)
 			changedTransport();
@@ -99,6 +103,7 @@ public class CABeaconHandler  {
 		if (lastBeaconTimeStamp == Long.MIN_VALUE)
 		{
 			// new server up...
+			context.getLogger().log(Level.INFO, () -> "New server beacon " + responseFrom);
 			context.beaconAnomalyNotify();
 			
 			if (remoteTransportRevision >= 10)
@@ -133,7 +138,11 @@ public class CABeaconHandler  {
 			// (this situation is probably caused by a duplicate route 
 			//  or a beacon due to input queue overun)
 			if (beaconSeqAdvance > 1 && beaconSeqAdvance < 4)
+                        {
+				// Ignore this beacon, but measure period of next beacon from this one
+				lastBeaconTimeStamp = timestamp;
 				return false;
+                        }
 		}
 
 		boolean networkChange = false;
@@ -149,10 +158,11 @@ public class CABeaconHandler  {
 		else
 		{
 			// is this a server seen because of a restored network segment?
-			if (currentPeriod >= (averagePeriod * 1.25))
+			if (currentPeriod >= (averagePeriod * context.getBeaconSlowdown()))
 			{
 				if (currentPeriod >= (averagePeriod * 3.25))
 				{
+					context.getLogger().log(Level.INFO, () -> "Restored network segment beacon " + responseFrom + ", period was " + averagePeriod + ", now " + currentPeriod);
 					context.beaconAnomalyNotify();
 
 					// trigger network change on any 3 contiguous missing beacons 
@@ -167,19 +177,21 @@ public class CABeaconHandler  {
 				else
 				{
 					// something might be wrong...
+					context.getLogger().log(Level.INFO, () -> "Delayed beacon " + responseFrom + ", period was " + averagePeriod + ", now " + currentPeriod);
 					context.beaconAnomalyNotify();
 				}
 			}
 			// is this a server seen because of reboot
 			// (beacons come at a higher rate just after the)
-			else if (currentPeriod <= (averagePeriod * 0.8))
+			else if (periodStabilized  &&  currentPeriod <= (averagePeriod * context.getBeaconSpeedup()))
 			{
 				// server restarted...
+				context.getLogger().log(Level.INFO, () -> "Fast 'reboot' beacon " + responseFrom + ", period was " + averagePeriod + ", now " + currentPeriod);
 				context.beaconAnomalyNotify();
 				
 				networkChange = true;
 			}
-			// all OK
+			// all OK, or still stabilizing
 			else
 			{
 				periodStabilized = true;
@@ -198,6 +210,8 @@ public class CABeaconHandler  {
 		}
 
 		lastBeaconTimeStamp = timestamp;
+
+		context.getLogger().log(Level.FINE, () -> "beacon " + responseFrom + " period: " + averagePeriod + (periodStabilized ? " (stable)" : " (not stable)"));
 		
 		return networkChange;
 	}

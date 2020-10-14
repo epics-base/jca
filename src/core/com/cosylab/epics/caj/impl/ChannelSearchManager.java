@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
 
 import com.cosylab.epics.caj.CAJChannel;
 import com.cosylab.epics.caj.CAJContext;
@@ -34,7 +35,6 @@ public class ChannelSearchManager {
 	 */
 	private final int intervalMultiplier;
 
-	private static final int MIN_SEND_INTERVAL_MS_DEFAULT = 100;
 	private static final int INTERVAL_MULTIPLIER_DEFAULT = 2;
 	
 	private static final int MESSAGE_COALESCENCE_TIME_MS = 3;
@@ -192,8 +192,8 @@ public class ChannelSearchManager {
 	{
 		this.context = context;
 
-		minSendInterval = MIN_SEND_INTERVAL_MS_DEFAULT;
 		// Convert from seconds to milliseconds.
+		minSendInterval = (long) (context.getMinSearchInterval() * 1000);
 		maxSendInterval = (long) (context.getMaxSearchInterval() * 1000);
 		intervalMultiplier = INTERVAL_MULTIPLIER_DEFAULT;
 
@@ -242,6 +242,7 @@ public class ChannelSearchManager {
 	 */
 	private synchronized boolean generateSearchRequestMessage(CAJChannel channel, boolean allowNewFrame)
 	{
+		context.getLogger().log(Level.FINE, () -> "ChannelSearchManager searches " + channel.getName() + " via " + context.getBroadcastTransport());
 		boolean success = channel.generateSearchRequestMessage(context.getBroadcastTransport(), sendBuffer);
 		// buffer full, flush
 		if (!success)
@@ -262,6 +263,7 @@ public class ChannelSearchManager {
 			// CAJTransport already coalesces with its sendBuffer
 			channel.generateSearchRequestMessage(trn, client.sendBuffer);
 			try {
+				context.getLogger().log(Level.FINE, () -> "ChannelSearchManager searches " + channel.getName() + " via " + client);
 				trn.submit(client);
 				trn.flush(); // TODO: delay w/ timer?
 			} catch (IOException e) {

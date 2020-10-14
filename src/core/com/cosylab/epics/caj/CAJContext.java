@@ -162,6 +162,20 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 	 * Period in second between two beacon signals.
 	 */
 	protected float beaconPeriod = 15.0f;
+
+	/**
+	 * Factor by which beacon period needs to shrink
+	 * to consider it a 'fast' beacon which suggests
+	 * a CA server restart/reboot.
+	 */
+	protected float beaconSpeedup = 0.8f;
+
+	/**
+	 * Factor by which beacon period needs to grow
+	 * to consider it a slow, delayed beacon which
+	 * suggests a restored network segment.
+	 */
+	protected float beaconSlowdown = 1.25f;
 	
 	/**
 	 * Port number for the repeater to listen to.
@@ -177,6 +191,11 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 	 * Length in bytes of the maximum array size that may pass through CA.
 	 */
 	protected int maxArrayBytes = 16384;
+
+	/**
+	 * Minimum interval in seconds between CA search broadcasts. Default is 0.1 seconds
+	 */
+	protected float minSearchInterval = (float) 0.1;
 
 	/**
 	 * Maximum interval in seconds between CA search broadcasts. Default is 5 minutes.
@@ -465,9 +484,12 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 			nameServersList = jcaLibrary.getProperty(thisClassName + ".name_servers", nameServersList);
 			connectionTimeout = jcaLibrary.getPropertyAsFloat(thisClassName + ".connection_timeout", connectionTimeout);
 			beaconPeriod = jcaLibrary.getPropertyAsFloat(thisClassName + ".beacon_period", beaconPeriod);
+			beaconSpeedup = jcaLibrary.getPropertyAsFloat(thisClassName + ".beacon_speedup", beaconSpeedup);
+			beaconSlowdown = jcaLibrary.getPropertyAsFloat(thisClassName + ".beacon_slowdown", beaconSlowdown);
 			repeaterPort = jcaLibrary.getPropertyAsInt(thisClassName + ".repeater_port", repeaterPort);
 			serverPort = jcaLibrary.getPropertyAsInt(thisClassName + ".server_port", serverPort);
 			maxArrayBytes = jcaLibrary.getPropertyAsInt(thisClassName + ".max_array_bytes", maxArrayBytes);
+			minSearchInterval = jcaLibrary.getPropertyAsFloat(thisClassName + ".min_search_interval", minSearchInterval);
 			maxSearchInterval = jcaLibrary.getPropertyAsFloat(thisClassName + ".max_search_interval", maxSearchInterval);
 	    }
 			
@@ -1339,6 +1361,30 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 	}
 
 	/**
+	 * Get beacon speedup.
+	 *
+	 * Factor by which beacon period needs to shrink
+	 * to consider it a 'fast' beacon which suggests
+	 * a CA server restart/reboot.
+	 * @return beacon speedup factor
+	 */
+	public float getBeaconSpeedup() {
+		return beaconSpeedup;
+	}
+
+	/**
+	 * Get beacon slowdown.
+	 *
+	 * Factor by which beacon period needs to grow
+	 * to consider it a slow, delayed beacon which
+	 * suggests a restored network segment.
+	 * @return beacon speedup factor
+	 */
+	public float getBeaconSlowdown() {
+		return beaconSlowdown;
+	}
+
+	/**
 	 * Get connection timeout (in seconds).
 	 * @return connection timeout (in seconds). 
 	 */
@@ -1385,6 +1431,12 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 	public int getBroadcastPort() {
 		return getServerPort();
 	}
+
+	/**
+	 * Get min. search interval
+	 * @return min. search interval in seconds
+	 */
+	public float getMinSearchInterval() { return minSearchInterval; }
 
 	/**
 	 * Get max. search interval
