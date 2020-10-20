@@ -14,6 +14,7 @@
 
 package com.cosylab.epics.caj.impl.requests;
 
+import com.cosylab.epics.caj.impl.Request;
 import com.cosylab.epics.caj.impl.Transport;
 
 /**
@@ -36,6 +37,11 @@ public class EventCancelRequest extends AbstractCARequest {
 		requestMessage = insertCAHeader(transport, null,
 										(short)2, (short)0, (short)dataType, (short)dataCount,
 										sid, subsid);
+	}
+
+	@Override
+	public byte getPriority() {
+		return Request.SEND_IMMEDIATELY_PRIORITY;
 	}
 
 }
