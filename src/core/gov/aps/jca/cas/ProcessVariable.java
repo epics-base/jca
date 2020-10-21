@@ -70,7 +70,7 @@ public abstract class ProcessVariable {
 	 */
 	public ProcessVariable(String name, ProcessVariableEventCallback eventCallback)
 	{
-		if (name == null || name.length() == 0)
+                if (name == null || name.getBytes().length == 0)
 			throw new IllegalArgumentException("non empty name expected.");
 
 		/*

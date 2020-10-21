@@ -45,10 +45,10 @@ public class SearchRequest extends AbstractCARequest {
 	public static final ByteBuffer generateSearchRequestMessage(Transport transport, ByteBuffer requestMessage,
 			String name, int cid)
 	{
-		if (name.length() > Math.min(CAConstants.MAX_UDP_SEND - CAConstants.CA_MESSAGE_HEADER_SIZE, 0xFFFF))
+            if (name.getBytes().length > Math.min(CAConstants.MAX_UDP_SEND - CAConstants.CA_MESSAGE_HEADER_SIZE, 0xFFFF))
 			throw new IllegalArgumentException("name too long");
 
-		int alignedMessageSize = calculateAlignedSize(8, CAConstants.CA_MESSAGE_HEADER_SIZE + name.length() + 1);
+            int alignedMessageSize = calculateAlignedSize(8, CAConstants.CA_MESSAGE_HEADER_SIZE + name.getBytes().length + 1);
 		if (requestMessage == null)
 			requestMessage = ByteBuffer.allocate(alignedMessageSize);
 		else if (requestMessage.remaining() < alignedMessageSize)
