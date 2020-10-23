@@ -1004,9 +1004,9 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 		throws CAException, IllegalStateException {
 		checkState();
 		
-		if (name == null || name.length() == 0)
+		if (name == null || name.getBytes().length == 0)
 			throw new IllegalArgumentException("null or empty channel name");
-		else if (name.length() > Math.min(CAConstants.MAX_UDP_SEND - CAConstants.CA_MESSAGE_HEADER_SIZE, 0xFFFF))
+		else if (name.getBytes().length > Math.min(CAConstants.MAX_UDP_SEND - CAConstants.CA_MESSAGE_HEADER_SIZE, 0xFFFF))
 			throw new CAException("name too long");
 		
 		if (priority < Channel.PRIORITY_MIN || priority > Channel.PRIORITY_MAX)

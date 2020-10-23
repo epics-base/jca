@@ -89,7 +89,7 @@ public class CreateChannelResponse extends AbstractCASResponseHandler {
 		String channelName = extractString(response[1], 0, payloadSize, false);
 
 		// check channel name lenght
-		if (channelName.length() > CAConstants.UNREASONABLE_CHANNEL_NAME_LENGTH)
+		if (channelName.getBytes().length > CAConstants.UNREASONABLE_CHANNEL_NAME_LENGTH)
 		{
 			context.getLogger().warning("Unreasonable channel name length, disconnecting client: " + transport.getRemoteAddress());
 			disconnect(transport);

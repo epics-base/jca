@@ -51,7 +51,7 @@ public class CreateChannelRequest extends AbstractCARequest {
 		 
 		int binaryNameLength = 0;
 		if (channelName != null)
-			binaryNameLength = channelName.length() + 1;
+			binaryNameLength = channelName.getBytes().length + 1;
 		 
 		int alignedMessageSize = calculateAlignedSize(8, CAConstants.CA_MESSAGE_HEADER_SIZE + binaryNameLength);
 		requestMessage = ByteBuffer.allocate(alignedMessageSize);
