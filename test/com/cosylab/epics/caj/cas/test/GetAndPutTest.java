@@ -860,7 +860,7 @@ public class GetAndPutTest extends TestCase {
 		// TEST double PV
 		MemoryProcessVariable mpv = new MemoryProcessVariable("TEST", null, DBR_Double.TYPE, new double[] { VALUE });
 		setCTRLData(mpv);
-		server.registerProcessVaribale(mpv);
+		server.registerProcessVariable(mpv);
 		
 		// ENUM
 		MemoryProcessVariable enumPV = new MemoryProcessVariable("ENUM", null, DBR_Enum.TYPE, new short[] { 0, 1, 2 }) 
@@ -873,7 +873,7 @@ public class GetAndPutTest extends TestCase {
 			}
 			
 		};
-		server.registerProcessVaribale(enumPV);
+		server.registerProcessVariable(enumPV);
 
 		// read/write error PV
 		MemoryProcessVariable errorPV = new MemoryProcessVariable("ERROR", null, DBR_Double.TYPE, new double[] { 0.0 } ) {
@@ -893,7 +893,7 @@ public class GetAndPutTest extends TestCase {
 			}
 			
 		};
-		server.registerProcessVaribale(errorPV);
+		server.registerProcessVariable(errorPV);
 		
 		// read/write exception PV
 		MemoryProcessVariable exceptionPV = new MemoryProcessVariable("EXCEPTION", null, DBR_Double.TYPE, new double[] { 0.0 } ) {
@@ -913,29 +913,29 @@ public class GetAndPutTest extends TestCase {
 			}
 			
 		};
-		server.registerProcessVaribale(exceptionPV);
+		server.registerProcessVariable(exceptionPV);
 
 		
 		// async (no exceptions)
 		MemoryProcessVariable ampv = new TestAsyncMemoryProcessVariable("ASYNC", null, DBR_Double.TYPE, new double[] { VALUE },
 				500, false);
 		setCTRLData(ampv);
-		server.registerProcessVaribale(ampv);
+		server.registerProcessVariable(ampv);
 		
 		// async (exceptions)
 		ampv = new TestAsyncMemoryProcessVariable("ASYNCEX", null, DBR_Double.TYPE, new double[] { VALUE },
 				1000, true);
-		server.registerProcessVaribale(ampv);
+		server.registerProcessVariable(ampv);
 
 		// fast async (no exceptions)
 		ampv = new TestAsyncMemoryProcessVariable("FASTASYNC", null, DBR_Double.TYPE, new double[] { VALUE },
 				0, false);
-		server.registerProcessVaribale(ampv);
+		server.registerProcessVariable(ampv);
 
 		// fast async (exceptions)
 		ampv = new TestAsyncMemoryProcessVariable("FASTASYNCEX", null, DBR_Double.TYPE, new double[] { VALUE },
 				0, true);
-		server.registerProcessVaribale(ampv);
+		server.registerProcessVariable(ampv);
 
 		server.createMemoryProcessVariable("ARRAY", DBRType.DOUBLE, new double[] { 1, 2, 3 } );
 		

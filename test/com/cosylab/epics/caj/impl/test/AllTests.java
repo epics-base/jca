@@ -114,7 +114,7 @@ public class AllTests {
         mpv.setUnits("units");
         mpv.setPrecision((short) 2);
 
-        server.registerProcessVaribale(mpv);
+        server.registerProcessVariable(mpv);
 
         // enum in-memory PV
         MemoryProcessVariable enumPV = new MemoryProcessVariable("enum", null, DBR_Enum.TYPE, new short[] { 0 }) {
@@ -125,7 +125,7 @@ public class AllTests {
             }
 
         };
-        server.registerProcessVaribale(enumPV);
+        server.registerProcessVariable(enumPV);
 
     }
 

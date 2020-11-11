@@ -104,12 +104,12 @@ public class CAJTestOnCASIT {
 
 		mpv.setUnits("units");
 		mpv.setPrecision((short)2);
-		server.registerProcessVaribale(mpv);
+		server.registerProcessVariable(mpv);
 		
 		
 		// COUNTER - 1s increment
 		CounterProcessVariable cpv = new CounterProcessVariable("record2", null, 0, Integer.MAX_VALUE, 1, 1000, -Integer.MAX_VALUE, Integer.MAX_VALUE, -Integer.MAX_VALUE, Integer.MAX_VALUE);
-		server.registerProcessVaribale(cpv);
+		server.registerProcessVariable(cpv);
 		
 		// ENUM
 		MemoryProcessVariable enumPV = new MemoryProcessVariable("enum", null, DBR_Enum.TYPE, new short[] { 0 }) 
@@ -129,7 +129,7 @@ public class CAJTestOnCASIT {
 			}
 			
 		};
-		server.registerProcessVaribale(enumPV);
+		server.registerProcessVariable(enumPV);
 		
 		context.initialize(server);
 
