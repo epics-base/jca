@@ -125,7 +125,7 @@ public class CAJChannelSearchTest extends TestCase {
 				}
 				
 			};
-			server.registerProcessVaribale(mpv);
+			server.registerProcessVariable(mpv);
 		}
 		
 		context.initialize(server);

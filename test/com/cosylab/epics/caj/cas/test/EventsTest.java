@@ -250,11 +250,11 @@ public class EventsTest extends TestCase {
 
 		// COUNTER - 1s increment
 		CounterProcessVariable cpv = new CounterProcessVariable("COUNTER", null, 0, Integer.MAX_VALUE, 1, 1000, -Integer.MAX_VALUE, Integer.MAX_VALUE, -Integer.MAX_VALUE, Integer.MAX_VALUE);
-		server.registerProcessVaribale(cpv);
+		server.registerProcessVariable(cpv);
 		
 		// FAST - 10ms increment
 		cpv = new CounterProcessVariable("FAST", null, 0, Integer.MAX_VALUE, 1, 10, -Integer.MAX_VALUE, Integer.MAX_VALUE, -Integer.MAX_VALUE, Integer.MAX_VALUE);
-		server.registerProcessVaribale(cpv);
+		server.registerProcessVariable(cpv);
 
 		context.initialize(server);
 

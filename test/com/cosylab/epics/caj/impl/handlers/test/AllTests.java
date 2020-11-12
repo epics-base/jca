@@ -120,7 +120,7 @@ public class AllTests {
         mpv.setUnits("units");
         mpv.setPrecision((short) 3);
 
-        server.registerProcessVaribale(mpv);
+        server.registerProcessVariable(mpv);
 
         // enum in-memory PV
         MemoryProcessVariable enumPV = new MemoryProcessVariable("ENUM", null, DBR_Enum.TYPE, new short[] { 0 }) {
@@ -137,11 +137,11 @@ public class AllTests {
             }
 
         };
-        server.registerProcessVaribale(enumPV);
+        server.registerProcessVariable(enumPV);
 
         // counter PV
         CounterProcessVariable counter = new CounterProcessVariable("COUNTER", null, -10, 10, 1, 1, -7, 7, -9, 9);
-        server.registerProcessVaribale(counter);
+        server.registerProcessVariable(counter);
     }
 
     /**

@@ -38,7 +38,7 @@ public class DefaultServerImpl implements Server
 	public MemoryProcessVariable createMemoryProcessVariable(String name, DBRType type, Object initialValue)
 	{
 		MemoryProcessVariable memoryProcessVariable = new MemoryProcessVariable(name, null, type, initialValue);
-		registerProcessVaribale(name, memoryProcessVariable);
+		registerProcessVariable(name, memoryProcessVariable);
 		return memoryProcessVariable;
 	}
 	
@@ -48,7 +48,7 @@ public class DefaultServerImpl implements Server
 	 * @param aliasName process variable name.
 	 * @param pv process variable instance.
 	 */
-	public void registerProcessVaribale(String aliasName, ProcessVariable pv)
+	public void registerProcessVariable(String aliasName, ProcessVariable pv)
 	{
 		synchronized (pvs)
 		{
@@ -61,9 +61,9 @@ public class DefaultServerImpl implements Server
 	 * Note: if process variable with the same name is already registered this will override it.
 	 * @param pv process variable instance.
 	 */
-	public void registerProcessVaribale(ProcessVariable pv)
+	public void registerProcessVariable(ProcessVariable pv)
 	{
-		registerProcessVaribale(pv.getName(), pv);
+		registerProcessVariable(pv.getName(), pv);
 	}
 
 	/**
@@ -71,7 +71,7 @@ public class DefaultServerImpl implements Server
 	 * @param aliasName	process variable name
 	 * @return unregistered process variable, <code>null</code> if non unregistered.
 	 */
-	public ProcessVariable unregisterProcessVaribale(String aliasName)
+	public ProcessVariable unregisterProcessVariable(String aliasName)
 	{
 		synchronized (pvs)
 		{
