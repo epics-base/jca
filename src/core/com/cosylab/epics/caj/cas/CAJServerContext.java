@@ -593,13 +593,14 @@ public class CAJServerContext extends ServerContext implements CAContext, Config
 		{
 			throw new CAException("Failed to initialize reactor.", ioex); 
 		}
-		
-		// setup UDP transport
+
+		// setup TCP socket and determine serverPort if dynamically assigned (0)
+		acceptor = new CASAcceptor(this, serverPort);
+
+		// setup UDP transport (uses serverPort)
 		initializeUDPTransport();
 		
 		beaconEmitter = new BeaconEmitter(broadcastTransport, this, beaconPeriod);
-
-		acceptor = new CASAcceptor(this, serverPort);
 	}
 
 	/**
