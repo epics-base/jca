@@ -12,3 +12,5 @@ nbactions.xml
 *.log
 /.settings
 .project
+/.idea/
+/jca.iml

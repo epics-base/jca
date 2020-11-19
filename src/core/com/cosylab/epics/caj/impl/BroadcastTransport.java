@@ -16,6 +16,7 @@ package com.cosylab.epics.caj.impl;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
@@ -26,6 +27,7 @@ import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.cosylab.epics.caj.cas.CAJServerContext;
 import com.cosylab.epics.caj.impl.reactor.ReactorHandler;
 
 /**
@@ -133,8 +135,16 @@ public class BroadcastTransport implements Transport, ReactorHandler {
 	 */
 	public void bind(boolean reuseAddress) throws SocketException
 	{
-		channel.socket().setReuseAddress(reuseAddress);
-		channel.socket().bind(connectAddress);
+		DatagramSocket socket = channel.socket();
+
+		socket.setReuseAddress(reuseAddress);
+		socket.bind(connectAddress);
+
+		int assignedPort = socket.getLocalPort();
+
+		// Only necessary if connectAddress contains port = 0, but harmless either way
+		((CAJServerContext)context).setUdpServerPort(assignedPort);
+		context.getLogger().info("Server listening for pv name search on UDP port: " + assignedPort);
 	}
 	
 	/**

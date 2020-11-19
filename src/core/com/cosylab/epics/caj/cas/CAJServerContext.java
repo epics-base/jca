@@ -166,9 +166,14 @@ public class CAJServerContext extends ServerContext implements CAContext, Config
 	protected int beaconPort = CAConstants.CA_REPEATER_PORT;
 	
 	/**
-	 * Port number for the server to listen to.
+	 * The TCP server port (used to establish channels).
 	 */
-	protected int serverPort = CAConstants.CA_SERVER_PORT;
+	protected int tcpServerPort = CAConstants.CA_SERVER_PORT;
+
+	/**
+	 * The UDP server port (used for pv name search requests).
+	 */
+	protected int udpServerPort = CAConstants.CA_SERVER_PORT;
 	
 	/**
 	 * Length in bytes of the maximum array size that may pass through CA.
@@ -312,21 +317,6 @@ public class CAJServerContext extends ServerContext implements CAContext, Config
 	protected void loadConfiguration()
 	{
 		JCALibrary jcaLibrary = JCALibrary.getInstance();
-
-		/*
-		// load env var configuration (move to JCA)
-		beaconAddressList = getEnvironmentVariable("EPICS_CA_ADDR_LIST", beaconAddressList);
-		beaconAddressList = getEnvironmentVariable("EPICS_CAS_BEACON_ADDR_LIST", beaconAddressList);
-		autoBeaconAddressList = getEnvironmentVariable("EPICS_CA_AUTO_ADDR_LIST",  autoBeaconAddressList?"YES":"NO").equalsIgnoreCase("YES");
-		autoBeaconAddressList = getEnvironmentVariable("EPICS_CAS_AUTO_BEACON_ADDR_LIST",  autoBeaconAddressList?"YES":"NO").equalsIgnoreCase("YES");
-		beaconPeriod = Float.parseFloat(getEnvironmentVariable("EPICS_CA_BEACON_PERIOD", String.valueOf(beaconPeriod)));
-		beaconPeriod = Float.parseFloat(getEnvironmentVariable("EPICS_CAS_BEACON_PERIOD", String.valueOf(beaconPeriod)));
-		beaconPort = Integer.parseInt(getEnvironmentVariable("EPICS_CA_REPEATER_PORT", String.valueOf(beaconPort)));
-		beaconPort = Integer.parseInt(getEnvironmentVariable("EPICS_CAS_BEACON_PORT", String.valueOf(beaconPort)));
-		serverPort = Integer.parseInt(getEnvironmentVariable("EPICS_CA_SERVER_PORT", String.valueOf(serverPort)));
-		serverPort = Integer.parseInt(getEnvironmentVariable("EPICS_CAS_SERVER_PORT", String.valueOf(serverPort)));
-		maxArrayBytes = Integer.parseInt(getEnvironmentVariable("EPICS_CA_MAX_ARRAY_BYTES", String.valueOf(maxArrayBytes)));
-        */
 		
 		// load default Context configuration
 		String contextClassName = Context.class.getName();
@@ -334,7 +324,7 @@ public class CAJServerContext extends ServerContext implements CAContext, Config
 		autoBeaconAddressList = jcaLibrary.getPropertyAsBoolean(contextClassName + ".auto_addr_list",  autoBeaconAddressList);
 		beaconPeriod = jcaLibrary.getPropertyAsFloat(contextClassName + ".beacon_period", beaconPeriod);
 		beaconPort = jcaLibrary.getPropertyAsInt(contextClassName + ".repeater_port", beaconPort);
-		serverPort = jcaLibrary.getPropertyAsInt(contextClassName + ".server_port", serverPort);
+		tcpServerPort = jcaLibrary.getPropertyAsInt(contextClassName + ".server_port", tcpServerPort);
 		maxArrayBytes = jcaLibrary.getPropertyAsInt(contextClassName + ".max_array_bytes", maxArrayBytes);
 
 		// load default CAJContext configuration
@@ -343,7 +333,7 @@ public class CAJServerContext extends ServerContext implements CAContext, Config
 		autoBeaconAddressList = jcaLibrary.getPropertyAsBoolean(contextClassName + ".auto_addr_list",  autoBeaconAddressList);
 		beaconPeriod = jcaLibrary.getPropertyAsFloat(contextClassName + ".beacon_period", beaconPeriod);
 		beaconPort = jcaLibrary.getPropertyAsInt(contextClassName + ".repeater_port", beaconPort);
-		serverPort = jcaLibrary.getPropertyAsInt(contextClassName + ".server_port", serverPort);
+		tcpServerPort = jcaLibrary.getPropertyAsInt(contextClassName + ".server_port", tcpServerPort);
 		maxArrayBytes = jcaLibrary.getPropertyAsInt(contextClassName + ".max_array_bytes", maxArrayBytes);
 
 		// load CAS specific configuration (overrides default)
@@ -352,10 +342,12 @@ public class CAJServerContext extends ServerContext implements CAContext, Config
 		autoBeaconAddressList = jcaLibrary.getPropertyAsBoolean(thisClassName + ".auto_beacon_addr_list",  autoBeaconAddressList);
 		beaconPeriod = jcaLibrary.getPropertyAsFloat(thisClassName + ".beacon_period", beaconPeriod);
 		beaconPort = jcaLibrary.getPropertyAsInt(thisClassName + ".beacon_port", beaconPort);
-		serverPort = jcaLibrary.getPropertyAsInt(thisClassName + ".server_port", serverPort);
+		tcpServerPort = jcaLibrary.getPropertyAsInt(thisClassName + ".server_port", tcpServerPort);
 		maxArrayBytes = jcaLibrary.getPropertyAsInt(thisClassName + ".max_array_bytes", maxArrayBytes);
 		ignoreAddressList = jcaLibrary.getProperty(thisClassName + ".ignore_addr_list",  ignoreAddressList);
 
+		// TCP and UDP ports can only be configured to be the same, and will only differ if configured = 0 OR if TCP port is already taken.
+		udpServerPort = tcpServerPort;
 	}
 
 
@@ -395,10 +387,13 @@ public class CAJServerContext extends ServerContext implements CAContext, Config
 
 			// server port    
 			try {
-				serverPort = configuration.getChild("server_port", false).getValueAsInteger();
+				tcpServerPort = configuration.getChild("server_port", false).getValueAsInteger();
 			} catch(Exception ex) {
-				serverPort = configuration.getAttributeAsInteger("server_port", serverPort);
+				tcpServerPort = configuration.getAttributeAsInteger("server_port", tcpServerPort);
 			}
+
+			// TCP and UDP ports can only be configured to be the same, and will only differ if configured = 0 OR if TCP port is already taken.
+			udpServerPort = tcpServerPort;
     
     		// max. array bytes
 			try {
@@ -593,13 +588,13 @@ public class CAJServerContext extends ServerContext implements CAContext, Config
 		{
 			throw new CAException("Failed to initialize reactor.", ioex); 
 		}
-		
+
 		// setup UDP transport
 		initializeUDPTransport();
 		
 		beaconEmitter = new BeaconEmitter(broadcastTransport, this, beaconPeriod);
 
-		acceptor = new CASAcceptor(this, serverPort);
+		acceptor = new CASAcceptor(this, tcpServerPort);
 	}
 
 	/**
@@ -610,7 +605,7 @@ public class CAJServerContext extends ServerContext implements CAContext, Config
 		// setup UDP transport
 		try
 		{
-			InetSocketAddress listenLocalAddress = new InetSocketAddress(serverPort);
+			InetSocketAddress listenLocalAddress = new InetSocketAddress(udpServerPort);
 		
 			BroadcastConnector broadcastConnector = new BroadcastConnector(this);
 			
@@ -846,7 +841,8 @@ public class CAJServerContext extends ServerContext implements CAContext, Config
 		out.println("AUTO_BEACON_ADDR_LIST : " + autoBeaconAddressList);
 		out.println("BEACON_PERIOD : " + beaconPeriod);
 		out.println("BEACON_PORT : " + beaconPort);
-		out.println("SERVER_PORT : " + serverPort);
+		out.println("TCP SERVER_PORT : " + tcpServerPort);
+		out.println("UDP SERVER_PORT : " + udpServerPort);
 		out.println("MAX_ARRAY_BYTES : " + maxArrayBytes);
 		out.println("IGNORE_ADDR_LIST: " + ignoreAddressList);
 		out.print("STATE : ");
@@ -937,19 +933,71 @@ public class CAJServerContext extends ServerContext implements CAContext, Config
 	}
 
 	/**
-	 * Get server port.
+	 * Get the TCP server port number (used to establish channels).
+	 *
+	 * Deprecated - use getTcpServerPort instead.
+	 *
+	 * @deprecated
 	 * @return server port.
 	 */
 	public int getServerPort() {
-		return serverPort;
+		return getTcpServerPort();
 	}
 
 	/**
-	 * Set server port number.
+	 * Set the TCP server port number (used to establish channels).
+	 *
+	 * Deprecated - use setTcpServerPort instead.
+	 *
+	 * @deprecated
 	 * @param port new server port number.
 	 */
 	public void setServerPort(int port) {
-		serverPort = port;
+		this.setTcpServerPort(port);
+	}
+
+	/**
+	 * Get the TCP server port number (used to establish channels).
+	 *
+	 * @return the port number.
+	 */
+	public int getTcpServerPort() {
+		return tcpServerPort;
+	}
+
+	/**
+	 * Set the TCP server port number (used to establish channels).
+	 *
+	 * @param port new server port number.
+	 */
+	public void setTcpServerPort(int port) {
+		tcpServerPort = port;
+	}
+
+	/**
+	 * Get the UDP server port number (used for pv name search requests).
+	 *
+	 * Note: the TCP and UDP server ports are often the same number, but do not have to be.
+	 * The UDP port number is what is used in a client addr_list to find a server and the TCP port
+	 * number is provided to clients in the pv name search response.
+	 *
+	 * @return the port number.
+	 */
+	public int getUdpServerPort() {
+		return udpServerPort;
+	}
+
+	/**
+	 * Set the UDP server port number (used for pv name search requests).
+	 *
+	 * Note: the TCP and UDP server ports are often the same number, but do not have to be.
+	 * The UDP port number is what is used in a client addr_list to find a server and the TCP port
+	 * number is provided to clients in the pv name search response.
+	 *
+	 * @param port new server port number.
+	 */
+	public void setUdpServerPort(int port) {
+		udpServerPort = port;
 	}
 
 	/**

@@ -65,7 +65,7 @@ public class CASAcceptor implements ReactorHandler {
 		
 		// update port, if dynamically assigned port is used
 		if (assignedPort != port)
-			((CAJServerContext)context).setServerPort(assignedPort);
+			((CAJServerContext)context).setTcpServerPort(assignedPort);
 	}
 
 	/**
