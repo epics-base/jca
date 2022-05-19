@@ -446,22 +446,41 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 			if (tmp != null) nameServersList = tmp;
 
 			tmp = System.getenv("EPICS_CA_CONN_TMO");
-			if (tmp != null) connectionTimeout = Float.parseFloat(tmp);
+			if (tmp != null)
+				try { connectionTimeout = Float.parseFloat(tmp); }
+				catch (Exception ex)
+				{   logger.log(Level.WARNING, "Cannot parse EPICS_CA_CONN_TMO='" + tmp + "'", ex); }
 
 			tmp = System.getenv("EPICS_CA_BEACON_PERIOD");
-			if (tmp != null) beaconPeriod = Float.parseFloat(tmp);
+			if (tmp != null)
+				try { beaconPeriod = Float.parseFloat(tmp); }
+				catch (Exception ex)
+				{   logger.log(Level.WARNING, "Cannot parse EPICS_CA_BEACON_PERIOD='" + tmp + "'", ex); }
 
 			tmp = System.getenv("EPICS_CA_REPEATER_PORT");
-			if (tmp != null) repeaterPort = Integer.parseInt(tmp);
+			if (tmp != null)
+				try { repeaterPort = Integer.parseInt(tmp); }
+				catch (Exception ex)
+				{   logger.log(Level.WARNING, "Cannot parse EPICS_CA_REPEATER_PORT='" + tmp + "'", ex); }
 
 			tmp = System.getenv("EPICS_CA_SERVER_PORT");
-			if (tmp != null) serverPort = Integer.parseInt(tmp);
+			if (tmp != null)
+				try { serverPort = Integer.parseInt(tmp); }
+				catch (Exception ex)
+				{   logger.log(Level.WARNING, "Cannot parse EPICS_CA_SERVER_PORT='" + tmp + "'", ex); }
 
 			tmp = System.getenv("EPICS_CA_MAX_ARRAY_BYTES");
-			if (tmp != null) maxArrayBytes = Integer.parseInt(tmp);
+			if (tmp != null)
+				try { maxArrayBytes = Integer.parseInt(tmp); }
+				catch (Exception ex)
+				{   logger.log(Level.WARNING, "Cannot parse EPICS_CA_MAX_ARRAY_BYTES='" + tmp + "'", ex); }
+
 
 			tmp = System.getenv("EPICS_CA_MAX_SEARCH_PERIOD");
-			if (tmp != null) maxSearchInterval = Float.parseFloat(tmp);
+			if (tmp != null)
+				try { maxSearchInterval = Float.parseFloat(tmp); }
+				catch (Exception ex)
+				{   logger.log(Level.WARNING, "Cannot parse EPICS_CA_MAX_SEARCH_PERIOD='" + tmp + "'", ex); }
 		}
 		else
 		{
