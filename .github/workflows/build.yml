@@ -6,11 +6,16 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.may_fail }}
     strategy:
       fail-fast: false
       matrix:
-        java: [ '8', '11', '16' ]
-    name: Java ${{ matrix.java }}
+        java: [ '8', '11' ]
+        may_fail: [ false ]
+        include:
+          - java: '16'
+            may_fail: true
+    name: Build on Java ${{ matrix.java }}
     steps:
     - uses: actions/checkout@v3
 
@@ -22,11 +27,11 @@ jobs:
         cache: maven
 
     - name: Build and Test
-      run: mvn -B verify
+      run: mvn --batch-mode --update-snapshots verify
 
   site:
     runs-on: ubuntu-latest
-    name: Build and Deploy site
+    name: Generate and Deploy site
     if: ${{ github.ref == 'refs/heads/master' }}
     steps:
     - uses: actions/checkout@v3
