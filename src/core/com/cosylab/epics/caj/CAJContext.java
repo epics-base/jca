@@ -1337,10 +1337,13 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 		out.println("NAME_SERVERS : " + nameServersList);
 		out.println("CONNECTION_TIMEOUT : " + connectionTimeout);
 		out.println("BEACON_PERIOD : " + beaconPeriod);
+		out.println("BEACON_SPEEDUP : " + beaconSpeedup);
+		out.println("BEACON_SLOWDOWN : " + beaconSlowdown);
 		out.println("ECHO_TIMEOUT : " + echoTimeout);
 		out.println("REPEATER_PORT : " + repeaterPort);
 		out.println("SERVER_PORT : " + serverPort);
 		out.println("MAX_ARRAY_BYTES : " + maxArrayBytes);
+		out.println("MIN_SEARCH_INTERVAL : " + minSearchInterval);
 		out.println("MAX_SEARCH_INTERVAL : " + maxSearchInterval);
 		out.println("EVENT_DISPATCHER: " + eventDispatcher);
 		out.print("STATE : ");
