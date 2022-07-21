@@ -1079,7 +1079,7 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 			{
 				probeResponsePending = false;
 			}
-			rescheduleTimer(CAConstants.CA_ECHO_TIMEOUT);
+			rescheduleTimer(context.getEchoTimeout());
 		}
 	}
 

@@ -177,6 +177,11 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 	 */
 	protected float beaconSlowdown = 1.25f;
 	
+        /**
+	 * Timeout for the state-of-health message (defaults to the CA default of 5 sec).
+	 */
+	protected long echoTimeout = CAConstants.CA_ECHO_TIMEOUT;
+
 	/**
 	 * Port number for the repeater to listen to.
 	 */
@@ -457,6 +462,12 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 				catch (Exception ex)
 				{   logger.log(Level.WARNING, "Cannot parse EPICS_CA_BEACON_PERIOD='" + tmp + "'", ex); }
 
+			tmp = System.getenv("EPICS_CA_ECHO_TIMEOUT");
+			if (tmp != null)
+				try { echoTimeout = Integer.parseInt(tmp); }
+				catch (Exception ex)
+				{   logger.log(Level.WARNING, "Cannot parse EPICS_CA_ECHO_TIMEOUT='" + tmp + "'", ex); }
+
 			tmp = System.getenv("EPICS_CA_REPEATER_PORT");
 			if (tmp != null)
 				try { repeaterPort = Integer.parseInt(tmp); }
@@ -491,6 +502,7 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 			nameServersList = jcaLibrary.getProperty(contextClassName + ".name_servers", nameServersList);
 			connectionTimeout = jcaLibrary.getPropertyAsFloat(contextClassName + ".connection_timeout", connectionTimeout);
 			beaconPeriod = jcaLibrary.getPropertyAsFloat(contextClassName + ".beacon_period", beaconPeriod);
+			echoTimeout = jcaLibrary.getPropertyAsLong(contextClassName + ".echo_timeout", echoTimeout);
 			repeaterPort = jcaLibrary.getPropertyAsInt(contextClassName + ".repeater_port", repeaterPort);
 			serverPort = jcaLibrary.getPropertyAsInt(contextClassName + ".server_port", serverPort);
 			maxArrayBytes = jcaLibrary.getPropertyAsInt(contextClassName + ".max_array_bytes", maxArrayBytes);
@@ -505,6 +517,7 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 			beaconPeriod = jcaLibrary.getPropertyAsFloat(thisClassName + ".beacon_period", beaconPeriod);
 			beaconSpeedup = jcaLibrary.getPropertyAsFloat(thisClassName + ".beacon_speedup", beaconSpeedup);
 			beaconSlowdown = jcaLibrary.getPropertyAsFloat(thisClassName + ".beacon_slowdown", beaconSlowdown);
+			echoTimeout = jcaLibrary.getPropertyAsLong(thisClassName + ".echo_timeout", echoTimeout);
 			repeaterPort = jcaLibrary.getPropertyAsInt(thisClassName + ".repeater_port", repeaterPort);
 			serverPort = jcaLibrary.getPropertyAsInt(thisClassName + ".server_port", serverPort);
 			maxArrayBytes = jcaLibrary.getPropertyAsInt(thisClassName + ".max_array_bytes", maxArrayBytes);
@@ -558,6 +571,13 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 				beaconPeriod = configuration.getChild("beacon_period", false).getValueAsFloat();
 			} catch(Exception ex) {
 				beaconPeriod = configuration.getAttributeAsFloat("beacon_period", beaconPeriod);
+			}
+
+			// echo timeout
+			try {
+				echoTimeout = configuration.getChild("echo_timeout", false).getValueAsLong();
+			} catch(Exception ex) {
+				echoTimeout = configuration.getAttributeAsLong("echo_timeout", echoTimeout);
 			}
 
 			// repeater port    
@@ -1319,6 +1339,7 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 		out.println("BEACON_PERIOD : " + beaconPeriod);
 		out.println("BEACON_SPEEDUP : " + beaconSpeedup);
 		out.println("BEACON_SLOWDOWN : " + beaconSlowdown);
+		out.println("ECHO_TIMEOUT : " + echoTimeout);
 		out.println("REPEATER_PORT : " + repeaterPort);
 		out.println("SERVER_PORT : " + serverPort);
 		out.println("MAX_ARRAY_BYTES : " + maxArrayBytes);
@@ -1404,6 +1425,14 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 	 */
 	public float getBeaconSlowdown() {
 		return beaconSlowdown;
+	}
+
+	/**
+	 * Get echo timeout (in milliseconds).
+	 * @return echo timeout (in milliseconds).
+	 */
+	public long getEchoTimeout() {
+		return echoTimeout;
 	}
 
 	/**
