@@ -1,0 +1,54 @@
+name: JCA build
+
+on: [push, pull_request]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.may_fail }}
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [ '8', '11' ]
+        may_fail: [ false ]
+        include:
+          - java: '16'
+            may_fail: true
+    name: Build on Java ${{ matrix.java }}
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up JDK ${{ matrix.java }}
+      uses: actions/setup-java@v3
+      with:
+        java-version: ${{ matrix.java }}
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Build and Test
+      run: mvn --batch-mode --update-snapshots verify
+
+  site:
+    runs-on: ubuntu-latest
+    name: Generate and Deploy site
+    if: ${{ github.ref == 'refs/heads/master' }}
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Create site
+      run: mvn -B -DskipTests compile site
+
+    - name: Push site to gh-pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./target/site
+        force_orphan: true  
