@@ -1,4 +1,4 @@
-# jca [![Build Status](https://github.com/epics-base/jca/actions/workflows/build.yml/badge.svg)
+# jca [![Build Status](https://github.com/epics-base/jca/actions/workflows/build.yml/badge.svg)](https://github.com/epics-base/jca/actions/workflows/build.yml)
 
 Java Channel Access client and server API and a pure java implementation for both.
 
