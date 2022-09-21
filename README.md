@@ -14,15 +14,15 @@ Java Channel Access client and server API and a pure java implementation for bot
 The jca artifacts are hosted on maven centeral and can be downloaded from https://mvnrepository.com/artifact/org.epics/jca  
 
 You can also directly download the jca jars along with their sources and javadocs from    
-[jca-2.4.3 jars](https://repo1.maven.org/maven2/org/epics/jca/2.4.3/)
+[jca-2.4.7 jars](https://repo1.maven.org/maven2/org/epics/jca/2.4.7/)
 
 The javadocs are also available online:  
-[jca-2.4.3-javadocs](https://www.javadoc.io/doc/org.epics/jca/latest/index.html)
+[jca-2.4.7-javadocs](https://www.javadoc.io/doc/org.epics/jca/latest/index.html)
 
 **Development Release**  
 You can also download the lastest development snapshots from the sonatype snapshot repository
 
-[Download jca-2.4.4-SNAPSHOT jars](https://oss.sonatype.org/content/repositories/snapshots/org/epics/jca/2.4.4-SNAPSHOT/)
+[Download jca-2.4.8-SNAPSHOT jars](https://oss.sonatype.org/content/repositories/snapshots/org/epics/jca/2.4.8-SNAPSHOT/)
 
 or add the sonatype repository to your pom
 
