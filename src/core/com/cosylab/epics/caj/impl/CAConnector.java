@@ -54,7 +54,7 @@ public class CAConnector implements Connector {
 	/**
 	 * Map tracking failed TCP connections
 	 */
-	private final Map<InetSocketAddress, FailedConnection> failedToConnect = new HashMap<InetSocketAddress, FailedConnection>();
+	private final Map<InetSocketAddress, RetryFailedConnection> failedToConnect = new HashMap<InetSocketAddress, RetryFailedConnection>();
 
 	/**
 	 * @param context
@@ -166,7 +166,7 @@ public class CAConnector implements Connector {
 					failedToConnect.get(address).increaseRetryTime();
 				} else // Otherwise add to failed connections map
 				{
-					failedToConnect.put(address, new FailedConnection(address));
+					failedToConnect.put(address, new RetryFailedConnection());
 				}
 				
 				throw new ConnectionException("Failed to connect to '" + address + "'.", address, th);
@@ -207,6 +207,7 @@ public class CAConnector implements Connector {
 			}
 
 			context.getLogger().finest("Openning socket to CA server " + address + ", attempt " + (tryCount+1) + ".");
+			
 			try
 			{
 				return SocketChannel.open(address);
@@ -226,15 +227,13 @@ public class CAConnector implements Connector {
 	 * Class defining the next time to retry the connection for
 	 * a given socket address.
 	 */
-	private class FailedConnection {
-		private InetSocketAddress address;
+	private class RetryFailedConnection {
 		private long delay = 1000;
 		private long retryTime;
 		private static final long MAX_DELAY_TIME = 120000;
 		
-		public FailedConnection(InetSocketAddress address)
+		public RetryFailedConnection()
 		{
-			this.address = address;
 			this.retryTime = System.currentTimeMillis() + delay;
 		}
 		
