@@ -207,7 +207,7 @@ public class CAConnector implements Connector {
 			}
 
 			context.getLogger().finest("Openning socket to CA server " + address + ", attempt " + (tryCount+1) + ".");
-			
+
 			try
 			{
 				return SocketChannel.open(address);
