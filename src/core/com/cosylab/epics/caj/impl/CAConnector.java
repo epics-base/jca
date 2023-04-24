@@ -18,8 +18,8 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.cosylab.epics.caj.CAJContext;
 import com.cosylab.epics.caj.impl.reactor.ReactorHandler;
@@ -54,7 +54,7 @@ public class CAConnector implements Connector {
 	/**
 	 * Map tracking failed TCP connections
 	 */
-	private final Map<InetSocketAddress, RetryFailedConnection> failedToConnect = new HashMap<InetSocketAddress, RetryFailedConnection>();
+	private final Map<InetSocketAddress, RetryFailedConnection> failedToConnect = new ConcurrentHashMap<InetSocketAddress, RetryFailedConnection>();
 
 	/**
 	 * @param context
@@ -73,9 +73,10 @@ public class CAConnector implements Connector {
 	{
 		// If already tried and failed to connect check that it is now time
 		// to retry, otherwise bail out
-		if (failedToConnect.containsKey(address))
+		RetryFailedConnection prevConnect = failedToConnect.get(address);
+		if (prevConnect != null)
 		{
-			if (System.currentTimeMillis() < failedToConnect.get(address).getRetryTime())
+			if (System.currentTimeMillis() < prevConnect.getRetryTime())
 			{
 				return null;
 			}
@@ -141,10 +142,7 @@ public class CAConnector implements Connector {
 				
 				// If previously unable connect now remove from map tracking
 				// failed connections
-				if (failedToConnect.containsKey(address))
-				{
-					failedToConnect.remove(address);
-				}
+				failedToConnect.remove(address);
 	
 				return transport;
 	
@@ -160,15 +158,9 @@ public class CAConnector implements Connector {
 				catch (Throwable t) { /* noop */ }
 	
 				// If previously unable to connect then increase the delay
-				// time before the next attempt
-				if (failedToConnect.containsKey(address))
-				{
-					failedToConnect.get(address).increaseRetryTime();
-				} else // Otherwise add to failed connections map
-				{
-					failedToConnect.put(address, new RetryFailedConnection());
-				}
-				
+				// time before the next attempt otherwise add to failed connections map
+				failedToConnect.computeIfAbsent(address, k -> new RetryFailedConnection()).increaseRetryTime();
+
 				throw new ConnectionException("Failed to connect to '" + address + "'.", address, th);
 			}
 			finally
