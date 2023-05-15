@@ -226,12 +226,12 @@ public class CAConnector implements Connector {
 		
 		public RetryFailedConnection()
 		{
-			this.retryTime = System.currentTimeMillis() + delay;
+			increaseRetryTime();
 		}
 		
 		public void increaseRetryTime()
 		{
-			this.retryTime = System.currentTimeMillis() + delay;
+			retryTime = System.currentTimeMillis() + delay;
 			delay = delay * 2;
 			if (delay > MAX_DELAY_TIME)
 			{
