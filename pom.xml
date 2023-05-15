@@ -136,6 +136,11 @@
                     </systemProperties>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.7</version>
+            </plugin>
             <!-- Required add sources to deployment -->
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
