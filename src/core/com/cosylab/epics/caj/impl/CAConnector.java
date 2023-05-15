@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.cosylab.epics.caj.CAJContext;
 import com.cosylab.epics.caj.impl.reactor.ReactorHandler;
@@ -48,6 +50,11 @@ public class CAConnector implements Connector {
 	 * Context instance.
 	 */
 	private static final int LOCK_TIMEOUT = 20 * 1000;	// 20s
+	
+	/**
+	 * Map tracking failed TCP connections
+	 */
+	private final Map<InetSocketAddress, RetryFailedConnection> failedToConnect = new ConcurrentHashMap<InetSocketAddress, RetryFailedConnection>();
 
 	/**
 	 * @param context
@@ -64,6 +71,17 @@ public class CAConnector implements Connector {
 							 InetSocketAddress address, short transportRevision, short priority)
 		throws ConnectionException
 	{
+		// If already tried and failed to connect check that it is now time
+		// to retry, otherwise bail out
+		RetryFailedConnection prevConnect = failedToConnect.get(address);
+		if (prevConnect != null)
+		{
+			if (System.currentTimeMillis() < prevConnect.getRetryTime())
+			{
+				return null;
+			}
+		}
+		
 		SocketChannel socket = null;
 		
 		// first try to check cache w/o named lock...
@@ -121,6 +139,10 @@ public class CAConnector implements Connector {
 				new HostNameRequest(transport).submit();
 				
 				context.getLogger().finer("Connected to CA server: " + address);
+				
+				// If previously unable connect now remove from map tracking
+				// failed connections
+				failedToConnect.remove(address);
 	
 				return transport;
 	
@@ -135,6 +157,10 @@ public class CAConnector implements Connector {
 				}
 				catch (Throwable t) { /* noop */ }
 	
+				// If previously unable to connect then increase the delay
+				// time before the next attempt otherwise add to failed connections map
+				failedToConnect.computeIfAbsent(address, k -> new RetryFailedConnection()).increaseRetryTime();
+
 				throw new ConnectionException("Failed to connect to '" + address + "'.", address, th);
 			}
 			finally
@@ -187,6 +213,36 @@ public class CAConnector implements Connector {
 		}
 
 		throw lastException;
+	}
+	
+	/**
+	 * Class defining the next time to retry the connection for
+	 * a given socket address.
+	 */
+	private class RetryFailedConnection {
+		private long delay = 1000;
+		private long retryTime;
+		private static final long MAX_DELAY_TIME = 120000;
+		
+		public RetryFailedConnection()
+		{
+			increaseRetryTime();
+		}
+		
+		public void increaseRetryTime()
+		{
+			retryTime = System.currentTimeMillis() + delay;
+			delay = delay * 2;
+			if (delay > MAX_DELAY_TIME)
+			{
+				delay = MAX_DELAY_TIME;
+			}
+		}
+
+		public long getRetryTime()
+		{
+			return retryTime;
+		}
 	}
 
 }
