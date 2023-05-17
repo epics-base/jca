@@ -38,23 +38,32 @@ public class Version {
     private String implementationLanguage;
     
     /**
+     * 
+     */
+    private String version;
+    
+    /**
      * @see Version#getMajorVersion()
      */
+    @Deprecated
     private int majorVersion;
     
     /**
      * @see Version#getMinorVersion()
      */
+    @Deprecated
     private int minorVersion;
     
     /**
      * @see Version#getMaintenanceVersion()
      */
+    @Deprecated
     private int maintenanceVersion;
     
     /**
      * @see Version#getDevelopmentVersion()
      */
+    @Deprecated
     private int developmentVersion;
     
     /**
@@ -66,6 +75,7 @@ public class Version {
      * @param maintenanceVersion	maintenance version.
      * @param developmentVersion	development version.
      */
+    @Deprecated
     public Version(String productName, String implementationLangugage,
             	   int majorVersion, int minorVersion, int maintenanceVersion,
             	   int developmentVersion)
@@ -82,6 +92,21 @@ public class Version {
     }
     
     /**
+     * Version consturctor.
+     * @param productName	product name.
+     * @param implementationLangugage	impementation language.
+     * @param version	a string representing the version number.
+     */
+    public Version(String productName, String implementationLangugage, String version)
+    {
+
+        this.productName = productName;
+        this.implementationLanguage = implementationLangugage;
+        this.version = version;
+    }
+    
+    
+    /**
      * Get the long version string. Version String formatted like <BR><CODE>
      * "<B>ProductName </B> \[<B>ImplementationLanguage</B>\] 'v'v.r[.dd|<B>D</B>nn]"
      * </CODE> <BR>e.g. <BR><CODE>"<B>CAJ </B> [<B>Java</B>] v1.0.1"</CODE>
@@ -95,16 +120,12 @@ public class Version {
                 + " ["
                 + getImplementationLanguage()
                 + "] v"
-                + getMajorVersion()
-                + "."
-                + getMinorVersion()
-                + "."
-                + ((getDevelopmentVersion() > 0) ? ("D" + getDevelopmentVersion())
-                        : ("" + getMaintenanceVersion()));
+                + getVersion();
     }
 
-    /**
-     * Get the basic version string. Version String formatted like <BR><CODE>
+
+	/**
+     * Get the basic version string. Vesion String formatted like <BR><CODE>
      * "<B>ProductName </B> 'v'v.r[.dd|<B>D</B>nn]"
      * </CODE> <BR>e.g. <BR><CODE>"<B>CAJ </B> v1.0.1"</CODE>
      * <BR>
@@ -115,12 +136,7 @@ public class Version {
     {
         return getProductName()
                 + " v"
-                + getMajorVersion()
-                + "."
-                + getMinorVersion()
-                + "."
-                + ((getDevelopmentVersion() > 0) ? ("D" + getDevelopmentVersion())
-                        : ("" + getMaintenanceVersion()));
+                + getVersion();
     }
     
     /**
@@ -139,6 +155,14 @@ public class Version {
         return implementationLanguage;
     }
 
+
+    /**
+     * 
+     * @return version number
+     */
+    private String getVersion() {
+		return version;
+	}
     /**
      * Major version number. This changes only when there is a
      * significant, externally apparent enhancement from the previous release.
@@ -147,6 +171,7 @@ public class Version {
      * Clients should carefully consider the implications of new versions as
      * external interfaces and behaviour may have changed.
      */
+    @Deprecated
     public int getMajorVersion()
     {
         return majorVersion;
@@ -161,6 +186,7 @@ public class Version {
      * <li>its designated as a reference release</li>
      * </ul>
      */
+    @Deprecated
     public int getMinorVersion()
     {
         return minorVersion;
@@ -173,6 +199,7 @@ public class Version {
      * contains no API changes. When missing, it designates the final and
      * complete development drop for a release.
      */
+    @Deprecated
     public int getMaintenanceVersion()
     {
         return maintenanceVersion;
@@ -192,6 +219,7 @@ public class Version {
      * Each 'D' drops can contain functional enhancements as well as defect
      * fixes. 'D' drops may not be as stable as the final releases.
      */
+    @Deprecated
     public int getDevelopmentVersion()
     {
         return developmentVersion;
