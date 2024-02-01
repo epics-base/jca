@@ -50,9 +50,9 @@ public class CAConnector implements Connector {
 	private NamedLockPattern namedLocker;
 	
 	/**
-	 * Socket connect timeout (ms).
+	 * Socket connect timeout (sec).
 	 */
-	private int socketConnectTimeout = 5000;
+	private float socketConnectTimeout = 120.0f;
 
 	/**
 	 * Context instance.
@@ -71,7 +71,7 @@ public class CAConnector implements Connector {
 	public CAConnector(CAJContext context) {
 		this.context = context;
 		namedLocker = new NamedLockPattern();
-		socketConnectTimeout = JCALibrary.getInstance().getPropertyAsInt(this.getClass().getName()+".socket_connect_timeout", socketConnectTimeout);
+		socketConnectTimeout = JCALibrary.getInstance().getPropertyAsFloat(this.getClass().getName()+".socket_connect_timeout", socketConnectTimeout);
 	}
 	
 	/**
@@ -213,7 +213,8 @@ public class CAConnector implements Connector {
 			try
 			{
 				SocketChannel socketChannel = SocketChannel.open();
-				socketChannel.socket().connect(address, socketConnectTimeout);				
+				int socketConnectTimeoutMs = (int) (socketConnectTimeout * 1000);
+				socketChannel.socket().connect(address, socketConnectTimeoutMs);				
 				return socketChannel;
 			}
 			catch (IOException ioe)
