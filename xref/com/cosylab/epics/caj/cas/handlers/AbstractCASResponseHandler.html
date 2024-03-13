@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>AbstractCASResponseHandler xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../../../apidocs/com/cosylab/epics/caj/cas/handlers/AbstractCASResponseHandler.html">View Javadoc</a></div><pre>
+<a class="jxr_linenumber" name="L1" href="#L1">1</a>   <em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="L2" href="#L2">2</a>   <em class="jxr_comment"> * Copyright (c) 2004 by Cosylab</em>
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <em class="jxr_comment"> *</em>
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <em class="jxr_comment"> * The full license specifying the redistribution, modification, usage and other</em>
+<a class="jxr_linenumber" name="L5" href="#L5">5</a>   <em class="jxr_comment"> * rights and obligations is included with the distribution of this project in</em>
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   <em class="jxr_comment"> * the file "LICENSE-CAJ". If the license is not included visit Cosylab web site,</em>
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>   <em class="jxr_comment"> * &lt;<a href="http://www.cosylab.com&gt;." target="alexandria_uri">http://www.cosylab.com&gt;.</a></em>
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <em class="jxr_comment"> *</em>
+<a class="jxr_linenumber" name="L9" href="#L9">9</a>   <em class="jxr_comment"> * THIS SOFTWARE IS PROVIDED AS-IS WITHOUT WARRANTY OF ANY KIND, NOT EVEN THE</em>
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>  <em class="jxr_comment"> * IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR OF THIS SOFTWARE, ASSUMES</em>
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>  <em class="jxr_comment"> * _NO_ RESPONSIBILITY FOR ANY CONSEQUENCE RESULTING FROM THE USE, MODIFICATION,</em>
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>  <em class="jxr_comment"> * OR REDISTRIBUTION OF THIS SOFTWARE.</em>
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>  <em class="jxr_comment"> */</em>
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>  
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>  <strong class="jxr_keyword">package</strong> com.cosylab.epics.caj.cas.handlers;
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>  
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">import</strong> gov.aps.jca.CAStatus;
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>  <strong class="jxr_keyword">import</strong> gov.aps.jca.cas.ProcessVariable;
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> gov.aps.jca.dbr.DBR;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> gov.aps.jca.dbr.DBRFactory;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> gov.aps.jca.dbr.DBRType;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> gov.aps.jca.dbr.DBR_PRECISION_Double;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> gov.aps.jca.dbr.DBR_PRECISION_Float;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> gov.aps.jca.dbr.DBR_TIME_LABELS_Enum;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> gov.aps.jca.dbr.PRECISION;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> gov.aps.jca.dbr.STS;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> gov.aps.jca.dbr.Severity;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> gov.aps.jca.dbr.Status;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> java.nio.ByteBuffer;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> java.util.logging.Level;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> com.cosylab.epics.caj.cas.CAJServerContext;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> com.cosylab.epics.caj.cas.requests.ExceptionRequest;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> com.cosylab.epics.caj.impl.Transport;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> com.cosylab.epics.caj.impl.handlers.AbstractCAResponseHandler;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_javadoccomment"> * @author &lt;a href="<a href="mailto:matej.sekoranjaATcosylab.com" target="alexandria_uri">mailto:matej.sekoranjaATcosylab.com</a>"&gt;Matej Sekoranja&lt;/a&gt;</em>
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <em class="jxr_javadoccomment"> * @version $id$</em>
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">class</strong> <a name="AbstractCASResponseHandler" href="../../../../../../com/cosylab/epics/caj/cas/handlers/AbstractCASResponseHandler.html#AbstractCASResponseHandler">AbstractCASResponseHandler</a> <strong class="jxr_keyword">extends</strong> <a name="AbstractCAResponseHandler" href="../../../../../../com/cosylab/epics/caj/impl/handlers/AbstractCAResponseHandler.html#AbstractCAResponseHandler">AbstractCAResponseHandler</a> {
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>  
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <em class="jxr_javadoccomment">	 * Context instance.</em>
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>  	<strong class="jxr_keyword">protected</strong> <a name="CAJServerContext" href="../../../../../../com/cosylab/epics/caj/cas/CAJServerContext.html#CAJServerContext">CAJServerContext</a> context;
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>  
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>  	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>  <em class="jxr_javadoccomment">	 * @param context</em>
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>  <em class="jxr_javadoccomment">	 * @param description</em>
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>  <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>  	<strong class="jxr_keyword">public</strong> <a name="AbstractCASResponseHandler" href="../../../../../../com/cosylab/epics/caj/cas/handlers/AbstractCASResponseHandler.html#AbstractCASResponseHandler">AbstractCASResponseHandler</a>(<a name="CAJServerContext" href="../../../../../../com/cosylab/epics/caj/cas/CAJServerContext.html#CAJServerContext">CAJServerContext</a> context, String description) {
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>  		<strong class="jxr_keyword">super</strong>(description);
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>  		<strong class="jxr_keyword">this</strong>.context = context;
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>  	}
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>  
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>  	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>  <em class="jxr_javadoccomment">	 * Extract string from payload.</em>
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>  <em class="jxr_javadoccomment">	 * @param buffer buffer to use.</em>
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>  <em class="jxr_javadoccomment">	 * @param start buffer offset to use, if negative current buffer position will be used</em>
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">	 * @param maxSize maximum payload size reserved for string.</em>
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment">	 * @param setToEnd set to the end of string flag (after zero char)</em>
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>  <em class="jxr_javadoccomment">	 * @return extracted string.</em>
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>  <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>  	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String extractString(ByteBuffer buffer, <strong class="jxr_keyword">int</strong> start, <strong class="jxr_keyword">int</strong> maxSize, <strong class="jxr_keyword">boolean</strong> setToEnd)
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>  	{
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>  		<strong class="jxr_keyword">if</strong> (start &lt; 0)
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>  			start = buffer.position();
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>  		<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> bufferEnd = start + maxSize;
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>  
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>  		byte[] data = buffer.array();
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>  		<strong class="jxr_keyword">int</strong> end = start;
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>  		
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>  		<em class="jxr_comment">// find zero char (string terminator)</em>
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>  		<strong class="jxr_keyword">while</strong> (data[end] != 0 &amp;&amp; end &lt; bufferEnd)
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>  			end++;
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>  
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>  		<em class="jxr_comment">// set to the end</em>
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>  		<strong class="jxr_keyword">if</strong> (setToEnd &amp;&amp; end != bufferEnd)
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>  			buffer.position(end + 1); <em class="jxr_comment">// skip 0 character</em>
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>  		
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>  		<strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> String(data, start, end-start);
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>  	}
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>  
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>  	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>  <em class="jxr_javadoccomment">	 * Send error (exception) response.</em>
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>  <em class="jxr_javadoccomment">	 * @param transport	transport to use.</em>
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>  <em class="jxr_javadoccomment">	 * @param cid channel ID.</em>
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>  <em class="jxr_javadoccomment">	 * @param errorStatus error status.</em>
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>  <em class="jxr_javadoccomment">	 * @param previousHeader header of the request messages causing this error.</em>
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>  <em class="jxr_javadoccomment">	 * @param message string message, can be &lt;code&gt;null&lt;/code&gt;.</em>
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>  <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>  	<strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> sendException(<a name="Transport" href="../../../../../../com/cosylab/epics/caj/impl/Transport.html#Transport">Transport</a> transport, <strong class="jxr_keyword">int</strong> cid, 
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>  			CAStatus errorStatus, ByteBuffer previousHeader, String message)
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>  	{
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>  		<strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>  			<em class="jxr_comment">// prepare for reading</em>
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>  			previousHeader.flip();
+<a class="jxr_linenumber" name="L100" href="#L100">100</a> 
+<a class="jxr_linenumber" name="L101" href="#L101">101</a> 			<strong class="jxr_keyword">new</strong> <a name="ExceptionRequest" href="../../../../../../com/cosylab/epics/caj/cas/requests/ExceptionRequest.html#ExceptionRequest">ExceptionRequest</a>(transport,	cid, errorStatus, previousHeader, message).submit();
+<a class="jxr_linenumber" name="L102" href="#L102">102</a> 		} <strong class="jxr_keyword">catch</strong> (Throwable th) {
+<a class="jxr_linenumber" name="L103" href="#L103">103</a> 			context.getLogger().log(Level.WARNING, <span class="jxr_string">"Failed to send exception response for CID: "</span> + cid, th);
+<a class="jxr_linenumber" name="L104" href="#L104">104</a> 		}
+<a class="jxr_linenumber" name="L105" href="#L105">105</a> 	}
+<a class="jxr_linenumber" name="L106" href="#L106">106</a> 
+<a class="jxr_linenumber" name="L107" href="#L107">107</a> 	
+<a class="jxr_linenumber" name="L108" href="#L108">108</a> 	
+<a class="jxr_linenumber" name="L109" href="#L109">109</a> 	<em class="jxr_comment">// type value codes</em>
+<a class="jxr_linenumber" name="L110" href="#L110">110</a> 	<strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> DBR_TIME_OFFSET = 14;
+<a class="jxr_linenumber" name="L111" href="#L111">111</a> 	<strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> DBR_GR_OFFSET = 21;
+<a class="jxr_linenumber" name="L112" href="#L112">112</a> 	<strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> DBR_CTRL_OFFSET = 28;
+<a class="jxr_linenumber" name="L113" href="#L113">113</a> 
+<a class="jxr_linenumber" name="L114" href="#L114">114</a> 	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L115" href="#L115">115</a> <em class="jxr_javadoccomment">	 * Create appropriate DBR structure for reading (of PV type).</em>
+<a class="jxr_linenumber" name="L116" href="#L116">116</a> <em class="jxr_javadoccomment">	 * Returned DBR structure will be the most complete one (CTRL usually)., PV array length.</em>
+<a class="jxr_linenumber" name="L117" href="#L117">117</a> <em class="jxr_javadoccomment">	 * @param processVariable	process variable to be read.</em>
+<a class="jxr_linenumber" name="L118" href="#L118">118</a> <em class="jxr_javadoccomment">	 * @return requested DBR.</em>
+<a class="jxr_linenumber" name="L119" href="#L119">119</a> <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="L120" href="#L120">120</a> 	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <a name="DBR" href="../../../../../../gov/aps/jca/dbr/DBR.html#DBR">DBR</a> createDBRforReading(<a name="ProcessVariable" href="../../../../../../gov/aps/jca/cas/ProcessVariable.html#ProcessVariable">ProcessVariable</a> processVariable)
+<a class="jxr_linenumber" name="L121" href="#L121">121</a> 	{
+<a class="jxr_linenumber" name="L122" href="#L122">122</a> 		<strong class="jxr_keyword">return</strong> createDBRforReading(processVariable, processVariable.getDimensionSize(0));
+<a class="jxr_linenumber" name="L123" href="#L123">123</a> 	}
+<a class="jxr_linenumber" name="L124" href="#L124">124</a> 	
+<a class="jxr_linenumber" name="L125" href="#L125">125</a> 	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L126" href="#L126">126</a> <em class="jxr_javadoccomment">	 * Create appropriate DBR structure for reading (of PV type).</em>
+<a class="jxr_linenumber" name="L127" href="#L127">127</a> <em class="jxr_javadoccomment">	 * Returned DBR structure will be the most complete one (CTRL usually).</em>
+<a class="jxr_linenumber" name="L128" href="#L128">128</a> <em class="jxr_javadoccomment">	 * @param processVariable	process variable to be read.</em>
+<a class="jxr_linenumber" name="L129" href="#L129">129</a> <em class="jxr_javadoccomment">	 * @param dataCount	requested data count (returned DBR will have this count).</em>
+<a class="jxr_linenumber" name="L130" href="#L130">130</a> <em class="jxr_javadoccomment">	 * @return requested DBR.</em>
+<a class="jxr_linenumber" name="L131" href="#L131">131</a> <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="L132" href="#L132">132</a> 	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <a name="DBR" href="../../../../../../gov/aps/jca/dbr/DBR.html#DBR">DBR</a> createDBRforReading(<a name="ProcessVariable" href="../../../../../../gov/aps/jca/cas/ProcessVariable.html#ProcessVariable">ProcessVariable</a> processVariable, <strong class="jxr_keyword">int</strong> dataCount)
+<a class="jxr_linenumber" name="L133" href="#L133">133</a> 	{
+<a class="jxr_linenumber" name="L134" href="#L134">134</a> 		<strong class="jxr_keyword">return</strong> createDBRforReading(processVariable, (<strong class="jxr_keyword">short</strong>)DBR_CTRL_OFFSET, dataCount);
+<a class="jxr_linenumber" name="L135" href="#L135">135</a> 	}
+<a class="jxr_linenumber" name="L136" href="#L136">136</a> 	
+<a class="jxr_linenumber" name="L137" href="#L137">137</a> 		<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L138" href="#L138">138</a> <em class="jxr_javadoccomment">	 * Create appropriate DBR structure for reading (of PV type).</em>
+<a class="jxr_linenumber" name="L139" href="#L139">139</a> <em class="jxr_javadoccomment">	 * @param processVariable	process variable to be read.</em>
+<a class="jxr_linenumber" name="L140" href="#L140">140</a> <em class="jxr_javadoccomment">	 * @param dataType 	data type requested from client (not necessary equals to PV type)</em>
+<a class="jxr_linenumber" name="L141" href="#L141">141</a> <em class="jxr_javadoccomment">	 * @param dataCount	requested data count (returned DBR will have this count).</em>
+<a class="jxr_linenumber" name="L142" href="#L142">142</a> <em class="jxr_javadoccomment">	 * @return requested DBR.</em>
+<a class="jxr_linenumber" name="L143" href="#L143">143</a> <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="L144" href="#L144">144</a> 	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <a name="DBR" href="../../../../../../gov/aps/jca/dbr/DBR.html#DBR">DBR</a> createDBRforReading(<a name="ProcessVariable" href="../../../../../../gov/aps/jca/cas/ProcessVariable.html#ProcessVariable">ProcessVariable</a> processVariable, <strong class="jxr_keyword">short</strong> dataType, <strong class="jxr_keyword">int</strong> dataCount)
+<a class="jxr_linenumber" name="L145" href="#L145">145</a> 	{
+<a class="jxr_linenumber" name="L146" href="#L146">146</a> 
+<a class="jxr_linenumber" name="L147" href="#L147">147</a> 		<em class="jxr_comment">// get native type (plain type) and convert it to TIME type (or GR, CTRL if requested)</em>
+<a class="jxr_linenumber" name="L148" href="#L148">148</a> 		<strong class="jxr_keyword">int</strong> offset = DBR_TIME_OFFSET;
+<a class="jxr_linenumber" name="L149" href="#L149">149</a> 		<strong class="jxr_keyword">if</strong> (dataType &gt;= DBR_GR_OFFSET)
+<a class="jxr_linenumber" name="L150" href="#L150">150</a> 			offset = (dataType &gt;= DBR_CTRL_OFFSET) ? DBR_CTRL_OFFSET : DBR_GR_OFFSET;
+<a class="jxr_linenumber" name="L151" href="#L151">151</a> 
+<a class="jxr_linenumber" name="L152" href="#L152">152</a> 		<em class="jxr_comment">// calculate new type</em>
+<a class="jxr_linenumber" name="L153" href="#L153">153</a> 		DBRType type = processVariable.getType();
+<a class="jxr_linenumber" name="L154" href="#L154">154</a> 		<strong class="jxr_keyword">int</strong> typeValue = type.getValue() + offset;
+<a class="jxr_linenumber" name="L155" href="#L155">155</a> 		
+<a class="jxr_linenumber" name="L156" href="#L156">156</a> 		DBR value;
+<a class="jxr_linenumber" name="L157" href="#L157">157</a> 		
+<a class="jxr_linenumber" name="L158" href="#L158">158</a> 		<em class="jxr_comment">// special case for TIME_Double, TIME_Float</em>
+<a class="jxr_linenumber" name="L159" href="#L159">159</a> 		<em class="jxr_comment">// use an "artificial" TIME type with PRECISION</em>
+<a class="jxr_linenumber" name="L160" href="#L160">160</a> 		<em class="jxr_comment">// they are needed for string formatting</em>
+<a class="jxr_linenumber" name="L161" href="#L161">161</a> 		<strong class="jxr_keyword">if</strong> (typeValue == 20)
+<a class="jxr_linenumber" name="L162" href="#L162">162</a> 			value = <strong class="jxr_keyword">new</strong> <a name="DBR_PRECISION_Double" href="../../../../../../gov/aps/jca/dbr/DBR_PRECISION_Double.html#DBR_PRECISION_Double">DBR_PRECISION_Double</a>(dataCount);
+<a class="jxr_linenumber" name="L163" href="#L163">163</a> 		<strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (typeValue == 16)
+<a class="jxr_linenumber" name="L164" href="#L164">164</a> 			value = <strong class="jxr_keyword">new</strong> <a name="DBR_PRECISION_Float" href="../../../../../../gov/aps/jca/dbr/DBR_PRECISION_Float.html#DBR_PRECISION_Float">DBR_PRECISION_Float</a>(dataCount);
+<a class="jxr_linenumber" name="L165" href="#L165">165</a> 		<em class="jxr_comment">// special case to get the enum table, TIME_Enum -&gt; LABELS_Enum</em>
+<a class="jxr_linenumber" name="L166" href="#L166">166</a> 		<em class="jxr_comment">// use an "artificial" DBR_TIME_LABELS type to support timestamping </em>
+<a class="jxr_linenumber" name="L167" href="#L167">167</a> 		<strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (typeValue == 17 || typeValue == 24 || typeValue == 31 )
+<a class="jxr_linenumber" name="L168" href="#L168">168</a> 			value = <strong class="jxr_keyword">new</strong> <a name="DBR_TIME_LABELS_Enum" href="../../../../../../gov/aps/jca/dbr/DBR_TIME_LABELS_Enum.html#DBR_TIME_LABELS_Enum">DBR_TIME_LABELS_Enum</a>(dataCount);
+<a class="jxr_linenumber" name="L169" href="#L169">169</a> 		<strong class="jxr_keyword">else</strong>
+<a class="jxr_linenumber" name="L170" href="#L170">170</a> 		{
+<a class="jxr_linenumber" name="L171" href="#L171">171</a> 			type = DBRType.forValue(typeValue);
+<a class="jxr_linenumber" name="L172" href="#L172">172</a> 	
+<a class="jxr_linenumber" name="L173" href="#L173">173</a> 			<em class="jxr_comment">// create native DBR_{TIME, GR, CTRL}_&lt;type&gt; and set default values</em>
+<a class="jxr_linenumber" name="L174" href="#L174">174</a> 			<em class="jxr_comment">// use required count</em>
+<a class="jxr_linenumber" name="L175" href="#L175">175</a> 			value = DBRFactory.create(type, dataCount);
+<a class="jxr_linenumber" name="L176" href="#L176">176</a> 		}
+<a class="jxr_linenumber" name="L177" href="#L177">177</a> 		
+<a class="jxr_linenumber" name="L178" href="#L178">178</a> 		<em class="jxr_comment">// set undefined status</em>
+<a class="jxr_linenumber" name="L179" href="#L179">179</a> 		STS dbrSts = (<a name="STS" href="../../../../../../gov/aps/jca/dbr/STS.html#STS">STS</a>)value;
+<a class="jxr_linenumber" name="L180" href="#L180">180</a> 		dbrSts.setSeverity(Severity.INVALID_ALARM);
+<a class="jxr_linenumber" name="L181" href="#L181">181</a> 		dbrSts.setStatus(Status.UDF_ALARM);
+<a class="jxr_linenumber" name="L182" href="#L182">182</a> 		
+<a class="jxr_linenumber" name="L183" href="#L183">183</a> 		<em class="jxr_comment">// initialize precision </em>
+<a class="jxr_linenumber" name="L184" href="#L184">184</a> 		<strong class="jxr_keyword">if</strong> (value.isPRECSION())
+<a class="jxr_linenumber" name="L185" href="#L185">185</a> 			((<a name="PRECISION" href="../../../../../../gov/aps/jca/dbr/PRECISION.html#PRECISION">PRECISION</a>)value).setPrecision((<strong class="jxr_keyword">short</strong>)-1);
+<a class="jxr_linenumber" name="L186" href="#L186">186</a> 
+<a class="jxr_linenumber" name="L187" href="#L187">187</a> 		<strong class="jxr_keyword">return</strong> value;
+<a class="jxr_linenumber" name="L188" href="#L188">188</a> 	}
+<a class="jxr_linenumber" name="L189" href="#L189">189</a> 
+<a class="jxr_linenumber" name="L190" href="#L190">190</a> }
+</pre>
+<hr/>
+<div id="footer">Copyright &#169; 2004&#x2013;2024 <a href="http://www.aps.anl.gov/epics/">EPICS</a>. All rights reserved.</div>
+</body>
+</html>

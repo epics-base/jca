@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>EventDispatcher xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../apidocs/gov/aps/jca/event/EventDispatcher.html">View Javadoc</a></div><pre>
+<a class="jxr_linenumber" name="L1" href="#L1">1</a>   <strong class="jxr_keyword">package</strong> gov.aps.jca.event;
+<a class="jxr_linenumber" name="L2" href="#L2">2</a>   
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <strong class="jxr_keyword">import</strong> java.util.*;
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   
+<a class="jxr_linenumber" name="L5" href="#L5">5</a>   
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> <a name="EventDispatcher" href="../../../../gov/aps/jca/event/EventDispatcher.html#EventDispatcher">EventDispatcher</a> {
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>   
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> dispatch( <a name="ContextMessageEvent" href="../../../../gov/aps/jca/event/ContextMessageEvent.html#ContextMessageEvent">ContextMessageEvent</a> ev , <a name="ContextMessageListener" href="../../../../gov/aps/jca/event/ContextMessageListener.html#ContextMessageListener">ContextMessageListener</a> listener);
+<a class="jxr_linenumber" name="L9" href="#L9">9</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> dispatch( <a name="ContextMessageEvent" href="../../../../gov/aps/jca/event/ContextMessageEvent.html#ContextMessageEvent">ContextMessageEvent</a> ev , List listeners);
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>  
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> dispatch( <a name="ContextExceptionEvent" href="../../../../gov/aps/jca/event/ContextExceptionEvent.html#ContextExceptionEvent">ContextExceptionEvent</a> ev, <a name="ContextExceptionListener" href="../../../../gov/aps/jca/event/ContextExceptionListener.html#ContextExceptionListener">ContextExceptionListener</a> listener );
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> dispatch( <a name="ContextExceptionEvent" href="../../../../gov/aps/jca/event/ContextExceptionEvent.html#ContextExceptionEvent">ContextExceptionEvent</a> ev, List listeners );
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>  
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> dispatch( <a name="ConnectionEvent" href="../../../../gov/aps/jca/event/ConnectionEvent.html#ConnectionEvent">ConnectionEvent</a> ev, <a name="ConnectionListener" href="../../../../gov/aps/jca/event/ConnectionListener.html#ConnectionListener">ConnectionListener</a> listener );
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> dispatch( <a name="ConnectionEvent" href="../../../../gov/aps/jca/event/ConnectionEvent.html#ConnectionEvent">ConnectionEvent</a> ev, List listeners );
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>  
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> dispatch( <a name="AccessRightsEvent" href="../../../../gov/aps/jca/event/AccessRightsEvent.html#AccessRightsEvent">AccessRightsEvent</a> ev, <a name="AccessRightsListener" href="../../../../gov/aps/jca/event/AccessRightsListener.html#AccessRightsListener">AccessRightsListener</a> listener );
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> dispatch( <a name="AccessRightsEvent" href="../../../../gov/aps/jca/event/AccessRightsEvent.html#AccessRightsEvent">AccessRightsEvent</a> ev, List listeners );
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> dispatch( <a name="MonitorEvent" href="../../../../gov/aps/jca/event/MonitorEvent.html#MonitorEvent">MonitorEvent</a> ev , <a name="MonitorListener" href="../../../../gov/aps/jca/event/MonitorListener.html#MonitorListener">MonitorListener</a> listener);
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> dispatch( <a name="MonitorEvent" href="../../../../gov/aps/jca/event/MonitorEvent.html#MonitorEvent">MonitorEvent</a> ev , List listeners);
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> dispatch( <a name="GetEvent" href="../../../../gov/aps/jca/event/GetEvent.html#GetEvent">GetEvent</a> ev , <a name="GetListener" href="../../../../gov/aps/jca/event/GetListener.html#GetListener">GetListener</a> listener );
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> dispatch( <a name="GetEvent" href="../../../../gov/aps/jca/event/GetEvent.html#GetEvent">GetEvent</a> ev , List listeners );
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> dispatch( <a name="PutEvent" href="../../../../gov/aps/jca/event/PutEvent.html#PutEvent">PutEvent</a> ev , <a name="PutListener" href="../../../../gov/aps/jca/event/PutListener.html#PutListener">PutListener</a> listener);
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> dispatch( <a name="PutEvent" href="../../../../gov/aps/jca/event/PutEvent.html#PutEvent">PutEvent</a> ev , List listeners);
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>    
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> dispose();
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  }
+</pre>
+<hr/>
+<div id="footer">Copyright &#169; 2004&#x2013;2024 <a href="http://www.aps.anl.gov/epics/">EPICS</a>. All rights reserved.</div>
+</body>
+</html>
