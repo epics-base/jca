@@ -14,6 +14,8 @@
 
 package com.cosylab.epics.caj.impl;
 
+import gov.aps.jca.JCALibrary;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
@@ -28,6 +30,7 @@ import com.cosylab.epics.caj.impl.requests.HostNameRequest;
 import com.cosylab.epics.caj.impl.requests.UserNameRequest;
 import com.cosylab.epics.caj.impl.requests.VersionRequest;
 import com.cosylab.epics.caj.impl.sync.NamedLockPattern;
+
 
 /**
  * Channel Access TCP connector.
@@ -45,11 +48,17 @@ public class CAConnector implements Connector {
 	 * Context instance.
 	 */
 	private NamedLockPattern namedLocker;
+	
+	/**
+	 * Socket connect timeout (sec).
+	 */
+	private float socketConnectTimeout = 120.0f;
 
 	/**
 	 * Context instance.
 	 */
 	private static final int LOCK_TIMEOUT = 20 * 1000;	// 20s
+	
 	
 	/**
 	 * Map tracking failed TCP connections
@@ -62,6 +71,7 @@ public class CAConnector implements Connector {
 	public CAConnector(CAJContext context) {
 		this.context = context;
 		namedLocker = new NamedLockPattern();
+		socketConnectTimeout = JCALibrary.getInstance().getPropertyAsFloat(this.getClass().getName()+".socket_connect_timeout", socketConnectTimeout);
 	}
 	
 	/**
@@ -202,7 +212,10 @@ public class CAConnector implements Connector {
 
 			try
 			{
-				return SocketChannel.open(address);
+				SocketChannel socketChannel = SocketChannel.open();
+				int socketConnectTimeoutMs = (int) (socketConnectTimeout * 1000);
+				socketChannel.socket().connect(address, socketConnectTimeoutMs);				
+				return socketChannel;
 			}
 			catch (IOException ioe)
 			{
