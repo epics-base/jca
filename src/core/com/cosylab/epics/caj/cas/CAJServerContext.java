@@ -69,33 +69,13 @@ public class CAJServerContext extends ServerContext implements CAContext, Config
 		System.setProperty("java.net.preferIPv4Stack", "true");
 	}
 
-    /**
-     * Major version.
-     */
-    private static final int CAS_VERSION_MAJOR = 1;
-    
-    /**
-     * Minor version.
-     */
-    private static final int CAS_VERSION_MINOR = 1;
-
-    /**
-     * Maintenance version.
-     */
-    private static final int CAS_VERSION_MAINTENANCE = 16;
-
-    /**
-     * Development version.
-     */
-    private static final int CAS_VERSION_DEVELOPMENT = 1;
 
     /**
      * Version.
      */
     public static final Version VERSION = new Version(
             "Channel Access Server in Java", "Java",
-            CAS_VERSION_MAJOR, CAS_VERSION_MINOR,
-            CAS_VERSION_MAINTENANCE, CAS_VERSION_DEVELOPMENT);
+            JCALibrary.getInstance().getVersion());
 	  
    
     /**

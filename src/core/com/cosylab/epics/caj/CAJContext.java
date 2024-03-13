@@ -80,32 +80,11 @@ import com.cosylab.epics.caj.util.logging.ConsoleLogHandler;
 public class CAJContext extends Context implements CAContext, CAJConstants, Configurable {
 
     /**
-     * Major version.
-     */
-    private static final int CAJ_VERSION_MAJOR = 1;
-    
-    /**
-     * Minor version.
-     */
-    private static final int CAJ_VERSION_MINOR = 1;
-
-    /**
-     * Maintenance version.
-     */
-    private static final int CAJ_VERSION_MAINTENANCE = 16;
-
-    /**
-     * Development version.
-     */
-    private static final int CAJ_VERSION_DEVELOPMENT = 1;
-
-    /**
      * Version.
      */
     public static final Version VERSION = new Version(
             "Channel Access in Java", "Java",
-            CAJ_VERSION_MAJOR, CAJ_VERSION_MINOR,
-            CAJ_VERSION_MAINTENANCE, CAJ_VERSION_DEVELOPMENT);
+            JCALibrary.getInstance().getVersion());
 	  
     /**
      * String value of the JVM property key to turn on single threaded model. 

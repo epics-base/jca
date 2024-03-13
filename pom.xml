@@ -87,8 +87,25 @@
                 <directory>src/core/gov/aps/jca</directory>
                 <includes>
                     <include>JCALibrary.properties</include>
+                    <include>version.properties</include>
                 </includes>
             </resource>
+            <resource>
+                <targetPath>gov/aps/jca</targetPath>
+				<directory>src/core/gov/aps/jca</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>version.properties</include>
+				</includes>
+			</resource>
+			<resource>
+                <targetPath>gov/aps/jca</targetPath>
+				<directory>src/core/gov/aps/jca</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>version.properties</exclude>
+				</excludes>
+			</resource>
         </resources>
         <plugins>
             <!-- Includes the OSGi manifest -->
