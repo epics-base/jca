@@ -155,14 +155,14 @@ public class Version {
         return implementationLanguage;
     }
 
-
     /**
      * 
      * @return version number
      */
-    private String getVersion() {
-		return version;
-	}
+    private String getVersion()
+    {
+        return version;
+    }
     /**
      * Major version number. This changes only when there is a
      * significant, externally apparent enhancement from the previous release.

@@ -139,7 +139,7 @@ public final class JCALibrary {
   }
   
   public String getVersion() {
-		return versionProperties.getProperty("jca.version");
+      return versionProperties.getProperty("jca.version");
   }
 
   /**Getter method for the version number.
