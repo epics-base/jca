@@ -66,10 +66,14 @@ import java.util.*;
  */
 public final class JCALibrary {
   
+  @Deprecated	
   static private final int VERSION=2;
+  @Deprecated	
   static private final int REVISION=4;
   // TODO version to be incremented - do not forget
+  @Deprecated	
   static private final int MODIFICATION=6;
+  @Deprecated	
   static private final String VERSION_STRING=""+VERSION+"."+REVISION+"."+MODIFICATION;
   
   static private JCALibrary _instance=null;
@@ -94,9 +98,18 @@ public final class JCALibrary {
     String fileSep=System.getProperty( "file.separator" );
     String path=null;
     
+    // Read the version
+    try (InputStream input = JCALibrary.class.getResourceAsStream("version.properties")) {
+        // load a properties file
+        if (input == null)
+            throw new RuntimeException("resource not found.");
+        versionProperties.load(input);
+    } catch (IOException ex) {
+        System.out.println( "Unable to load default configuration located in 'version.properties' resource: " + ex.getMessage() );
+    }
+    
     // Read Configuration
-    try {
-        InputStream is = JCALibrary.class.getResourceAsStream( "JCALibrary.properties" );
+    try (InputStream is = JCALibrary.class.getResourceAsStream( "JCALibrary.properties" );) {        
         if (is == null)
             throw new RuntimeException("resource not found.");
         _builtinProperties.load( is );
@@ -125,12 +138,16 @@ public final class JCALibrary {
     
   }
   
+  public String getVersion() {
+      return versionProperties.getProperty("jca.version");
+  }
+
   /**Getter method for the version number.
    * @return the JCALibrary version number.
    */
-  public int getVersion() {
-    return VERSION;
-  }
+//  public int getVersion() {
+//    return VERSION;
+//  }
   
   /**Getter method for the revision number.
    * @return the JCALibrary revision number.
@@ -150,7 +167,7 @@ public final class JCALibrary {
    * @return the JCALibrary version string.
    */
   public String getVersionString() {
-    return VERSION_STRING;
+    return getVersion();
   }
   
   /** Print some basic info about the JCALibrary to the standard output stream.
@@ -167,10 +184,11 @@ public final class JCALibrary {
   }
   
   public String toString() {
-    return JCALibrary.class.getName()+"["+getVersionString()+"]";
+    return JCALibrary.class.getName()+"["+getVersion()+"]";
   }
   
   // PROPERTIES
+  Properties versionProperties=new Properties();
   Properties _builtinProperties=new Properties();
   Properties _defaultProperties=new Properties( _builtinProperties );
   Properties _properties=new Properties( _defaultProperties );
