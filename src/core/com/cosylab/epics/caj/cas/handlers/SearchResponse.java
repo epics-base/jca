@@ -90,7 +90,8 @@ public class SearchResponse extends AbstractCASResponseHandler {
 		}
 		
 		if (completion == ProcessVariableExistanceCompletion.EXISTS_HERE ||
-			completion == ProcessVariableExistanceCompletion.DOES_NOT_EXIST_HERE)
+			completion == ProcessVariableExistanceCompletion.DOES_NOT_EXIST_HERE ||
+			completion.doesExistElsewhere())
 		{
 			searchResponse(responseFrom, dataType, dataCount, parameter1, completion);
 		}
@@ -118,6 +119,18 @@ public class SearchResponse extends AbstractCASResponseHandler {
 			{
 				// TODO prepend version header (if context.getLastReceivedSequenceNumber() != 0)
 				SearchRequest searchRequest = new SearchRequest(context.getBroadcastTransport(), (short)dataCount, cid);
+				context.getBroadcastTransport().send(searchRequest, responseFrom);
+			} catch (Throwable th) {
+				context.getLogger().log(Level.WARNING, "Failed to send back search response to: " + responseFrom, th);
+			}
+		}
+		else if (completion.doesExistElsewhere())
+		{
+			// send back
+			try
+			{
+				// TODO prepend version header (if context.getLastReceivedSequenceNumber() != 0)
+				SearchRequest searchRequest = new SearchRequest(context.getBroadcastTransport(), completion.getOtherAddress(), (short)dataCount, cid);
 				context.getBroadcastTransport().send(searchRequest, responseFrom);
 			} catch (Throwable th) {
 				context.getLogger().log(Level.WARNING, "Failed to send back search response to: " + responseFrom, th);

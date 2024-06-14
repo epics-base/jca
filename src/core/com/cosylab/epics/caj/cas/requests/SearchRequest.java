@@ -15,7 +15,10 @@
 package com.cosylab.epics.caj.cas.requests;
 
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.cosylab.epics.caj.cas.CAJServerContext;
 import com.cosylab.epics.caj.impl.CAConstants;
@@ -31,10 +34,25 @@ import com.cosylab.epics.caj.util.InetAddressUtil;
  */
 public class SearchRequest extends AbstractCARequest {
 
+	private static final Logger logger = Logger.getLogger(SearchRequest.class.getName());
+
 	/**
-	 * @param transport
+	 * @param transport Transport to use
+	 * @param clientMinorVersion
+	 * @param cid Channel ID
 	 */
-	public SearchRequest(Transport transport, short clientMinorVersion, int cid) {
+	public SearchRequest(Transport transport, short clientMinorVersion, int cid)
+	{
+		this(transport, null, clientMinorVersion, cid);
+	}
+
+	/**
+	 * @param transport Transport to use
+	 * @param other_address Optional other address to report, null to use this transport
+	 * @param clientMinorVersion
+	 * @param cid Channel ID
+	 */
+	public SearchRequest(Transport transport, InetSocketAddress other_address, short clientMinorVersion, int cid) {
 		super(transport);
 
 		// add minor version payload (aligned by 8)
@@ -43,15 +61,22 @@ public class SearchRequest extends AbstractCARequest {
 
 		// set server IP address
 		int serverIP = 0xFFFFFFFF;
+		int port = other_address == null
+		         ? transport.getContext().getServerPort()
+				 : other_address.getPort();
+
 		if (clientMinorVersion >= 8)
 		{
-			InetAddress serverAddress = ((CAJServerContext)(transport.getContext())).getServerInetAddress();
+			InetAddress serverAddress = other_address == null
+			                          ? ((CAJServerContext)(transport.getContext())).getServerInetAddress()
+									  : other_address.getAddress();
 			if (serverAddress != null && !serverAddress.isAnyLocalAddress())
 				serverIP = InetAddressUtil.ipv4AddressToInt(serverAddress);
+			logger.log(Level.FINE, "Replying to search with " + serverAddress + ":" + port);
 		}
-		
+
 		requestMessage = insertCAHeader(transport, requestMessage,
-										(short)6, (short)8, (short)transport.getContext().getServerPort(), 0,
+										(short)6, (short)8, (short)port, 0,
 										serverIP, cid);
 		
 		requestMessage.putShort(CAConstants.CAS_MINOR_PROTOCOL_REVISION);

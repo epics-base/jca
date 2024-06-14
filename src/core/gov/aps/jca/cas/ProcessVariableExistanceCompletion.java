@@ -14,40 +14,70 @@
 
 package gov.aps.jca.cas;
 
-import gov.aps.jca.Enum;
+import java.net.InetSocketAddress;
 
 /**
- * Process variable existance completion enum class.
+ * Process variable existance completion class.
  * @author Matej Sekoranja (matej.sekoranja@cosylab.com)
- * @version $Id: ProcessVariableExistanceCompletion.java,v 1.1 2006-03-06 17:16:04 msekoranja Exp $
  */
-public final class ProcessVariableExistanceCompletion extends Enum
+public final class ProcessVariableExistanceCompletion
 {
-	   
+	private final String name;
+	private final InetSocketAddress addr;
+
 	/**
 	 * Process variable exists.
 	 */
-	public static final ProcessVariableExistanceCompletion EXISTS_HERE = new ProcessVariableExistanceCompletion("EXISTS_HERE");
+	public static final ProcessVariableExistanceCompletion EXISTS_HERE = new ProcessVariableExistanceCompletion("EXISTS_HERE", null);
+
+	/**
+	 * Process variable exists at a different address, not this CA server.
+	 */
+	public static ProcessVariableExistanceCompletion EXISTS_ELSEWHERE(final InetSocketAddress addr)
+	{
+		return new ProcessVariableExistanceCompletion("EXISTS_ELSEWHERE", addr);
+	}
+
+	/** @return Does the PV exist elsewhere? */
+	public boolean doesExistElsewhere()
+	{
+		return addr != null;
+	}
+
+	/** @return Other address where PV does exist or null */
+	public InetSocketAddress getOtherAddress()
+	{
+		return addr;
+	}
 
 	/**
 	 * Process variable does not exist.
 	 */
-	public static final ProcessVariableExistanceCompletion DOES_NOT_EXIST_HERE = new ProcessVariableExistanceCompletion("DOES_NOT_EXIST_HERE");
+	public static final ProcessVariableExistanceCompletion DOES_NOT_EXIST_HERE = new ProcessVariableExistanceCompletion("DOES_NOT_EXIST_HERE", null);
 
 	/**
 	 * Deffered result (asynchronous operation),
 	 * <code>ProcessVariableExistanceCompletionCallback.processVariableExistanceTestCompleted()</code> callback method method should be called to return completion.
 	 */
-	public static final ProcessVariableExistanceCompletion ASYNC_COMPLETION = new ProcessVariableExistanceCompletion("ASYNC_COMPLETION");
+	public static final ProcessVariableExistanceCompletion ASYNC_COMPLETION = new ProcessVariableExistanceCompletion("ASYNC_COMPLETION", null);
 
 	/**
 	 * Creates a new PV existance completion.
 	 * Contructor is <code>protected</code> to deny creation of unsupported types.
 	 * @param name	name of the completion.
+	 * @param addr  Address if exists elsewhere, otherwise null
 	 */
-	protected ProcessVariableExistanceCompletion(String name) {
-		super(name);
+	protected ProcessVariableExistanceCompletion(final String name, final InetSocketAddress addr) {
+		this.name = name;
+		this.addr = addr;
 	}
 
+	@Override
+	public String toString()
+	{
+		if (doesExistElsewhere())
+			return name + "@" + addr;
+		return name;
+	}
 
 }
