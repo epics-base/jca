@@ -32,9 +32,10 @@ import gov.aps.jca.cas.ServerContext;
  * 
  *  Example usage:
  * 
- *  In one terminal,
+ *  In one terminal, run an IOC database with a record named "ramp"
+ *  under a non-default UDP and TCP port:
  *      export EPICS_CA_SERVER_PORT=9876
- *  then run an IOC database with a record named "ramp".
+ *      softIoc -d test/resources/ramp.db 
  * 
  *  In another terminal, check that
  *      caget ramp
