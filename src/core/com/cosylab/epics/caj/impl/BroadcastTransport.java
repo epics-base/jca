@@ -237,6 +237,9 @@ public class BroadcastTransport implements Transport, ReactorHandler {
 	 */
 	protected void send(ByteBuffer buffer) 
 	{
+		// TCP-only search?
+		if (broadcastAddresses == null)
+			return;
 		for (int i = 0; i < broadcastAddresses.length; i++)
 		{
 			try
