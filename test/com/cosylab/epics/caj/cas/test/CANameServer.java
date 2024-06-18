@@ -42,6 +42,7 @@ import gov.aps.jca.cas.ServerContext;
  *  via UDP port 5064, while the IOC runs on 9876 (UDP and TCP).
  * 
  *  Now run this CANameServer on the same host,
+ *      java -cp target/classes:target/test-classes -DCAJ_DEBUG=true com.cosylab.epics.caj.cas.test.CANameServer
  *  and try `caget ramp` again.
  *  The client will reach the name server via UDP 5064.
  *  The name server replies with 127.0.0.1, port 9876

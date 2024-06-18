@@ -38,21 +38,12 @@ public class SearchRequest extends AbstractCARequest {
 
 	/**
 	 * @param transport Transport to use
-	 * @param clientMinorVersion
-	 * @param cid Channel ID
-	 */
-	public SearchRequest(Transport transport, short clientMinorVersion, int cid)
-	{
-		this(transport, null, clientMinorVersion, cid);
-	}
-
-	/**
-	 * @param transport Transport to use
 	 * @param other_address Optional other address to report, null to use this transport
+	 * @param with_version Include minor version in payload (for UDP), or no payload (for TCP)?
 	 * @param clientMinorVersion
 	 * @param cid Channel ID
 	 */
-	public SearchRequest(Transport transport, InetSocketAddress other_address, short clientMinorVersion, int cid) {
+	public SearchRequest(Transport transport, InetSocketAddress other_address, boolean with_version, short clientMinorVersion, int cid) {
 		super(transport);
 
 		// add minor version payload (aligned by 8)
@@ -72,17 +63,20 @@ public class SearchRequest extends AbstractCARequest {
 									  : other_address.getAddress();
 			if (serverAddress != null && !serverAddress.isAnyLocalAddress())
 				serverIP = InetAddressUtil.ipv4AddressToInt(serverAddress);
-			logger.log(Level.FINE, "Replying to search with " + serverAddress + ":" + port);
 		}
 
 		requestMessage = insertCAHeader(transport, requestMessage,
-										(short)6, (short)8, (short)port, 0,
+										(short)6, (short)(with_version ? 8 : 0), (short)port, 0,
 										serverIP, cid);
-		
-		requestMessage.putShort(CAConstants.CAS_MINOR_PROTOCOL_REVISION);
-		// clear rest of the message (security)
-		requestMessage.putShort((short)0);
-		requestMessage.putInt(0);
+		if (with_version)
+		{
+			requestMessage.putShort(CAConstants.CAS_MINOR_PROTOCOL_REVISION);
+			// clear rest of the message (security)
+			requestMessage.putShort((short)0);
+			requestMessage.putInt(0);
+			logger.log(Level.FINE, "Replying to search with " + serverIP + ":" + port + ", minor " + CAConstants.CAS_MINOR_PROTOCOL_REVISION);
+		}
+		logger.log(Level.FINE, "Replying to search with " + serverIP + ":" + port + ", no payload");
 	}
 
 	/**

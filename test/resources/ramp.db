@@ -1,0 +1,6 @@
+record(calc, "ramp")
+{
+  field(SCAN, "1 second")
+  field(CALC, "A+1")
+  field(INPA, "ramp")
+}

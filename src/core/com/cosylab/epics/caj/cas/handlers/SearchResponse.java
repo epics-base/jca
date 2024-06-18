@@ -138,14 +138,16 @@ public class SearchResponse extends AbstractCASResponseHandler {
 			try
 			{
 				// TODO prepend version header (if context.getLastReceivedSequenceNumber() != 0)
-				SearchRequest searchRequest = new SearchRequest(context.getBroadcastTransport(), (short)dataCount, cid);
+				// UDP includes payload (version) in reply, TCP has no payload
 				if (tcp == null)
 				{
+					SearchRequest searchRequest = new SearchRequest(context.getBroadcastTransport(), null, true, (short)dataCount, cid);
 					context.getLogger().log(Level.FINE, "UDP EXISTS_HERE search reply");
 					context.getBroadcastTransport().send(searchRequest, responseFrom);
 				}
 				else
 				{
+					SearchRequest searchRequest = new SearchRequest(context.getBroadcastTransport(), null, false, (short)dataCount, cid);
 					context.getLogger().log(Level.FINE, "TCP EXISTS_HERE search reply");
 				    tcp.send(searchRequest.getRequestMessage());
 				}
@@ -155,18 +157,18 @@ public class SearchResponse extends AbstractCASResponseHandler {
 		}
 		else if (completion.doesExistElsewhere())
 		{
-			// send back
+			// Same comments as for EXISTS_HERE
 			try
 			{
-				// TODO prepend version header (if context.getLastReceivedSequenceNumber() != 0)
-				SearchRequest searchRequest = new SearchRequest(context.getBroadcastTransport(), completion.getOtherAddress(), (short)dataCount, cid);
 				if (tcp == null)
 				{
+					SearchRequest searchRequest = new SearchRequest(context.getBroadcastTransport(), completion.getOtherAddress(), true, (short)dataCount, cid);
 					context.getLogger().log(Level.FINE, "UDP EXISTS_ELSEWHERE search reply: " + completion.getOtherAddress());
 					context.getBroadcastTransport().send(searchRequest, responseFrom);
 				}
 				else
 				{
+					SearchRequest searchRequest = new SearchRequest(context.getBroadcastTransport(), completion.getOtherAddress(), false, (short)dataCount, cid);
 					context.getLogger().log(Level.FINE, "TCP EXISTS_ELSEWHERE search reply: " + completion.getOtherAddress());
 				    tcp.send(searchRequest.getRequestMessage());
 				}
