@@ -25,6 +25,7 @@ import com.cosylab.epics.caj.impl.CAConstants;
 import com.cosylab.epics.caj.impl.CATransport;
 import com.cosylab.epics.caj.impl.Transport;
 import com.cosylab.epics.caj.util.InetAddressUtil;
+import com.cosylab.epics.caj.util.HexDump;
 
 /**
  * @author <a href="mailto:matej.sekoranjaATcosylab.com">Matej Sekoranja</a>
@@ -53,21 +54,69 @@ public class SearchResponse extends AbstractCAJResponseHandler {
 		//
 
 		short minorVersion = CAConstants.CA_UNKNOWN_MINOR_PROTOCOL_REVISION;
+
+		// Search response via UDP: Only response[0]
+		// Payload size 8, with only a 'short minor' in payload
+		//
+		// Hexdump [response[0] @ 16] size = 24
+		// 00 06 00 08  13 C8 00 00  FF FF FF FF  00 00 00 01  .... .... .... .... 
+		// 00 0B 00 00  00 00 00 00 
+		// or
+		// Hexdump [response[0] @ 32] size = 40
+		// 00 00 00 00  00 01 00 0D  00 00 00 01  00 00 00 00  .... .... .... .... 
+		// 00 06 00 08  13 C8 00 00  FF FF FF FF  00 00 00 01  .... .... .... .... 
+		// 00 0D 00 00  00 00 00 00                            .... .... 
+
+		// Search response via TCP: Two buffers
+		// No payload, second buffer is empty
+		//
+		// Hexdump [response[0] @ 16] size = 16
+		// 00 06 00 00  13 C8 00 00  FF FF FF FF  00 00 00 01  .... .... .... .... 
+		// Hexdump [response[1] @ 0] size = 0
+
+		// Earlier CAJ server server added the 8 byte payload to TCP response,
+		// which caused client to crash.
+		// Now handle that as well in client.
+		// Hexdump [response[0] @ 16] size = 16
+		// 00 06 00 08  13 C8 00 00  FF FF FF FF  00 00 00 01  .... .... .... .... 
+		// Hexdump [response[1] @ 0] size = 8
+		// 00 0B 00 00  00 00 00 00     
+
+		// System.out.println("Client received search response");
+		// System.out.println(response[0]);
+		// if (response.length > 1)
+		// 	System.out.println(response[1]);
+		//
+		// byte[] data = new byte[response[0].limit()];
+		// for (int i=0; i<response[0].limit(); ++i)
+		// 	data[i] = response[0].get(i);
+		// HexDump.hexDump("response[0] @ " + response[0].position(), data, 0, response[0].limit());
+		// if (response.length > 1)
+		// {
+		// 	data = new byte[response[1].limit()];
+		// 	for (int i=0; i<response[1].limit(); ++i)
+		// 		data[i] = response[1].get(i);
+		// 	HexDump.hexDump("response[1] @ " + response[1].position(), data, 0, response[1].limit());
+		// }
 		
 		// Starting with CA V4.1 the minor version number is
 		// appended to the end of each search reply.
 		int payloadStart = response[0].position();
 		if (payloadSize >= 2 /* short size = 2 bytes */)
 		{ 
-			// UDP response (all in buffer 0)
-			minorVersion = response[0].getShort();
+			// UDP response (all in buffer 0), or TCP (payload in buffer 1)?
+			if (response.length == 1)
+				minorVersion = response[0].getShort();
+			else
+				minorVersion = response[1].getShort();
 		} else if(transport instanceof CATransport) {
 			// for TCP transport use already provided version
 			minorVersion = transport.getMinorRevision();
 		}
 			
 		// read rest of the playload (needed for UDP)
-		response[0].position(payloadStart + payloadSize);
+		if (response.length == 1)
+			response[0].position(payloadStart + payloadSize);
 		
 		// signed short conversion -> signed int 
 		int port = dataType & 0xFFFF;

@@ -22,6 +22,7 @@ import java.nio.ByteBuffer;
 import java.util.logging.Level;
 
 import com.cosylab.epics.caj.cas.CAJServerContext;
+import com.cosylab.epics.caj.cas.CASTransport;
 import com.cosylab.epics.caj.cas.requests.SearchFailedRequest;
 import com.cosylab.epics.caj.cas.requests.SearchRequest;
 import com.cosylab.epics.caj.impl.CAConstants;
@@ -49,12 +50,29 @@ public class SearchResponse extends AbstractCASResponseHandler {
 		Transport transport,
 		ByteBuffer[] response) {
 
-		ByteBuffer headerBuffer = response[0];
-		final int start = headerBuffer.position();
+		// For a UDP client, BroadcastTransport.processRead will call this with response=[buffer].
+		// That one buffer holds version info, search header and search payload, positioned at start of payload:
+        //
+		// 00 00 00 00  00 01 00 0D  00 00 00 01  00 00 00 00  .... .... .... .... 
+		// 00 06 00 08  00 05 00 0D  00 00 00 01  00 00 00 01  .... .... .... .... 
+		// 54 45 53 54  00 00 00 00                            TEST .... 
+		// ^^
+        //
+		// For a TCP client, CASTransport.processRead will call this with a response=[headerBuffer, payloadBuffer].
+		// headerBuffer is positioned at the end, and a payloadBuffer positioned at the start:
+        //
+		// 00 06 00 08  00 05 00 0D  00 00 00 01  00 00 00 01  .... .... .... .... 
+        //                                                   ^^
+		// 54 45 53 54  00 00 00 00                            TEST .... 
+        // ^^
+		// We need the payload, which holds the zero-padded channel name
+		ByteBuffer buffer = response.length == 2 ? response[1] : response[0];
+
+		final int start = buffer.position();
 		final int bufferEnd = start + payloadSize;
 
 		// to support multiple messages in one UDP packet
-		headerBuffer.position(bufferEnd);
+		buffer.position(bufferEnd);
 
 		// check channel name size
 		if (payloadSize <= 1) {
@@ -62,7 +80,7 @@ public class SearchResponse extends AbstractCASResponseHandler {
 			return;
 		}
 
-		String channelName = extractString(headerBuffer, start, payloadSize, false);
+		String channelName = extractString(buffer, start, payloadSize, false);
 		
 		// empty name check
 		if (channelName.length() == 0) {
@@ -92,8 +110,9 @@ public class SearchResponse extends AbstractCASResponseHandler {
 		if (completion == ProcessVariableExistanceCompletion.EXISTS_HERE ||
 			completion == ProcessVariableExistanceCompletion.DOES_NOT_EXIST_HERE ||
 			completion.doesExistElsewhere())
-		{
-			searchResponse(responseFrom, dataType, dataCount, parameter1, completion);
+		{	// Reply via TCP?
+			CASTransport tcp = transport instanceof CASTransport ? (CASTransport) transport : null;
+			searchResponse(responseFrom, tcp, dataType, dataCount, parameter1, completion);
 		}
 		// in case of ProcessVariableExistanceCompletion.ASYNC_COMPLETION callback will call searchResponse method
 		// in case of null, do nothing
@@ -102,12 +121,13 @@ public class SearchResponse extends AbstractCASResponseHandler {
 	/**
 	 * Respond to search response.
 	 * @param responseFrom
+	 * @param tcp Use TCP CASTransport?
 	 * @param dataType
 	 * @param dataCount
 	 * @param cid
 	 * @param completion
 	 */
-	private void searchResponse(InetSocketAddress responseFrom, short dataType, int dataCount, int cid, ProcessVariableExistanceCompletion completion) {
+	private void searchResponse(InetSocketAddress responseFrom, CASTransport tcp, short dataType, int dataCount, int cid, ProcessVariableExistanceCompletion completion) {
 
 		//
 		// ... respond
@@ -118,20 +138,40 @@ public class SearchResponse extends AbstractCASResponseHandler {
 			try
 			{
 				// TODO prepend version header (if context.getLastReceivedSequenceNumber() != 0)
-				SearchRequest searchRequest = new SearchRequest(context.getBroadcastTransport(), (short)dataCount, cid);
-				context.getBroadcastTransport().send(searchRequest, responseFrom);
+				// UDP includes payload (version) in reply, TCP has no payload
+				if (tcp == null)
+				{
+					SearchRequest searchRequest = new SearchRequest(context.getBroadcastTransport(), null, true, (short)dataCount, cid);
+					context.getLogger().log(Level.FINE, "UDP EXISTS_HERE search reply");
+					context.getBroadcastTransport().send(searchRequest, responseFrom);
+				}
+				else
+				{
+					SearchRequest searchRequest = new SearchRequest(context.getBroadcastTransport(), null, false, (short)dataCount, cid);
+					context.getLogger().log(Level.FINE, "TCP EXISTS_HERE search reply");
+				    tcp.send(searchRequest.getRequestMessage());
+				}
 			} catch (Throwable th) {
 				context.getLogger().log(Level.WARNING, "Failed to send back search response to: " + responseFrom, th);
 			}
 		}
 		else if (completion.doesExistElsewhere())
 		{
-			// send back
+			// Same comments as for EXISTS_HERE
 			try
 			{
-				// TODO prepend version header (if context.getLastReceivedSequenceNumber() != 0)
-				SearchRequest searchRequest = new SearchRequest(context.getBroadcastTransport(), completion.getOtherAddress(), (short)dataCount, cid);
-				context.getBroadcastTransport().send(searchRequest, responseFrom);
+				if (tcp == null)
+				{
+					SearchRequest searchRequest = new SearchRequest(context.getBroadcastTransport(), completion.getOtherAddress(), true, (short)dataCount, cid);
+					context.getLogger().log(Level.FINE, "UDP EXISTS_ELSEWHERE search reply: " + completion.getOtherAddress());
+					context.getBroadcastTransport().send(searchRequest, responseFrom);
+				}
+				else
+				{
+					SearchRequest searchRequest = new SearchRequest(context.getBroadcastTransport(), completion.getOtherAddress(), false, (short)dataCount, cid);
+					context.getLogger().log(Level.FINE, "TCP EXISTS_ELSEWHERE search reply: " + completion.getOtherAddress());
+				    tcp.send(searchRequest.getRequestMessage());
+				}
 			} catch (Throwable th) {
 				context.getLogger().log(Level.WARNING, "Failed to send back search response to: " + responseFrom, th);
 			}
@@ -197,7 +237,7 @@ public class SearchResponse extends AbstractCASResponseHandler {
 		 * @see gov.aps.jca.cas.ProcessVariableExistanceCallback#processVariableExistanceTestCompleted(gov.aps.jca.cas.ProcessVariableExistanceCompletion)
 		 */
 		public void processVariableExistanceTestCompleted(ProcessVariableExistanceCompletion completion) {
-			searchResponse(responseFrom, dataType, dataCount, cid, completion);
+			searchResponse(responseFrom, null /* not TCP */, dataType, dataCount, cid, completion);
 		}
 
 		/* (non-Javadoc)

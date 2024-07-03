@@ -32,18 +32,27 @@ import gov.aps.jca.cas.ServerContext;
  * 
  *  Example usage:
  * 
- *  In one terminal,
- *  export EPICS_CA_SERVER_PORT=9876
- *  then run an IOC database with a record named "ramp".
+ *  In one terminal, run an IOC database with a record named "ramp"
+ *  under a non-default UDP and TCP port:
+ *      export EPICS_CA_SERVER_PORT=9876
+ *      softIoc -d test/resources/ramp.db 
  * 
- *  In another terminal,
- *  caget ramp
- *  will not be able to connect.
+ *  In another terminal, check that
+ *      caget ramp
+ *  will NOT be able to connect because it searches by default
+ *  via UDP port 5064, while the IOC runs on 9876 (UDP and TCP).
  * 
  *  Now run this CANameServer on the same host,
+ *      java -cp target/classes:target/test-classes -DCAJ_DEBUG=true com.cosylab.epics.caj.cas.test.CANameServer
  *  and try `caget ramp` again.
- *  It will reach the name server, which replies with 127.0.0.1, port 9876
- *  to the seach request and client can then reach the IOC.
+ *  The client will reach the name server via UDP 5064.
+ *  The name server replies with 127.0.0.1, port 9876
+ *  to the search request and client can then reach the IOC.
+ * 
+ *  The CANameServer also supports searches via TCP:
+ *      export EPICS_CA_NAME_SERVERS=127.0.0.1
+ *      export EPICS_CA_AUTO_ADDR_LIST=no
+ *      caget ramp
  */
 public class CANameServer
 {
