@@ -36,10 +36,14 @@
         </repository>
     </repositories>
 
-    <organization>
-      <name>EPICS</name>
-      <url>http://www.aps.anl.gov/epics/</url>
-    </organization>
+    <licenses>
+        <license>
+            <name>EPICS Open License</name>
+            <url>https://epics-controls.org/epics-open-license</url>
+            <distribution>repo</distribution>
+            <comments>The EPICS Open License for Java Channel Access</comments>
+        </license>
+    </licenses>
 
     <developers>
         <developer>
