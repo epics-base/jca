@@ -86,7 +86,7 @@ public class SearchTimer extends Thread {
         /**
          * Method invoked by timer at requested time.
          * 
-         * @return delay (in ms) after which to reschedule, not rescheduled if <= 0.
+         * @return delay (in ms) after which to reschedule, not rescheduled if &le; 0.
          */
         public abstract long timeout();
     }
