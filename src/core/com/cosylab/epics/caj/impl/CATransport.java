@@ -701,9 +701,10 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 							
 						}
 						
-						// flush & wait for a while...
+						// wait for a while to let the OS drain the TCP send buffer
+						// (channel.socket().getOutputStream().flush() was here but throws
+						// IllegalBlockingModeException in non-blocking mode and is a no-op for TCP output)
 						context.getLogger().finest("Send buffer full for " + socketAddress + ", waiting...");
-						channel.socket().getOutputStream().flush();
 						try {
 							Thread.sleep(Math.min(15000,10+tries*100));
 						} catch (InterruptedException e) {

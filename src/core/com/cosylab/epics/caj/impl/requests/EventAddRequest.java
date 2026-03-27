@@ -163,6 +163,14 @@ public class EventAddRequest extends AbstractCARequest implements NotifyResponse
 	public void resubscribeSubscription(Transport transport) throws IOException
 	{
 		this.transport = transport;
+		// Reset buffer state: a prior failed send (IOException mid-write in noSyncSend)
+		// can leave position < capacity and limit = capacity.  The next flip() would then
+		// set limit = that partial position, causing putInt(8,…) to throw
+		// IndexOutOfBoundsException on the reconnect after that.  Resetting to the
+		// fully-written state (position == limit == capacity) guarantees the flip() in
+		// Transport.submit() always produces position=0, limit=capacity.
+		requestMessage.limit(requestMessage.capacity());
+		requestMessage.position(requestMessage.capacity());
 		// update channel sid
 		requestMessage.putInt(8, channel.getServerChannelID());
 		// immediate send (increase priority - all subsequent sends will be done immediately).
