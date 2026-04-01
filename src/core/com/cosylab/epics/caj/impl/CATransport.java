@@ -628,99 +628,77 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 		}
 	}
 	
+	/** Maximum number of times to retry a partial write before giving up. */
+	private static final int MAX_SEND_RETRIES = 10;
+
 	/**
 	 * Send a buffer through the transport.
-	 * NOTE: TCP sent buffer/sending has to be synchronized. 
+	 * NOTE: TCP sent buffer/sending has to be synchronized.
 	 * @param buffer	buffer to be sent
-	 * @throws IOException 
+	 * @throws IOException
 	 */
-	public void send(ByteBuffer buffer, boolean asyncCloseOnError) throws IOException
+	public void send(ByteBuffer buffer) throws IOException
 	{
 		sendLock.lock();
 		try
 		{
-			noSyncSend(buffer, asyncCloseOnError);
+			noSyncSend(buffer);
 		}
-		finally 
+		finally
 		{
 			sendLock.unlock();
 		}
 	}
 
 	/**
-	 * Send a buffer through the transport.
-	 * NOTE: TCP sent buffer/sending has to be synchronized. 
-	 * @param buffer	buffer to be sent
-	 * @throws IOException 
+	 * Send a buffer through the transport without acquiring the send lock
+	 * (caller is responsible for holding it).
+	 *
+	 * <p>Flips the buffer, then loops until all bytes are written.  If the
+	 * kernel TCP send buffer is full, waits briefly and retries.  Throws
+	 * {@link IOException} (and closes the transport) if the send buffer
+	 * remains full after {@value #MAX_SEND_RETRIES} retries, the channel is
+	 * already closed, or the calling thread is interrupted.
+	 *
+	 * @param buffer	fully-written buffer to send (will be flipped)
+	 * @throws IOException on write error, persistent backpressure, or interrupt
 	 */
-	// TODO optimize !!!
-	private void noSyncSend(ByteBuffer buffer, boolean asyncCloseOnError) throws IOException
+	private void noSyncSend(ByteBuffer buffer) throws IOException
 	{
 		try
 		{
-			// prepare buffer
 			buffer.flip();
 
-			final int SEND_BUFFER_LIMIT = 16000;
-			int bufferLimit = buffer.limit();
+			context.getLogger().finest("Sending " + buffer.limit() + " bytes to " + socketAddress + ".");
 
-			// TODO remove?!
-			context.getLogger().finest("Sending " + bufferLimit + " bytes to " + socketAddress + ".");
-
-			// limit sending large buffers, split the into parts
-			int parts = (buffer.limit()-1) / SEND_BUFFER_LIMIT + 1;
-			for (int part = 1; part <= parts; part++)
+			int tries = 0;
+			while (buffer.hasRemaining())
 			{
-				if (parts > 1)
-				{
-					buffer.limit(Math.min(part * SEND_BUFFER_LIMIT, bufferLimit));
-					context.getLogger().finest("[Parted] Sending (part " + part + "/" + parts + ") " + (buffer.limit()-buffer.position()) + " bytes to " + socketAddress + ".");
-				}
-				
-				final int TRIES = 10;
-				for (int tries = 0; /* tries <= TRIES */ ; tries++)
-				{
-					
-					// send
-					int bytesSent = channel.write(buffer);
-					if (bytesSent < 0)
-						throw new IOException("bytesSent < 0");
-					
-					// bytesSend == buffer.position(), so there is no need for flip()
-					if (buffer.position() != buffer.limit())
-					{
-						if (closed)
-							throw new IOException("transport closed on the client side");
-						
-						if (tries >= TRIES)
-						{
-							context.getLogger().warning("Failed to send message to " + socketAddress + " - buffer full, will retry.");
+				int bytesSent = channel.write(buffer);
+				if (bytesSent < 0)
+					throw new IOException("channel closed");
 
-							//if (tries >= 2*TRIES)
-							//	throw new IOException("TCP send buffer persistently full, disconnecting!");
-							
-						}
-						
-						// wait for a while to let the OS drain the TCP send buffer
-						// channel.socket().getOutputStream().flush() was here but throws
-						// IllegalBlockingModeException in non-blocking mode and is a no-op for TCP output)
-						context.getLogger().finest("Send buffer full for " + socketAddress + ", waiting...");
-						try {
-							Thread.sleep(Math.min(15000,10+tries*100));
-						} catch (InterruptedException e) {
-							// noop
-						}
-						continue;
+				if (buffer.hasRemaining())
+				{
+					if (closed)
+						throw new IOException("transport closed on the client side");
+
+					if (++tries > MAX_SEND_RETRIES)
+						throw new IOException("TCP send buffer persistently full, disconnecting " + socketAddress);
+
+					context.getLogger().finest("Send buffer full for " + socketAddress
+							+ ", waiting (attempt " + tries + "/" + MAX_SEND_RETRIES + ")...");
+					try {
+						Thread.sleep(Math.min(15000, 10 + tries * 100));
+					} catch (InterruptedException e) {
+						Thread.currentThread().interrupt();
+						throw new IOException("interrupted while sending to " + socketAddress);
 					}
-					else
-						break;
 				}
-			
 			}
 		}
-		catch (IOException ioex) 
+		catch (IOException ioex)
 		{
-			// close connection
 			close(true);
 			throw ioex;
 		}
@@ -833,7 +811,7 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 				}
 				
 				try {
-				    send(buf, false);
+				    send(buf);
 				}
 				finally {
 				    // return back to the cache
@@ -884,7 +862,7 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 				{
 					try
 					{
-						noSyncSend(message, true);
+						noSyncSend(message);
 						return;
 					}
 					finally
