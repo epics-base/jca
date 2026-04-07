@@ -628,9 +628,6 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 		}
 	}
 	
-	/** Maximum number of times to retry a partial write before giving up. */
-	private static final int MAX_SEND_RETRIES = 10;
-
 	/**
 	 * Send a buffer through the transport.
 	 * NOTE: TCP sent buffer/sending has to be synchronized.
@@ -657,8 +654,9 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 	 * <p>Flips the buffer, then loops until all bytes are written.  If the
 	 * kernel TCP send buffer is full, waits briefly and retries.  Throws
 	 * {@link IOException} (and closes the transport) if the send buffer
-	 * remains full after {@value #MAX_SEND_RETRIES} retries, the channel is
-	 * already closed, or the calling thread is interrupted.
+	 * remains full after the configured max send retries (see
+	 * {@link CAJContext#getMaxSendRetries()}; -1 means retry indefinitely),
+	 * the channel is already closed, or the calling thread is interrupted.
 	 *
 	 * @param buffer	fully-written buffer to send (will be flipped)
 	 * @throws IOException on write error, persistent backpressure, or interrupt
@@ -672,6 +670,7 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 			context.getLogger().finest("Sending " + buffer.limit() + " bytes to " + socketAddress + ".");
 
 			int tries = 0;
+			final int maxRetries = context.getMaxSendRetries();
 			while (buffer.hasRemaining())
 			{
 				int bytesSent = channel.write(buffer);
@@ -683,11 +682,13 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 					if (closed)
 						throw new IOException("transport closed on the client side");
 
-					if (++tries > MAX_SEND_RETRIES)
+					tries++;
+					if (maxRetries >= 0 && tries > maxRetries)
 						throw new IOException("TCP send buffer persistently full, disconnecting " + socketAddress);
 
 					context.getLogger().finest("Send buffer full for " + socketAddress
-							+ ", waiting (attempt " + tries + "/" + MAX_SEND_RETRIES + ")...");
+							+ ", waiting (attempt " + tries
+							+ (maxRetries < 0 ? "" : "/" + maxRetries) + ")...");
 					try {
 						Thread.sleep(Math.min(15000, 10 + tries * 100));
 					} catch (InterruptedException e) {
