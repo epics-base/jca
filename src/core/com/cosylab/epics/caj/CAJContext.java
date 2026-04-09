@@ -177,6 +177,12 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 	protected int maxArrayBytes = 16384;
 
 	/**
+	 * Maximum number of times to retry a partial TCP send before giving up.
+	 * A value of -1 means retry indefinitely (the default).
+	 */
+	protected int maxSendRetries = -1;
+
+	/**
 	 * Minimum interval in seconds between CA search broadcasts. Default is 0.1 seconds
 	 */
 	protected float minSearchInterval = (float) 0.1;
@@ -465,6 +471,11 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 				catch (Exception ex)
 				{   logger.log(Level.WARNING, "Cannot parse EPICS_CA_MAX_ARRAY_BYTES='" + tmp + "'", ex); }
 
+			tmp = System.getenv("EPICS_CA_MAX_SEND_RETRIES");
+			if (tmp != null)
+				try { maxSendRetries = Integer.parseInt(tmp); }
+				catch (Exception ex)
+				{   logger.log(Level.WARNING, "Cannot parse EPICS_CA_MAX_SEND_RETRIES='" + tmp + "'", ex); }
 
 			tmp = System.getenv("EPICS_CA_MAX_SEARCH_PERIOD");
 			if (tmp != null)
@@ -485,9 +496,10 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 			repeaterPort = jcaLibrary.getPropertyAsInt(contextClassName + ".repeater_port", repeaterPort);
 			serverPort = jcaLibrary.getPropertyAsInt(contextClassName + ".server_port", serverPort);
 			maxArrayBytes = jcaLibrary.getPropertyAsInt(contextClassName + ".max_array_bytes", maxArrayBytes);
+			maxSendRetries = jcaLibrary.getPropertyAsInt(contextClassName + ".max_send_retries", maxSendRetries);
 			maxSearchInterval = jcaLibrary.getPropertyAsFloat(contextClassName + ".max_search_interval", maxSearchInterval);
 			eventDispatcherClassName = jcaLibrary.getProperty(contextClassName + ".event_dispatcher");
-	
+
 			// load CAJ specific configuration (overrides default)
 			addressList = jcaLibrary.getProperty(thisClassName + ".addr_list", addressList);
 			autoAddressList = jcaLibrary.getPropertyAsBoolean(thisClassName + ".auto_addr_list",  autoAddressList);
@@ -500,6 +512,7 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 			repeaterPort = jcaLibrary.getPropertyAsInt(thisClassName + ".repeater_port", repeaterPort);
 			serverPort = jcaLibrary.getPropertyAsInt(thisClassName + ".server_port", serverPort);
 			maxArrayBytes = jcaLibrary.getPropertyAsInt(thisClassName + ".max_array_bytes", maxArrayBytes);
+			maxSendRetries = jcaLibrary.getPropertyAsInt(thisClassName + ".max_send_retries", maxSendRetries);
 			minSearchInterval = jcaLibrary.getPropertyAsFloat(thisClassName + ".min_search_interval", minSearchInterval);
 			maxSearchInterval = jcaLibrary.getPropertyAsFloat(thisClassName + ".max_search_interval", maxSearchInterval);
 	    }
@@ -578,6 +591,13 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 				maxArrayBytes = configuration.getChild("max_array_bytes", false).getValueAsInteger();
 			} catch(Exception ex) {
 				maxArrayBytes = configuration.getAttributeAsInteger("max_array_bytes", maxArrayBytes);
+			}
+
+			// max. send retries (-1 = infinite)
+			try {
+				maxSendRetries = configuration.getChild("max_send_retries", false).getValueAsInteger();
+			} catch(Exception ex) {
+				maxSendRetries = configuration.getAttributeAsInteger("max_send_retries", maxSendRetries);
 			}
 
 			// max. search interval
@@ -1322,6 +1342,7 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 		out.println("REPEATER_PORT : " + repeaterPort);
 		out.println("SERVER_PORT : " + serverPort);
 		out.println("MAX_ARRAY_BYTES : " + maxArrayBytes);
+		out.println("MAX_SEND_RETRIES : " + (maxSendRetries < 0 ? "infinite" : maxSendRetries));
 		out.println("MIN_SEARCH_INTERVAL : " + minSearchInterval);
 		out.println("MAX_SEARCH_INTERVAL : " + maxSearchInterval);
 		out.println("EVENT_DISPATCHER: " + eventDispatcher);
@@ -1436,6 +1457,14 @@ public class CAJContext extends Context implements CAContext, CAJConstants, Conf
 	 */
 	public int getMaxArrayBytes() {
 		return maxArrayBytes;
+	}
+
+	/**
+	 * Get maximum number of TCP send retries (-1 means infinite).
+	 * @return max send retries, or -1 for unlimited.
+	 */
+	public int getMaxSendRetries() {
+		return maxSendRetries;
 	}
 
 	/**
