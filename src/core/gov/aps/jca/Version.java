@@ -21,6 +21,9 @@
 
 package gov.aps.jca;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Administrative class to keep track of the version number of the context
  * implementations.
@@ -103,6 +106,56 @@ public class Version {
         this.productName = productName;
         this.implementationLanguage = implementationLangugage;
         this.version = version;
+        parseDeprecatedVersionFields(version);
+    }
+
+    private static final Pattern LEGACY_DEV_WITH_MAINT_PATTERN =
+            Pattern.compile("^\\s*[vV]?(\\d+)\\.(\\d+)\\.(\\d+)[dD](\\d+).*$");
+
+    private static final Pattern LEGACY_DEV_PATTERN =
+            Pattern.compile("^\\s*[vV]?(\\d+)\\.(\\d+)[dD](\\d+).*$");
+
+    private static final Pattern NUMERIC_CORE_PATTERN =
+            Pattern.compile("^\\s*[vV]?(\\d+)(?:\\.(\\d+))?(?:\\.(\\d+))?.*$");
+
+    private void parseDeprecatedVersionFields(String rawVersion)
+    {
+        majorVersion = 0;
+        minorVersion = 0;
+        maintenanceVersion = 0;
+        developmentVersion = 0;
+
+        if (rawVersion == null)
+            return;
+
+        Matcher matcher = LEGACY_DEV_WITH_MAINT_PATTERN.matcher(rawVersion);
+        if (matcher.matches())
+        {
+            majorVersion = Integer.parseInt(matcher.group(1));
+            minorVersion = Integer.parseInt(matcher.group(2));
+            maintenanceVersion = Integer.parseInt(matcher.group(3));
+            developmentVersion = Integer.parseInt(matcher.group(4));
+            return;
+        }
+
+        matcher = LEGACY_DEV_PATTERN.matcher(rawVersion);
+        if (matcher.matches())
+        {
+            majorVersion = Integer.parseInt(matcher.group(1));
+            minorVersion = Integer.parseInt(matcher.group(2));
+            developmentVersion = Integer.parseInt(matcher.group(3));
+            return;
+        }
+
+        matcher = NUMERIC_CORE_PATTERN.matcher(rawVersion);
+        if (matcher.matches())
+        {
+            majorVersion = Integer.parseInt(matcher.group(1));
+            if (matcher.group(2) != null)
+                minorVersion = Integer.parseInt(matcher.group(2));
+            if (matcher.group(3) != null)
+                maintenanceVersion = Integer.parseInt(matcher.group(3));
+        }
     }
     
     
