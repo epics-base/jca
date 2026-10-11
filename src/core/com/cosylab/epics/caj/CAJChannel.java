@@ -324,6 +324,19 @@ public class CAJChannel extends Channel implements TransportClient {
 	public synchronized void connectionCompleted(int sid, short typeCode, int elementCount) 
 		throws IllegalStateException
 	{
+		connectionCompleted(sid, typeCode, elementCount, true);
+	}
+
+	/**
+	 * Completes the connection.
+	 * @param sid sid
+	 * @param typeCode type code
+	 * @param elementCount element count
+	 * @param resubscribe <code>false</code> if the server already has the channel's
+	 * 					  subscriptions, as when an unresponsive transport responds again.
+	 */
+	private void connectionCompleted(int sid, short typeCode, int elementCount, boolean resubscribe)
+	{
 		try
 		{
 			// do this silently
@@ -351,7 +364,8 @@ public class CAJChannel extends Channel implements TransportClient {
 			// user might create monitors in listeners, so this has to be done before this can happen
 			// however, it would not be nice if events would come before connection event is fired
 			// but this cannot happen since transport (TCP) is serving in this thread 
-			resubscribeSubscriptions();
+			if (resubscribe)
+				resubscribeSubscriptions();
 			setConnectionState(ConnectionState.CONNECTED);
 		}
 		finally
@@ -546,8 +560,10 @@ public class CAJChannel extends Channel implements TransportClient {
 			 
 			updateSubscriptions();
 			
-			// reconnect using existing IDs, data
-			connectionCompleted(serverChannelID, (short)type.getValue(), elementCount);
+			// reconnect using existing IDs, data; the transport was never closed,
+			// so the server still has the subscriptions: another EVENT_ADD for one
+			// would make it send each update twice
+			connectionCompleted(serverChannelID, (short)type.getValue(), elementCount, false);
 		}
 	}
 
