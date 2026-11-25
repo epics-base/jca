@@ -723,9 +723,10 @@ public class CATransport implements Transport, ReactorHandler, Timer.TimerRunnab
 	 * ... by enabling SelectionKey.OP_WRITE and process in reactor. 
 	 * @see com.cosylab.epics.caj.impl.Transport#flush()
 	 */
-	public synchronized boolean flush()
+	public boolean flush()
 	{
 
+	    // submit() calls this while holding sendQueue; do not acquire the transport monitor.
 	    // add to queue and flush
 		synchronized(sendQueue)
 		{
